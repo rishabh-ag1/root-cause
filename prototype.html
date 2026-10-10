@@ -1,0 +1,288 @@
+<title>Root Cause</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: a case file. Brief on top, eight sealed evidence folders in a grid, accusation form at the bottom, live score bar pinned on top. */
+:root{
+  --bg:#e6dfcf; --paper:#fbf8f1; --sealed:#d8ccb0; --ink:#1f2421; --muted:#6c675b; --line:#cfc5ad;
+  --ledger:#1f6b4f; --ledger-soft:#dcebe2; --stamp:#b8322a; --stamp-soft:#f4dcd8; --hl:#f5e7a8;
+  --display:"Oswald","Arial Narrow",Arial,sans-serif;
+  --body:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#151816; --paper:#1f2320; --sealed:#2b2f2a; --ink:#e9e4d7; --muted:#9a9586; --line:#363b36;
+  --ledger:#62c59d; --ledger-soft:#1d3229; --stamp:#ff6f61; --stamp-soft:#3a201d; --hl:#4a4320; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151816; --paper:#1f2320; --sealed:#2b2f2a; --ink:#e9e4d7; --muted:#9a9586; --line:#363b36;
+  --ledger:#62c59d; --ledger-soft:#1d3229; --stamp:#ff6f61; --stamp-soft:#3a201d; --hl:#4a4320; color-scheme:dark}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);font-size:15px;line-height:1.55;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible+span{outline:2px solid var(--ledger);outline-offset:2px}
+
+.hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+.brand small{display:block;font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.06em;color:var(--muted);margin-top:4px}
+.stats{display:flex;gap:18px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;align-items:flex-end}
+.stat .k{font-family:var(--display);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-family:var(--mono);font-weight:600;font-size:18px;font-variant-numeric:tabular-nums}
+.dots{letter-spacing:3px;color:var(--stamp)}
+
+.brief{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:22px 22px 20px;display:flex;flex-direction:column;gap:12px;position:relative}
+.tag{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.brief h1{font-family:var(--display);font-weight:600;font-size:32px;line-height:1.1;margin:0;text-wrap:balance}
+.brief p{margin:0;max-width:64ch}
+.facts{display:flex;gap:10px;flex-wrap:wrap}
+.fact{font-family:var(--mono);font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:3px;padding:4px 8px}
+.fact b{font-weight:600}
+.fact.down b{color:var(--stamp)}
+.rules{font-size:14px;color:var(--muted);border-top:1px dashed var(--line);padding-top:12px;max-width:68ch}
+.rules b{color:var(--ink)}
+
+h2{font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:.06em;text-transform:uppercase;margin:0;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+h2 span{font-family:var(--mono);font-weight:400;font-size:12px;letter-spacing:0;text-transform:none;color:var(--muted)}
+
+.evidence{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:4px;background:var(--sealed);display:flex;flex-direction:column;min-width:0}
+.card.open{background:var(--paper);grid-column:1/-1}
+.card-top{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.num{font-family:var(--mono);font-size:12px;color:var(--muted);flex:none}
+.card-title{flex:1;min-width:0}
+.card-title b{display:block;font-weight:600}
+.card-title i{font-style:normal;font-size:13px;color:var(--muted)}
+.openbtn{flex:none;border:1px solid var(--ink);background:transparent;border-radius:3px;padding:6px 10px;font-family:var(--mono);font-size:12px}
+.openbtn:hover{background:var(--ink);color:var(--paper)}
+.card-body{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-family:var(--display);font-weight:500;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+tr.total td{font-weight:600;border-top:2px solid var(--ink)}
+.up{color:var(--stamp)}
+.foot{font-size:13px;color:var(--muted);margin:0}
+.quote{margin:0;padding:8px 12px;border-left:3px solid var(--line);font-size:14px}
+.quote span{display:block;font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+.accuse{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.causes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.causes label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:3px;cursor:pointer;font-size:14px;min-width:0}
+.causes input{position:absolute;opacity:0;pointer-events:none}
+.causes .box{flex:none;width:14px;height:14px;border:1.5px solid var(--ink);border-radius:50%;margin-top:3px}
+.causes input:checked~.box{background:var(--ink);box-shadow:inset 0 0 0 3px var(--paper)}
+.causes label:has(input:checked){background:var(--hl);border-color:var(--ink)}
+.causes label.ruled{opacity:.5;text-decoration:line-through;cursor:not-allowed}
+.accuse-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.btn{border:0;border-radius:3px;padding:12px 20px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.08em;text-transform:uppercase}
+.btn.primary{background:var(--stamp);color:#fff}
+.btn.ghost{background:transparent;border:1px solid var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.feedback{display:flex;flex-direction:column;gap:6px}
+.fb{font-size:14px;padding:8px 12px;border-radius:3px;background:var(--stamp-soft)}
+.fb b{color:var(--stamp)}
+
+.verdict{background:var(--paper);border:2px solid var(--ink);border-radius:4px;padding:22px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden}
+.stampmark{position:absolute;right:18px;top:18px;transform:rotate(-8deg);border:3px solid var(--stamp);color:var(--stamp);font-family:var(--display);font-weight:700;font-size:24px;letter-spacing:.1em;padding:4px 12px;border-radius:4px;text-transform:uppercase}
+.stampmark.solved{border-color:var(--ledger);color:var(--ledger)}
+.pts{font-family:var(--display);font-weight:700;font-size:64px;line-height:.9}
+.pts small{font-size:.28em;font-weight:500;color:var(--muted);margin-left:8px;letter-spacing:.06em}
+.breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.breakdown div{font-family:var(--mono);font-size:13px}
+.breakdown span{display:block;font-family:var(--display);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.explain{display:flex;flex-direction:column;gap:8px;max-width:68ch;border-top:1px dashed var(--line);padding-top:14px}
+.explain p{margin:0}
+.explain ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+pre.share{margin:0;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:12px 14px;font-family:var(--mono);font-size:14px;white-space:pre-wrap;user-select:all}
+.copied{font-family:var(--mono);font-size:12px;color:var(--ledger)}
+.banner{background:var(--ledger-soft);border:1px solid var(--ledger);border-radius:4px;padding:10px 14px;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+
+@media (max-width:620px){
+  .evidence,.causes{grid-template-columns:1fr}
+  .stats{gap:12px}
+  .stat .v{font-size:16px}
+  .brief h1{font-size:27px}
+  .pts{font-size:52px}
+  .stampmark{position:static;align-self:flex-start}
+}
+</style>
+
+<div class="wrap">
+  <div class="hud">
+    <div class="brand">Root Cause<small>CASE #1 · <span id="dateTxt"></span></small></div>
+    <div class="stats">
+      <div class="stat"><span class="k">Points</span><span class="v" id="hPts">1000</span></div>
+      <div class="stat"><span class="k">Files opened</span><span class="v" id="hCards">0 / 8</span></div>
+      <div class="stat"><span class="k">Accusations</span><span class="v dots" id="hAcc">●●●</span></div>
+      <div class="stat"><span class="k">Clock</span><span class="v" id="hTime">0:00</span></div>
+    </div>
+  </div>
+
+  <div id="banner"></div>
+
+  <section class="brief">
+    <div class="tag">Case file · Kettle &amp; Co · Bangalore</div>
+    <h1>Sales held steady. Profit fell 31%. Find out why by noon.</h1>
+    <p>Kettle &amp; Co runs 14 chai and snack outlets across Bangalore: dine-in, takeaway, and delivery through Swiggy and Zomato. September revenue came in flat against August. Profit didn't. The CEO is meeting investors this afternoon and wants one clear answer for what went wrong, backed by the numbers.</p>
+    <div class="facts">
+      <span class="fact">Revenue <b>₹84.0L → ₹84.6L</b></span>
+      <span class="fact down">Profit <b>₹12.6L → ₹8.7L</b></span>
+      <span class="fact">Outlets <b>14</b></span>
+      <span class="fact">Period <b>Aug → Sep</b></span>
+    </div>
+    <div class="rules"><b>How it works.</b> You start with 1,000 points. Opening an evidence file costs <b>75</b>. A wrong accusation costs <b>250</b>, and you get 3. The clock starts when you open your first file and costs 1 point every 3 seconds (up to 150). This case can be cracked with <b>2 files</b>. Read the brief as long as you like first.</div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <h2>Evidence <span>Each file costs 75 points to open</span></h2>
+    <div class="evidence" id="evidence"></div>
+  </section>
+
+  <section class="accuse" id="accuse">
+    <h2>Make your accusation <span>Wrong answer costs 250</span></h2>
+    <div class="causes" id="causes"></div>
+    <div class="accuse-row"><button class="btn primary" id="btnAccuse" disabled>Accuse</button><span class="foot" id="pickNote">Pick the single biggest reason profit fell.</span></div>
+    <div class="feedback" id="feedback"></div>
+  </section>
+
+  <section id="verdict" hidden></section>
+</div>
+
+<script>
+const CARDS=[
+ {t:'Profit & loss statement',d:'Every cost line, August vs September',body:()=>tbl(['₹ lakh','Aug','Sep','Change'],[
+   ['Revenue','84.0','84.6','+0.6'],['Food & packaging','25.2','26.5',up('+1.3')],['Staff','16.8','16.8','0.0'],['Rent','14.0','14.5',up('+0.5')],
+   ['Selling & distribution','8.4','10.9',up('+2.5')],['Utilities','4.2','4.2','0.0'],['Other costs','2.8','3.0',up('+0.2')],
+   {total:1,r:['Profit','12.6','8.7',up('−3.9')]}])+'<p class="foot">Selling &amp; distribution includes marketing spend and delivery-platform commissions.</p>'},
+ {t:'Outlet-wise margins',d:'Profit margin for all 14 outlets',body:()=>tbl(['Outlet','Aug','Sep','Change'],[
+   ['Koramangala','18.2%','13.6%','−4.6'],['Indiranagar','17.5%','11.9%','−5.6'],['HSR Layout','16.8%','12.4%','−4.4'],['MG Road','16.1%','11.8%','−4.3'],
+   ['Jayanagar','15.6%','11.5%','−4.1'],['JP Nagar','15.1%','11.0%','−4.1'],['Malleshwaram','14.8%','10.9%','−3.9'],['Bellandur','14.4%','10.1%','−4.3'],
+   ['Whitefield','13.9%','9.8%','−4.1'],['Marathahalli','13.1%','9.0%','−4.1'],['Hebbal','12.9%','8.8%','−4.1'],['BTM Layout','12.5%','8.6%','−3.9'],
+   ['Electronic City','11.7%','7.9%','−3.8'],['Yelahanka','10.8%','7.1%','−3.7']])},
+ {t:'Sales by channel',d:'Dine-in & takeaway vs Swiggy + Zomato',body:()=>tbl(['Channel','Aug','Sep','Share Aug → Sep'],[
+   ['Dine-in & takeaway','₹65.5L','₹53.3L','78% → 63%'],['Swiggy + Zomato','₹18.5L','₹31.3L','22% → 37%'],{total:1,r:['Total','₹84.0L','₹84.6L','']}])+
+   tbl(['Orders','Aug','Sep',''],[['Delivery orders','9,950','16,820',''],['Dine-in & takeaway bills','35,200','28,650','']])+
+   '<p class="foot">Platform commission: about 20% of order value after offers. Every delivery order is packed in sealed cups, lids, a sleeve and a bag.</p>'},
+ {t:'Menu & ticket size',d:'Units sold of top items, average bill',body:()=>tbl(['Item','Aug','Sep'],[
+   ['Masala chai (cups)','61,200','60,400'],['Filter coffee','28,900','29,300'],['Samosa','18,600','19,100'],['Bun maska','14,100','13,800'],
+   ['Kesar cold coffee (new, launched 1 Sep)','—','3,900'],{total:1,r:['Average bill','₹186','₹184']}])},
+ {t:'Supplier invoices',d:'Rates paid for key materials',body:()=>tbl(['Material','Aug rate','Sep rate','Sep spend'],[
+   ['Milk','₹56 / L','₹56 / L','₹9.1L'],['Tea leaves','₹420 / kg','₹420 / kg','₹2.6L'],['Coffee','₹780 / kg','₹780 / kg','₹2.2L'],['Sugar','₹44 / kg','₹45 / kg','₹0.9L'],
+   ['Paper cup + lid','₹3.10','₹3.10','—'],{total:1,r:['Packaging spend (all)','₹2.1L','₹3.4L',up('+62%')]}])},
+ {t:'Staff & payroll',d:'Headcount, payroll, overtime',body:()=>tbl(['','Aug','Sep'],[
+   ['Headcount','98','98'],['Payroll','₹16.8L','₹16.8L'],['Overtime hours','410','395'],['Attendance','96%','96%']])},
+ {t:'Wastage log',d:'Spoiled and thrown-out stock',body:()=>tbl(['','Aug','Sep'],[
+   ['Wastage, % of material cost','2.1%','2.3%'],['Value','₹0.53L','₹0.61L'],['Biggest item','Milk','Kesar cold coffee base']])},
+ {t:'Customer reviews',d:'Ratings and recent comments',body:()=>'<p class="foot">Average rating 4.3 → 4.2 · 1,140 reviews in September</p>'+
+   q('"Rained all week so I just ordered on Swiggy. ₹75 off on Kettle the whole month, can\'t complain."','Swiggy · Whitefield')+
+   q('"Cold coffee is way too sweet."','Google · Koramangala')+
+   q('"HSR outlet was half empty on a Sunday morning. Unusual."','Google · HSR Layout')+
+   q('"Indiranagar is cramped. Hard to find a seat."','Zomato · Indiranagar')+
+   q('"Cups arrive sealed and hot. Better packaging than other chai places."','Zomato · Bellandur')}
+];
+const CAUSES=[
+ ['Milk and raw material prices went up','Supplier rates per litre and per kg didn\'t move. Sugar rose ₹1/kg, which is nothing.'],
+ ['Theft or leakage at one outlet','Every one of the 14 outlets lost about 4 margin points. This isn\'t one bad store.'],
+ ['A new competitor took customers away','Revenue was flat, so customers didn\'t leave. Something about how they bought changed.'],
+ ['Customers moved to delivery, which costs more to serve',null],
+ ['Rent went up','Rent rose ₹0.5L. Profit fell ₹3.9L. Rent is part of the story, not the cause.'],
+ ['Wastage from the new cold coffee','Wastage went from 2.1% to 2.3%, worth about ₹8,000. Far too small.'],
+ ['Overstaffing and overtime','Headcount and payroll were flat. Overtime actually dropped.'],
+ ['Heavy discounting on the dine-in menu','The average bill barely moved and dine-in prices weren\'t cut.'],
+ ['Higher payment gateway and UPI fees','"Other costs", where gateway fees sit, rose only ₹0.2L.'],
+ ['Electricity tariff hike','Utilities were flat at ₹4.2L.'],
+ ['Smaller average order value','The average bill fell from ₹186 to ₹184. That\'s under ₹1L of impact.'],
+ ['Packaging supplier is overcharging','The price per cup didn\'t change. Kettle is buying more packaging, not paying more for each piece.']
+];
+const ANSWER=3, PAR=2, CARD_COST=75, WRONG_COST=250, TIME_CAP=150;
+
+const $=id=>document.getElementById(id);
+const up=s=>'<span class="up">'+s+'</span>';
+function tbl(h,rows){return '<div class="tbl"><table><thead><tr>'+h.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+
+  rows.map(r=>r.total?'<tr class="total">'+r.r.map(c=>'<td>'+c+'</td>').join('')+'</tr>':'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
+function q(t,s){return '<p class="quote">'+t+'<span>'+s+'</span></p>'}
+function store(k,v){try{if(v===undefined){const s=localStorage.getItem(k);return s?JSON.parse(s):null}localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+const KEY='rootcause-1-'+todayKey();
+$('dateTxt').textContent=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}).toUpperCase();
+
+let S;
+function reset(ranked){
+  S={ranked,opened:new Array(CARDS.length).fill(false),order:[],wrong:[],t0:null,done:false,solved:false};
+  renderEvidence();renderCauses();$('feedback').innerHTML='';$('verdict').hidden=true;$('accuse').hidden=false;hud();
+}
+const fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+function elapsed(){return S.t0?((S.tEnd||performance.now())-S.t0)/1000:0}
+function timePen(){return Math.min(TIME_CAP,Math.floor(elapsed()/3))}
+function points(){const n=S.opened.filter(Boolean).length;return Math.max(0,1000-n*CARD_COST-S.wrong.length*WRONG_COST-timePen())}
+function hud(){const n=S.opened.filter(Boolean).length;$('hPts').textContent=S.done&&!S.solved?0:points();$('hCards').textContent=n+' / 8';
+  $('hAcc').textContent='●'.repeat(3-S.wrong.length)+'○'.repeat(S.wrong.length);$('hTime').textContent=fmt(elapsed())}
+setInterval(()=>{if(S&&S.t0&&!S.done)hud()},500);
+function startClock(){if(!S.t0)S.t0=performance.now()}
+
+function renderEvidence(){
+  $('evidence').innerHTML=CARDS.map((c,i)=>{
+    const o=S.opened[i];
+    return '<div class="card'+(o?' open':'')+'"><div class="card-top"><span class="num">'+String(i+1).padStart(2,'0')+'</span>'+
+      '<div class="card-title"><b>'+c.t+'</b><i>'+c.d+'</i></div>'+
+      (o?'':'<button class="openbtn" data-i="'+i+'"'+(S.done?' disabled':'')+'>Open · −75</button>')+'</div>'+
+      (o?'<div class="card-body">'+c.body()+'</div>':'')+'</div>'}).join('');
+  document.querySelectorAll('.openbtn').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;startClock();S.opened[i]=true;S.order.push(i);renderEvidence();hud()});
+}
+function renderCauses(){
+  $('causes').innerHTML=CAUSES.map((c,i)=>{const ruled=S.wrong.includes(i);
+    return '<label class="'+(ruled?'ruled':'')+'"><input type="radio" name="cause" id="c'+i+'" value="'+i+'"'+(ruled||S.done?' disabled':'')+'><span class="box"></span><span>'+c[0]+'</span></label>'}).join('');
+  document.querySelectorAll('input[name=cause]').forEach(r=>r.onchange=()=>{$('btnAccuse').disabled=false});
+  $('btnAccuse').disabled=true;
+}
+$('btnAccuse').onclick=()=>{
+  const sel=document.querySelector('input[name=cause]:checked');if(!sel||S.done)return;
+  startClock();const i=+sel.value;
+  if(i===ANSWER){S.solved=true;return finish()}
+  S.wrong.push(i);
+  $('feedback').insertAdjacentHTML('beforeend','<div class="fb"><b>Not it.</b> '+CAUSES[i][1]+'</div>');
+  renderCauses();hud();
+  if(S.wrong.length>=3)finish();
+};
+
+function finish(){
+  S.done=true;S.tEnd=performance.now();hud();
+  const n=S.opened.filter(Boolean).length, pts=S.solved?points():0, secs=elapsed();
+  const grid=CARDS.map((_,i)=>S.opened[i]?'🟩':'⬛').join('');
+  const tries=S.wrong.map(()=>'❌').join('')+(S.solved?'✅':'');
+  const parTxt=n===PAR?'par':n<PAR?(PAR-n)+' under par':'+'+(n-PAR)+' over par';
+  const share='Root Cause #1 🕵️ Kettle & Co\n'+grid+'\n'+tries+(S.solved?' · '+pts+' pts':' · case unsolved')+'\n'+n+' files ('+parTxt+') · '+fmt(secs);
+  if(S.ranked)store(KEY,{pts,solved:S.solved,share});
+  renderEvidence();renderCauses();
+  $('verdict').hidden=false;
+  $('verdict').innerHTML='<div class="verdict">'+
+    '<div class="stampmark'+(S.solved?' solved':'')+'">'+(S.solved?'Case closed':'Case cold')+'</div>'+
+    '<div><div class="tag">'+(S.ranked?'Today\'s ranked case':'Practice replay')+'</div><div class="pts">'+pts+'<small>POINTS</small></div></div>'+
+    '<div class="breakdown">'+
+      '<div><span>Files opened</span>'+n+' × 75 = −'+n*CARD_COST+'</div>'+
+      '<div><span>Wrong accusations</span>'+S.wrong.length+' × 250 = −'+S.wrong.length*WRONG_COST+'</div>'+
+      '<div><span>Time</span>'+fmt(secs)+' = −'+timePen()+'</div>'+
+      '<div><span>Vs par</span>'+n+' files, '+parTxt+'</div>'+
+    '</div>'+
+    '<div class="explain">'+
+      '<p><b>The answer: customers moved to delivery.</b> Revenue stayed the same, but ₹12.2L of it moved from the counter to Swiggy and Zomato, probably pushed by a month-long ₹75-off offer and a rainy September.</p>'+
+      '<p>Delivery is a worse sale. At about 20% commission, the extra ₹12.8L of delivery revenue cost <b>₹2.5L in commissions</b>, which is exactly the jump in selling &amp; distribution. Every delivery order also needs a sealed cup, lid, sleeve and bag, which is the <b>₹1.3L packaging increase</b> hiding inside food costs. That accounts for ₹3.8L of the ₹3.9L drop.</p>'+
+      '<p><b>The fastest path (par 2):</b></p><ol><li>Open the P&amp;L. Selling &amp; distribution (+₹2.5L) is the biggest mover, and it holds platform commissions.</li><li>Open sales by channel. Delivery went from 22% to 37% of sales. 20% of the extra ₹12.8L is ₹2.5L. Case closed.</li></ol>'+
+      '<p><b>The traps:</b> food costs went up, which points at milk prices, but supplier rates were flat. Rent went up, but only by ₹0.5L. The new cold coffee looks suspicious, but the wastage is tiny.</p>'+
+      '<p><b>The fix the CEO should take to the meeting:</b> price the delivery menu 15-20% above the counter menu, stop funding the platform discount, and push repeat delivery customers to a direct WhatsApp order line.</p>'+
+    '</div>'+
+    '<pre class="share" id="shareTxt">'+share+'</pre>'+
+    '<div class="accuse-row"><button class="btn primary" id="btnCopy">Copy result</button><button class="btn ghost" id="btnReplay">Replay for practice</button><span class="copied" id="copied"></span></div>'+
+  '</div>';
+  $('btnCopy').onclick=()=>{navigator.clipboard.writeText(share).then(()=>{$('copied').textContent='Copied'}).catch(()=>{const r=document.createRange();r.selectNodeContents($('shareTxt'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('copied').textContent='Selected. Press Ctrl/Cmd+C'})};
+  $('btnReplay').onclick=()=>{reset(false);window.scrollTo({top:0,behavior:'smooth'})};
+  $('verdict').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+const prior=store(KEY);
+if(prior){$('banner').innerHTML='<div class="banner"><span>You already played today\'s case: <b>'+(prior.solved?prior.pts+' points':'unsolved')+'</b>. This replay won\'t count.</span></div>'}
+reset(!prior);
+</script>
