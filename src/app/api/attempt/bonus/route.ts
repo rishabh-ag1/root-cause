@@ -12,9 +12,8 @@ export async function POST(req: Request) {
   try {
     const c = await getCaseById(g.body.caseId);
     if (!c) return fail(404, 'no_case', 'Case not found.');
-    const now = new Date().toISOString();
-    const { attempt, bonusCorrect } = await mutateAttempt(g.user.id, c.id, (a) => applyBonus(a, c, g.body.optionIndex, now));
-    return json({ serverNow: now, bonusCorrect, attempt: playerView(attempt, c), final: await resultPayload(c, attempt, g.user.id) });
+    const { attempt, bonusCorrect } = await mutateAttempt(g.user.id, c.id, (a) => applyBonus(a, c, g.body.optionIndex));
+    return json({ serverNow: new Date().toISOString(), bonusCorrect, attempt: playerView(attempt, c), final: await resultPayload(c, attempt, g.user.id) });
   } catch (e) {
     return handleError(e);
   }

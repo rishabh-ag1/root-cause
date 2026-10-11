@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-/** A table cell. `{v, tone:'up'}` renders in the alert colour (cost went up). */
+/** A table cell. `{v, tone:'up'}` renders in the alert colour, `'down'` in the good colour. */
 export const Cell = z.union([
   z.string(),
   z.object({ v: z.string(), tone: z.enum(['up', 'down']) }),
@@ -9,19 +9,14 @@ export type Cell = z.infer<typeof Cell>;
 
 export const TableBlock = z.object({
   type: z.literal('table'),
-  headers: z.array(z.string()).min(1),
+  columns: z.array(z.string()).min(1),
   rows: z.array(z.array(Cell)).min(1),
   total: z.array(Cell).optional(),
   /**
-   * Declares which columns must reconcile with the total row.
-   * sum: rows add up to the total. firstMinusRest: row 1 minus every other row = total (a P&L).
+   * Declares which columns must add up to the total row. Write negatives in brackets, e.g. "(152)",
+   * so a P&L reconciles as a plain sum.
    */
-  check: z
-    .object({
-      columns: z.array(z.number().int().nonnegative()).min(1),
-      mode: z.enum(['sum', 'firstMinusRest']),
-    })
-    .optional(),
+  sum_check: z.object({ columns: z.array(z.number().int().nonnegative()).min(1) }).optional(),
 });
 
 export const NoteBlock = z.object({ type: z.literal('note'), text: z.string().min(1) });
@@ -39,19 +34,27 @@ export const Evidence = z.object({
 
 export const Cause = z.object({
   label: z.string().min(1),
-  /** Shown when this cause is picked wrongly. Empty for the answer. */
-  feedback: z.string(),
+  /** Shown when this cause is picked wrongly. Null/empty for the answer. */
+  feedback: z.string().nullable(),
 });
+
+const strOrList = z.union([z.string().min(1), z.array(z.string().min(1)).min(1)]);
+
+export const DIFFICULTIES = ['easy', 'medium', 'hard', 'expert', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
 
 export const CaseFile = z
   .object({
     case_number: z.number().int().positive(),
-    slug: z.string().regex(/^[a-z0-9-]+$/),
-    difficulty: z.enum(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']),
+    slug: z.string().regex(/^[a-z0-9-]+$/).optional(),
+    /** Ignored by the seed script, which derives it from LAUNCH_DATE. Allowed so authored files validate. */
+    publish_date: z.string().optional(),
+    difficulty: z.enum(DIFFICULTIES),
     title: z.string().min(1),
     company: z.string().min(1),
+    units_note: z.string().optional(),
     brief: z.object({
-      tag: z.string().min(1),
+      tag: z.string().min(1).optional(),
+      units_note: z.string().optional(),
       headline: z.string().min(1),
       story: z.string().min(1),
       facts: z.array(z.object({ label: z.string(), value: z.string(), tone: z.enum(['down', 'up']).optional() })),
@@ -67,10 +70,12 @@ export const CaseFile = z
     }),
     explanation: z.object({
       answer: z.string().min(1),
-      why: z.array(z.string().min(1)).min(1),
+      why: z.array(z.string().min(1)).optional(),
+      cash_bridge: z.string().optional(),
       fastest_path: z.array(z.string().min(1)).min(1),
-      traps: z.string().min(1),
-      fix: z.string().min(1),
+      traps: strOrList,
+      fix: z.string().optional(),
+      lesson: z.string().optional(),
     }),
     par: z.number().int().positive(),
     status: z.enum(['draft', 'scheduled', 'live']).default('scheduled'),
@@ -81,38 +86,55 @@ export const CaseFile = z
     if (c.par > c.evidence.length)
       ctx.addIssue({ code: 'custom', path: ['par'], message: 'par is larger than the number of files' });
     c.causes.forEach((cause, i) => {
-      if (i !== c.answer_index && !cause.feedback.trim())
+      if (i !== c.answer_index && !cause.feedback?.trim())
         ctx.addIssue({ code: 'custom', path: ['causes', i, 'feedback'], message: 'wrong cause needs feedback' });
     });
+    c.evidence.forEach((e, i) =>
+      e.body.forEach((b, j) => {
+        if (b.type !== 'table') return;
+        const width = b.columns.length;
+        [...b.rows, ...(b.total ? [b.total] : [])].forEach((r, k) => {
+          if (r.length !== width)
+            ctx.addIssue({ code: 'custom', path: ['evidence', i, 'body', j], message: `row ${k} has ${r.length} cells, expected ${width}` });
+        });
+      }),
+    );
   });
 
 export type CaseFile = z.infer<typeof CaseFile>;
 
-/** Parse "₹84.0L", "−3.9", "+1.3", "9,950", "18.2%" into a number. Returns null for non-numbers like "—". */
+/**
+ * Parse "₹84.0L", "(152)", "−3.9", "+1.3", "9,950", "18.2%" into a number.
+ * Returns null for non-numbers like "—" or "60 days".
+ */
 export function parseNum(s: string): number | null {
-  const cleaned = s.replace(/[₹,%\s]/g, '').replace(/[LK]$/i, '').replace('−', '-').replace(/^\+/, '');
-  if (!/^-?\d+(\.\d+)?$/.test(cleaned)) return null;
-  return Number(cleaned);
+  let t = s.trim().replace(/[₹,%\s]/g, '').replace(/(L|K|Cr)$/i, '').replace('−', '-').replace(/^\+/, '');
+  let neg = false;
+  if (/^\(.*\)$/.test(t)) {
+    neg = true;
+    t = t.slice(1, -1);
+  }
+  if (!/^-?\d+(\.\d+)?$/.test(t)) return null;
+  return neg ? -Number(t) : Number(t);
 }
 
 export const cellText = (c: Cell) => (typeof c === 'string' ? c : c.v);
 
 /** Returns a list of human-readable problems with a table's declared totals. */
 export function checkTableTotals(t: TableBlock, where: string): string[] {
-  if (!t.check) return [];
-  if (!t.total) return [`${where}: has a check but no total row`];
+  if (!t.sum_check) return [];
+  if (!t.total) return [`${where}: has sum_check but no total row`];
   const problems: string[] = [];
-  for (const col of t.check.columns) {
+  for (const col of t.sum_check.columns) {
     const vals = t.rows.map((r) => parseNum(cellText(r[col] ?? '')));
     const total = parseNum(cellText(t.total[col] ?? ''));
     if (total === null || vals.some((v) => v === null)) {
-      problems.push(`${where}: column ${col} has a non-numeric cell`);
+      problems.push(`${where}: column ${col} ("${t.columns[col]}") has a non-numeric cell`);
       continue;
     }
-    const nums = vals as number[];
-    const computed = t.check.mode === 'sum' ? nums.reduce((a, b) => a + b, 0) : nums[0] - nums.slice(1).reduce((a, b) => a + b, 0);
+    const computed = (vals as number[]).reduce((a, b) => a + b, 0);
     if (Math.abs(computed - total) > 0.051)
-      problems.push(`${where}: column "${t.headers[col]}" adds to ${computed.toFixed(2)} but total says ${total}`);
+      problems.push(`${where}: column "${t.columns[col]}" adds to ${+computed.toFixed(2)} but total says ${total}`);
   }
   return problems;
 }

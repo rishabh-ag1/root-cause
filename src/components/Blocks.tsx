@@ -23,7 +23,7 @@ export function Blocks({ blocks }: { blocks: Block[] }) {
           <div key={i} className="tbl">
             <table>
               <thead>
-                <tr>{b.headers.map((h, j) => <th key={j}>{h}</th>)}</tr>
+                <tr>{b.columns.map((h, j) => <th key={j}>{h}</th>)}</tr>
               </thead>
               <tbody>
                 {b.rows.map((r, j) => (

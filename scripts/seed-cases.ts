@@ -24,8 +24,9 @@ const sb = createClient(url, key, { auth: { persistSession: false } });
 
 for (const { file, result } of loaded) {
   if (!result.ok) continue;
-  const { slug: _slug, ...c } = result.data;
-  const row = { ...c, publish_date: publishDateFor(c.case_number, launch) };
+  // slug lives in the file name; publish_date always comes from LAUNCH_DATE; units_note is shown with the brief.
+  const { slug: _slug, publish_date: _pd, units_note, ...c } = result.data;
+  const row = { ...c, brief: { ...c.brief, units_note }, publish_date: publishDateFor(c.case_number, launch) };
   const { error } = await sb.from('cases').upsert(row, { onConflict: 'case_number' });
   if (error) {
     console.error(`✗ ${file}: ${error.message}`);

@@ -21,8 +21,9 @@ export function loadCases(): { loaded: Loaded[]; errors: string[] } {
     const result = validateCase(raw);
     if (result.ok) {
       const c: CaseFile = result.data;
-      const expected = `${String(c.case_number).padStart(3, '0')}-${c.slug}.json`;
-      if (file !== expected) errors.push(`${file}: should be named ${expected}`);
+      const prefix = `${String(c.case_number).padStart(3, '0')}-`;
+      if (!/^\d{3}-[a-z0-9-]+\.json$/.test(file) || !file.startsWith(prefix)) errors.push(`${file}: should be named ${prefix}<slug>.json`);
+      else if (c.slug && file !== `${prefix}${c.slug}.json`) errors.push(`${file}: slug says ${c.slug}`);
       if (seen.has(c.case_number)) errors.push(`${file}: case_number ${c.case_number} also used by ${seen.get(c.case_number)}`);
       seen.set(c.case_number, file);
     }

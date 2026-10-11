@@ -166,7 +166,10 @@ tr.total td { font-weight: 600; border-top: 2px solid var(--ink); }
 .options button:hover:not(:disabled) { border-color: var(--ink); }
 .options button:active:not(:disabled) { transform: scale(.995); }
 .options button b { font-family: var(--mono); color: var(--muted); }
+.options button.picked { border-color: var(--ink); background: var(--hl); }
 .options button.right { background: var(--ledger-soft); border-color: var(--ledger); }
+.explain .lesson { font-family: var(--display); font-size: 19px; line-height: 1.3; letter-spacing: .01em; border-left: 3px solid var(--stamp); padding-left: 12px; }
+.explain .lesson b { font-family: var(--body); font-size: 15px; display: block; }
 .options button.wrongpick { background: var(--stamp-soft); border-color: var(--stamp); }
 .options button:disabled { cursor: default; }
 

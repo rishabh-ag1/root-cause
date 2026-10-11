@@ -6,18 +6,19 @@ export const WRONG_COST = 250;
 export const MAX_WRONG = 3;
 export const TIME_CAP = 150;
 export const SECONDS_PER_POINT = 3;
-export const BONUS_POINTS = 150;
 export const FLAG_UNDER_SECONDS = 20;
 
 export function timePenalty(seconds: number) {
   return Math.min(TIME_CAP, Math.floor(Math.max(0, seconds) / SECONDS_PER_POINT));
 }
 
-/** §4: max(0, 1000 − 75·files − 250·wrong − min(150, floor(s/3))) + bonus, if solved; else 0. */
-export function computeScore(p: { files: number; wrong: number; seconds: number; solved: boolean; bonusCorrect: boolean }) {
+/**
+ * max(0, 1000 − 75·files − 250·wrong − min(150, floor(s/3))) if solved, else 0.
+ * The bonus question is just for fun and never changes the score, so the leaderboard stays a fair comparison.
+ */
+export function computeScore(p: { files: number; wrong: number; seconds: number; solved: boolean }) {
   if (!p.solved) return 0;
-  const base = Math.max(0, START_POINTS - CARD_COST * p.files - WRONG_COST * p.wrong - timePenalty(p.seconds));
-  return base + (p.bonusCorrect ? BONUS_POINTS : 0);
+  return Math.max(0, START_POINTS - CARD_COST * p.files - WRONG_COST * p.wrong - timePenalty(p.seconds));
 }
 
 export function elapsedSeconds(start: string | Date | null, end: string | Date | null) {
@@ -26,7 +27,7 @@ export function elapsedSeconds(start: string | Date | null, end: string | Date |
 }
 
 /** A case as stored in the DB (the case file plus its row id and publish date). */
-export type StoredCase = Omit<CaseFile, 'slug'> & { id: number; publish_date: string; slug?: string };
+export type StoredCase = Omit<CaseFile, 'slug' | 'publish_date' | 'units_note'> & { id: number; publish_date: string };
 
 export type Attempt = {
   started_at: string | null;
@@ -55,18 +56,18 @@ export const emptyAttempt = (): Attempt => ({
 });
 
 export class GameError extends Error {
-  constructor(public code: 'finished' | 'solved' | 'not_solved' | 'bad_index' | 'already_ruled', message: string) {
+  constructor(public code: 'finished' | 'not_solved' | 'bonus_done' | 'bad_index' | 'already_ruled', message: string) {
     super(message);
   }
 }
 
 const isFinished = (a: Attempt) => a.finished_at !== null;
+const bonusPending = (a: Attempt) => a.solved === true && a.bonus_correct === null;
 
 // ---------------------------------------------------------------- transitions
 
 export function applyOpen(a: Attempt, c: StoredCase, index: number, now: string) {
   if (isFinished(a)) throw new GameError('finished', 'This case is closed.');
-  if (a.solved) throw new GameError('solved', 'You already cracked it. Answer the bonus question.');
   if (!Number.isInteger(index) || index < 0 || index >= c.evidence.length) throw new GameError('bad_index', 'No such file.');
   const next: Attempt = { ...a, started_at: a.started_at ?? now, opened: a.opened.includes(index) ? a.opened : [...a.opened, index] };
   return { attempt: next, body: c.evidence[index].body };
@@ -77,43 +78,40 @@ export type AccuseResult =
   | { result: 'unsolved'; feedback: string }
   | { result: 'correct'; bonus: { question: string; options: string[] } };
 
+/** A correct accusation ends the attempt and locks the score. The bonus question comes after, for fun. */
 export function applyAccuse(a: Attempt, c: StoredCase, causeIndex: number, now: string): { attempt: Attempt; out: AccuseResult } {
   if (isFinished(a)) throw new GameError('finished', 'This case is closed.');
-  if (a.solved) throw new GameError('solved', 'You already cracked it. Answer the bonus question.');
   if (!Number.isInteger(causeIndex) || causeIndex < 0 || causeIndex >= c.causes.length) throw new GameError('bad_index', 'No such cause.');
   if (a.wrong.includes(causeIndex)) throw new GameError('already_ruled', 'You already ruled that out.');
 
   const started = a.started_at ?? now;
+  const secs = elapsedSeconds(started, now);
+  const flagged = secs < FLAG_UNDER_SECONDS;
   if (causeIndex === c.answer_index) {
+    const score = computeScore({ files: a.opened.length, wrong: a.wrong.length, seconds: secs, solved: true });
     return {
-      attempt: { ...a, started_at: started, solved: true, solved_at: now },
+      attempt: { ...a, started_at: started, solved: true, solved_at: now, finished_at: now, score, elapsed_seconds: secs, flagged },
       out: { result: 'correct', bonus: { question: c.bonus.question, options: c.bonus.options } },
     };
   }
   const wrong = [...a.wrong, causeIndex];
-  const feedback = c.causes[causeIndex].feedback;
+  const feedback = c.causes[causeIndex].feedback ?? '';
   if (wrong.length >= MAX_WRONG) {
-    const secs = elapsedSeconds(started, now);
     return {
-      attempt: { ...a, started_at: started, wrong, solved: false, finished_at: now, score: 0, elapsed_seconds: secs, flagged: secs < FLAG_UNDER_SECONDS },
+      attempt: { ...a, started_at: started, wrong, solved: false, finished_at: now, score: 0, elapsed_seconds: secs, flagged },
       out: { result: 'unsolved', feedback },
     };
   }
   return { attempt: { ...a, started_at: started, wrong }, out: { result: 'wrong', feedback, wrongLeft: MAX_WRONG - wrong.length } };
 }
 
-export function applyBonus(a: Attempt, c: StoredCase, optionIndex: number, now: string) {
-  if (isFinished(a)) throw new GameError('finished', 'This case is closed.');
+/** One try at the bonus question, after solving. Records the answer; the score does not change. */
+export function applyBonus(a: Attempt, c: StoredCase, optionIndex: number) {
   if (!a.solved) throw new GameError('not_solved', 'Crack the case first.');
+  if (a.bonus_correct !== null) throw new GameError('bonus_done', 'You already answered the bonus question.');
   if (!Number.isInteger(optionIndex) || optionIndex < 0 || optionIndex >= c.bonus.options.length) throw new GameError('bad_index', 'No such option.');
   const bonusCorrect = optionIndex === c.bonus.answer_index;
-  // The clock stops at the correct accusation; time spent on the bonus question is free.
-  const secs = elapsedSeconds(a.started_at, a.solved_at);
-  const score = computeScore({ files: a.opened.length, wrong: a.wrong.length, seconds: secs, solved: true, bonusCorrect });
-  return {
-    attempt: { ...a, bonus_correct: bonusCorrect, finished_at: now, score, elapsed_seconds: secs, flagged: secs < FLAG_UNDER_SECONDS },
-    bonusCorrect,
-  };
+  return { attempt: { ...a, bonus_correct: bonusCorrect }, bonusCorrect };
 }
 
 // ---------------------------------------------------------------- views
@@ -141,8 +139,7 @@ export function shareText(p: {
 }) {
   const grid = Array.from({ length: p.fileCount }, (_, i) => (p.opened.includes(i) ? '🟩' : '⬛')).join('');
   const tries = '❌'.repeat(p.wrong) + (p.solved ? '✅' : '');
-  const parts = [tries];
-  if (p.solved && p.bonusCorrect) parts[0] += ' +bonus';
+  const parts = [tries + (p.solved && p.bonusCorrect ? ' ⭐' : '')];
   parts.push(p.solved ? `${p.score} pts` : 'case unsolved');
   if (p.rank) parts.push(`#${p.rank} today`);
   return [
@@ -186,7 +183,8 @@ export function publicCase(c: StoredCase): PublicCase {
 export type Reveal = {
   answerIndex: number;
   explanation: CaseFile['explanation'];
-  bonus: CaseFile['bonus'];
+  /** Withheld while the player still has the bonus question to answer. */
+  bonus: CaseFile['bonus'] | null;
   /** Everything needed for a local practice replay, only sent after the ranked attempt ends. */
   practice: { bodies: Block[][]; feedback: string[] };
 };
@@ -197,6 +195,7 @@ export type PlayerView = {
   bodies: Record<number, Block[]>;
   wrong: { index: number; feedback: string }[];
   solved: boolean | null;
+  /** Set when the case is solved and the bonus question hasn't been answered yet. */
   bonusQuestion: { question: string; options: string[] } | null;
   finished: boolean;
   bonusCorrect: boolean | null;
@@ -215,23 +214,23 @@ export function playerView(a: Attempt, c: StoredCase): PlayerView {
     startedAt: a.started_at,
     opened: a.opened,
     bodies,
-    wrong: a.wrong.map((i) => ({ index: i, feedback: c.causes[i].feedback })),
+    wrong: a.wrong.map((i) => ({ index: i, feedback: c.causes[i].feedback ?? '' })),
     solved: a.solved,
-    bonusQuestion: a.solved && !finished ? { question: c.bonus.question, options: c.bonus.options } : null,
+    bonusQuestion: bonusPending(a) ? { question: c.bonus.question, options: c.bonus.options } : null,
     finished,
     bonusCorrect: a.bonus_correct,
     score: a.score,
     elapsedSeconds: a.elapsed_seconds,
     solvedAt: a.solved_at,
-    reveal: finished ? revealFor(c) : null,
+    reveal: finished ? revealFor(c, !bonusPending(a)) : null,
   };
 }
 
-export function revealFor(c: StoredCase): Reveal {
+export function revealFor(c: StoredCase, withBonus = true): Reveal {
   return {
     answerIndex: c.answer_index,
     explanation: c.explanation,
-    bonus: c.bonus,
-    practice: { bodies: c.evidence.map((e) => e.body), feedback: c.causes.map((x) => x.feedback) },
+    bonus: withBonus ? c.bonus : null,
+    practice: { bodies: c.evidence.map((e) => e.body), feedback: c.causes.map((x) => x.feedback ?? '') },
   };
 }

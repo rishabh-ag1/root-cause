@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     if (!c) return fail(404, 'no_case', 'Case not found.');
     const now = new Date().toISOString();
     const { attempt, out } = await mutateAttempt(g.user.id, c.id, (a) => applyAccuse(a, c, g.body.causeIndex, now));
-    const final = out.result === 'unsolved' ? await resultPayload(c, attempt, g.user.id) : null;
+    const final = out.result === 'wrong' ? null : await resultPayload(c, attempt, g.user.id);
     return json({ serverNow: now, causeIndex: g.body.causeIndex, ...out, attempt: playerView(attempt, c), final });
   } catch (e) {
     return handleError(e);

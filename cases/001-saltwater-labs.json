@@ -1,0 +1,274 @@
+{
+  "case_number": 1,
+  "publish_date": "2026-10-10",
+  "difficulty": "hard",
+  "title": "The Vanishing Crore",
+  "company": "Saltwater Labs",
+  "units_note": "All money figures in ₹ lakh unless marked. Negative numbers are written in parentheses, e.g. (152).",
+  "brief": {
+    "headline": "Revenue up 23%. Profitable. And ₹1.4 crore of cash is gone.",
+    "story": "Saltwater Labs is a Mumbai sunscreen brand that sells on its own website, Amazon, Nykaa and quick-commerce apps. July to September was its best quarter ever: sales up 23%, and still profitable. But the bank balance fell from ₹1.90 Cr to ₹50L, and October's salaries and ad bills are due before month-end. The founder wants to know where the money went before calling investors.",
+    "facts": [
+      { "label": "Revenue", "value": "₹4.10 Cr → ₹5.05 Cr" },
+      { "label": "Profit (EBITDA)", "value": "₹39L → ₹30L" },
+      { "label": "Bank balance", "value": "₹1.90 Cr → ₹50L", "tone": "down" },
+      { "label": "Period", "value": "Apr-Jun → Jul-Sep" }
+    ]
+  },
+  "evidence": [
+    {
+      "title": "Profit & loss statement",
+      "teaser": "Every cost line, Q1 vs Q2",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Q1 (Apr-Jun)", "Q2 (Jul-Sep)"],
+          "rows": [
+            ["Revenue (net of returns)", "410", "505"],
+            ["Product cost", "(123)", "(152)"],
+            ["Marketplace & platform fees", "(41)", "(68)"],
+            ["Performance marketing", "(98)", "(145)"],
+            ["Logistics", "(33)", "(30)"],
+            ["Salaries", "(54)", "(56)"],
+            ["Other opex", "(22)", "(24)"]
+          ],
+          "total": ["EBITDA", "39", "30"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "Gross margin was 70% in both quarters." }
+      ]
+    },
+    {
+      "title": "Ad performance",
+      "teaser": "Meta and Google spend, returns",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Ad spend", "₹98L", "₹145L"],
+            ["Revenue from website + Amazon + Nykaa", "₹340L", "₹330L"],
+            ["Blended ROAS", "3.5×", "2.3×"],
+            ["New-customer orders", "21,400", "23,300"]
+          ]
+        },
+        { "type": "note", "text": "Quick-commerce sales are not driven by Meta or Google ads; they are excluded from ROAS." }
+      ]
+    },
+    {
+      "title": "Inventory",
+      "teaser": "Stock on hand, units and value",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "End Jun", "End Sep"],
+          "rows": [
+            ["Units in stock", "62,000", "88,000"],
+            ["Stock value", "₹110L", "₹140L"],
+            ["Days of inventory", "82", "84"],
+            ["SPF 50 stick (new, launched Aug)", "—", "18,000 units"]
+          ]
+        },
+        { "type": "note", "text": "No expired or slow-moving SKUs flagged by the warehouse." }
+      ]
+    },
+    {
+      "title": "Sales by channel",
+      "teaser": "Monthly revenue for each channel",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Q1 total", "Jul", "Aug", "Sep", "Q2 total"],
+          "rows": [
+            ["Website", "180", "58", "56", "56", "170"],
+            ["Amazon", "110", "36", "34", "35", "105"],
+            ["Nykaa", "50", "17", "18", "20", "55"],
+            ["Quick commerce", "70", "22", "63", "90", "175"]
+          ],
+          "total": ["Total", "410", "133", "171", "201", "505"],
+          "sum_check": { "columns": [1, 2, 3, 4, 5] }
+        },
+        { "type": "note", "text": "From 1 Aug, all quick-commerce sales (Blinkit, Zepto, Instamart across 6 cities) go through a distributor, QuikReach. Before that, Saltwater sold to Blinkit directly." }
+      ]
+    },
+    {
+      "title": "Team & payroll",
+      "teaser": "Headcount and salaries",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Headcount", "31", "33"],
+            ["Salaries", "₹54L", "₹56L"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Bank statement",
+      "teaser": "Every rupee in and out, Jul-Sep",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Q2"],
+          "rows": [
+            ["Opening balance (1 Jul)", "190"],
+            ["In: Website (Razorpay)", "170"],
+            ["In: Amazon", "106"],
+            ["In: Nykaa", "52"],
+            ["In: Quick commerce (Blinkit, then QuikReach)", "47"],
+            ["Out: Suppliers", "(182)"],
+            ["Out: Meta & Google ads", "(145)"],
+            ["Out: Platform fees", "(68)"],
+            ["Out: Logistics", "(30)"],
+            ["Out: Salaries", "(56)"],
+            ["Out: Other opex", "(24)"],
+            ["Out: Capex", "(10)"]
+          ],
+          "total": ["Closing balance (30 Sep)", "50"],
+          "sum_check": { "columns": [1] }
+        },
+        { "type": "note", "text": "No loans taken or repaid. No tax payments fell due this quarter. Platform fees are invoiced monthly and paid separately." }
+      ]
+    },
+    {
+      "title": "Returns & refunds",
+      "teaser": "Return rate and refunds",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Return rate", "6.1%", "6.4%"],
+            ["Refunds processed", "₹26L", "₹32L"]
+          ]
+        },
+        { "type": "note", "text": "Revenue is reported net of returns and refunds." }
+      ]
+    },
+    {
+      "title": "Supplier payables",
+      "teaser": "What Saltwater owes its suppliers",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "End Jun", "End Sep"],
+          "rows": [
+            ["Owed to suppliers", "₹70L", "₹70L"],
+            ["Supplier payment terms", "30 days", "30 days"],
+            ["Advance payments to suppliers", "₹0", "₹0"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Unit economics by channel",
+      "teaser": "Contribution margin per ₹100 of sales",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Channel", "Contribution margin, Q2"],
+          "rows": [
+            ["Website", "31%"],
+            ["Amazon", "22%"],
+            ["Nykaa", "24%"],
+            ["Quick commerce", "27%"]
+          ]
+        },
+        { "type": "note", "text": "After product cost, platform fees, logistics and channel-specific marketing." }
+      ]
+    },
+    {
+      "title": "Capex & one-offs",
+      "teaser": "Equipment, loans, unusual payments",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Q2"],
+          "rows": [
+            ["Warehouse racking", "6"],
+            ["Laptops", "4"]
+          ],
+          "total": ["Total capex", "10"],
+          "sum_check": { "columns": [1] }
+        },
+        { "type": "note", "text": "No loan repayments, dividends or tax payments this quarter." }
+      ]
+    },
+    {
+      "title": "Receivables & payment terms",
+      "teaser": "Who owes Saltwater money, and when it's due",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Payment terms", "Owed end Jun", "Owed end Sep", "Overdue now"],
+          "rows": [
+            ["Website (Razorpay)", "2 days", "4", "4", "0"],
+            ["Amazon", "7 days after delivery", "26", "25", "0"],
+            ["Nykaa", "45 days", "25", "28", "2"],
+            ["Quick commerce", "Blinkit direct: 30 days · QuikReach (from 1 Aug): 60 days after month-end", "25", "153", "0"]
+          ],
+          "total": ["Total", "", "80", "210", "2"],
+          "sum_check": { "columns": [2, 3, 4] }
+        },
+        { "type": "note", "text": "QuikReach has paid every invoice that has fallen due, on time. August invoices (₹63L) are due on 30 Oct. September invoices (₹90L) are due on 29 Nov." }
+      ]
+    },
+    {
+      "title": "Team WhatsApp",
+      "teaser": "Messages from the last six weeks",
+      "body": [
+        { "type": "quote", "text": "QuikReach wants 40% more stock for September, festive season. We're the #2 sunscreen on Zepto in Mumbai now 🚀", "source": "Head of Sales · 2 Sep" },
+        { "type": "quote", "text": "Can we take September ads to ₹55L? CAC is creeping up but it's festive.", "source": "Growth lead · 4 Sep" },
+        { "type": "quote", "text": "Per our agreement, invoices are paid 60 days after month-end. August will be cleared on 30 Oct.", "source": "QuikReach accounts · 9 Sep" },
+        { "type": "quote", "text": "Why is the bank balance this low if we're profitable??", "source": "Founder · 1 Oct" }
+      ]
+    }
+  ],
+  "causes": [
+    { "label": "Ad spend burned through the cash", "feedback": "Ad efficiency did fall, and it's worth fixing. But ad spend is already inside the P&L, and the business still made ₹30L. Ads can't explain a ₹1.4 Cr cash drop." },
+    { "label": "Inventory pile-up from the new SPF stick", "feedback": "Units rose 42%, but stock value rose only ₹30L and days of inventory barely moved (82 → 84)." },
+    { "label": "A channel partner is paying late", "feedback": "Almost nothing is overdue. QuikReach has paid every invoice that has fallen due, on time. The money isn't late. It isn't due yet." },
+    { "label": "Quick-commerce sales are loss-making", "feedback": "Quick commerce earns a 27% contribution margin, better than Amazon or Nykaa. The channel is profitable." },
+    { "label": "Suppliers demanded advance payments", "feedback": "Supplier dues were ₹70L at both quarter-ends, on unchanged 30-day terms. No advances were paid." },
+    { "label": "Marketplace and platform fees jumped", "feedback": "Fees rose ₹27L, but they're inside the P&L, and the P&L is still profitable." },
+    { "label": "One-off capital spending", "feedback": "Capex was ₹10L: warehouse racking and laptops." },
+    { "label": "Returns and refunds spiked", "feedback": "The return rate moved from 6.1% to 6.4%, and revenue is already reported net of returns." },
+    { "label": "A hiring spree", "feedback": "Two new hires. Salaries rose ₹2L." },
+    { "label": "Growth moved to a channel that pays 60 days after month-end, so cash is stuck with customers", "feedback": null },
+    { "label": "Website sales collapsed", "feedback": "Website sales dipped from ₹180L to ₹170L. That's small, and that channel pays in 2 days." },
+    { "label": "Discounting crushed margins", "feedback": "Gross margin held at 70% in both quarters." },
+    { "label": "Amazon held back settlements", "feedback": "Amazon owed ₹26L in June and ₹25L in September. Nothing was held back." },
+    { "label": "Logistics costs spiked", "feedback": "Logistics fell, from ₹33L to ₹30L." },
+    { "label": "Fraud or money leaking from the account", "feedback": "The bank statement reconciles to the rupee. Every outflow matches a cost line or capex." },
+    { "label": "Nykaa is delaying payments", "feedback": "Nykaa has ₹2L overdue. That's not ₹1.4 Cr." }
+  ],
+  "answer_index": 9,
+  "par": 2,
+  "bonus": {
+    "question": "October salaries and ad bills are due before QuikReach's ₹63L August payment arrives on 30 Oct. What should the founder do first?",
+    "options": [
+      "Cut all ad spend until the cash recovers",
+      "Stop supplying quick commerce until the money comes in",
+      "Raise cash against the ₹1.53 Cr QuikReach receivables (invoice discounting) and negotiate shorter terms on new orders",
+      "Raise website prices by 15%"
+    ],
+    "answer_index": 2,
+    "explanation": "The receivables are real money owed by a partner that pays on time. Invoice discounting at roughly 1-1.5% a month turns them into cash this week. Cutting ads or pausing quick commerce shrinks the growth that's working, and a price hike does nothing for October."
+  },
+  "explanation": {
+    "answer": "Growth moved to quick commerce through a distributor, QuikReach, that pays 60 days after month-end. Every rupee sold there in August and September is still owed: ₹1.53 Cr. Receivables rose ₹1.30 Cr, which is 93% of the ₹1.40 Cr cash drop. The business didn't lose money. It lent it to its customers.",
+    "cash_bridge": "₹190L opening + ₹30L profit − ₹130L more owed by customers − ₹30L more stock − ₹10L capex = ₹50L closing.",
+    "fastest_path": [
+      "Open the bank statement. Only ₹375L came in against ₹505L of sales, and quick commerce paid just ₹47L on ₹175L of sales.",
+      "Open receivables & payment terms. Quick-commerce dues went from ₹25L to ₹1.53 Cr, almost nothing is overdue, and the terms are 60 days after month-end. The cash isn't lost. It's waiting."
+    ],
+    "traps": [
+      "Ad spend: ROAS fell from 3.5× to 2.3×. It's a real problem and the wrong answer, because ads are already inside a profitable P&L.",
+      "Inventory: units jumped 42%, which looks alarming, but stock value rose only ₹30L.",
+      "\"A partner is paying late\": the closest wrong answer. Nobody is late. The terms changed, and growth piled onto the slowest-paying channel."
+    ],
+    "lesson": "Profit is an opinion. Cash is a fact. Fast growth on long credit terms can sink a profitable company."
+  }
+}
