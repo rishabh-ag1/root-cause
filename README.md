@@ -34,6 +34,7 @@ src/components/Game.tsx    the Today screen
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API → `service_role` key. **Server only, never expose.** |
 | `LAUNCH_DATE` | IST date of Case #1, `YYYY-MM-DD` |
 | `NEXT_PUBLIC_SITE_URL` | e.g. `https://rootcause.in` (used in share text and OG tags) |
+| `NEXT_PUBLIC_CLARITY_ID` | Optional. Microsoft Clarity project ID (clarity.microsoft.com → Settings → Overview). Enables session recordings and heatmaps. |
 
 Copy `.env.example` to `.env.local` and fill it in.
 
@@ -74,6 +75,14 @@ Copy `.env.example` to `.env.local` and fill it in.
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run validate-cases` | validate every file in `cases/` |
 | `npm run seed-cases` | upsert cases into Supabase (reads `.env.local`) |
+
+## Analytics (Microsoft Clarity)
+
+Set `NEXT_PUBLIC_CLARITY_ID` and redeploy. Besides recordings and heatmaps, the app sends these custom events (filter recordings or build funnels with them in Clarity):
+
+`signin_prompt` → `signin_code_sent` → `signin_verified` → `username_set` · `file_open` and `file_open_N` (which of the files) · `accuse_wrong` · `case_solved` / `case_unsolved` · `bonus_correct` / `bonus_wrong` · `share_copy` / `share_native` · `practice_start`.
+
+Tags: `case`, `signed_in`, `played_today`, `result`, `files_opened`. The sign-in sheet is masked, so emails and codes are never recorded.
 
 ## Not in v1 (Phase 2)
 

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import Nav from '@/components/Nav';
+import Analytics from '@/components/Analytics';
 import './globals.css';
 
 const site = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Nav />
         {children}
+        <Analytics />
       </body>
     </html>
   );

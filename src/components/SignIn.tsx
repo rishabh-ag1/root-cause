@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { browserClient } from '@/lib/supabase/browser';
+import { track } from '@/lib/track';
 
 type Step = 'email' | 'code' | 'username';
 
@@ -43,6 +44,7 @@ export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt
     const { error } = await browserClient().auth.signInWithOtp({ email: email.trim(), options: { shouldCreateUser: true } });
     setBusy(false);
     if (error) return setErr(error.message);
+    track('signin_code_sent');
     setStep('code');
     setResendIn(45);
   }
@@ -58,6 +60,7 @@ export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt
       setBusy(false);
       return setErr(error.message.includes('expired') || error.message.includes('invalid') ? 'That code is wrong or has expired.' : error.message);
     }
+    track('signin_verified');
     const res = await fetch('/api/profile', { cache: 'no-store' }).then((r) => r.json());
     setBusy(false);
     if (res.me?.username) onDone(res.me.username);
@@ -72,6 +75,7 @@ export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt
     const body = await res.json();
     setBusy(false);
     if (!res.ok) return setErr(body.error?.message ?? 'Could not save that username.');
+    track('username_set');
     onDone(body.username);
   }
 
@@ -79,7 +83,7 @@ export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt
 
   return (
     <div className="scrim" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="sheet" role="dialog" aria-modal="true" aria-labelledby="signin-title">
+      <div className="sheet" data-clarity-mask="true" role="dialog" aria-modal="true" aria-labelledby="signin-title">
         <button className="close" onClick={onClose} aria-label="Close">×</button>
         <div className="steps" aria-hidden="true">
           {[0, 1, 2].map((i) => <span key={i} className={i <= stepNo ? 'on' : ''} />)}

@@ -9,6 +9,7 @@ import type { TodayPayload } from '@/lib/today';
 import type { ResultPayload } from '@/lib/result';
 import { Blocks, Rich } from './Blocks';
 import SignIn from './SignIn';
+import { tag, track } from '@/lib/track';
 
 type Practice = { attempt: Attempt; c: StoredCase; bonusPick: number | null };
 
@@ -56,6 +57,12 @@ export default function Game({ initial }: { initial: TodayPayload }) {
   const opened = view?.opened ?? [];
   const wrong = view?.wrong ?? [];
 
+  useEffect(() => {
+    tag('case', pc.caseNumber);
+    tag('signed_in', !!initial.me);
+    tag('played_today', !!initial.attempt?.finished);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 500);
     return () => clearInterval(t);
@@ -105,6 +112,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
     if (practice) return false;
     if (!me || !me.username) {
       pending.current = action;
+      track('signin_prompt');
       setSheet(me ? 'username' : 'email');
       return true;
     }
@@ -135,6 +143,8 @@ export default function Game({ initial }: { initial: TodayPayload }) {
     const { ok, status, data } = await post('/api/attempt/open', { caseId: pc.id, index: i });
     setBusy(null);
     if (!ok) return handleError(status, data);
+    track('file_open');
+    track(`file_open_${i + 1}`);
     sync(data.serverNow);
     setAtt((a) => {
       const base = a ?? playerView(emptyAttempt(), { evidence: [], causes: [] } as unknown as StoredCase);
@@ -163,6 +173,11 @@ export default function Game({ initial }: { initial: TodayPayload }) {
     setAtt(data.attempt);
     setSelected(null);
     if (data.final) setFinal(data.final);
+    track(data.result === 'correct' ? 'case_solved' : data.result === 'unsolved' ? 'case_unsolved' : 'accuse_wrong');
+    if (data.result !== 'wrong') {
+      tag('result', data.result);
+      tag('files_opened', data.attempt.opened.length);
+    }
     if (data.result === 'wrong') setHitKey((k) => k + 1);
     else scrollTo(verdictRef.current);
   }
@@ -183,6 +198,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
       setBonusPick(null);
       return handleError(status, data);
     }
+    track(data.bonusCorrect ? 'bonus_correct' : 'bonus_wrong');
     setAtt(data.attempt);
     setFinal(data.final);
   }
@@ -197,6 +213,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
       causes: pc.causes.map((label, i) => ({ label, feedback: reveal.practice.feedback[i] })),
       answer_index: reveal.answerIndex, bonus: reveal.bonus, explanation: reveal.explanation,
     };
+    track('practice_start');
     setPractice({ attempt: emptyAttempt(), c, bonusPick: null });
     setSelected(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -210,6 +227,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
 
   async function copyShare(text: string) {
     try {
+      track('share_copy');
       await navigator.clipboard.writeText(text);
       setCopied('Copied. Paste it anywhere.');
     } catch {
@@ -219,6 +237,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
 
   async function nativeShare(text: string) {
     try {
+      track('share_native');
       await navigator.share({ text });
     } catch {}
   }
