@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { browserClient } from '@/lib/supabase/browser';
 import SignIn from '@/components/SignIn';
+import { resetIdentity, track } from '@/lib/track';
 
-type Me = { email: string | null; username: string | null } | null;
+type Me = { id: string; email: string | null; username: string | null } | null;
 
 export default function Settings() {
   const [me, setMe] = useState<Me | undefined>(undefined);
@@ -25,6 +26,8 @@ export default function Settings() {
 
   async function signOut() {
     await browserClient().auth.signOut();
+    track('sign_out');
+    resetIdentity();
     setMe(null);
     setMsg('Signed out.');
   }
@@ -35,6 +38,8 @@ export default function Settings() {
     setBusy(false);
     if (!res.ok) return setMsg('Could not delete your account. Try again.');
     await browserClient().auth.signOut().catch(() => {});
+    track('account_deleted');
+    resetIdentity();
     setMe(null);
     setConfirm('');
     setMsg('Your account and all your results have been deleted.');

@@ -2,9 +2,10 @@ import 'server-only';
 import { caseLeaderboard } from './repo';
 import { shareText, type Attempt, type StoredCase } from './game';
 
+/** The link at the end of the share text, tagged so analytics can count players who arrive from a shared result. */
 export function siteHost() {
-  const url = process.env.NEXT_PUBLIC_SITE_URL || 'https://rootcause.in';
-  return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  const url = process.env.NEXT_PUBLIC_SITE_URL || 'https://playrootcause.vercel.app';
+  return url.replace(/^https?:\/\//, '').replace(/\/$/, '') + '/?utm_source=share';
 }
 
 /** Rank, share text and leaderboard preview for a finished attempt. */

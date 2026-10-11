@@ -9,7 +9,7 @@ import type { TodayPayload } from '@/lib/today';
 import type { ResultPayload } from '@/lib/result';
 import { Blocks, Rich } from './Blocks';
 import SignIn from './SignIn';
-import { tag, track } from '@/lib/track';
+import { identify, tag, track } from '@/lib/track';
 
 type Practice = { attempt: Attempt; c: StoredCase; bonusPick: number | null };
 
@@ -59,10 +59,14 @@ export default function Game({ initial }: { initial: TodayPayload }) {
 
   useEffect(() => {
     tag('case', pc.caseNumber);
+    track('case_view', { case: pc.caseNumber, difficulty: pc.difficulty });
     tag('signed_in', !!initial.me);
     tag('played_today', !!initial.attempt?.finished);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    if (me?.id) identify(me.id, me.username);
+  }, [me?.id, me?.username]);
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 500);
     return () => clearInterval(t);
@@ -143,8 +147,10 @@ export default function Game({ initial }: { initial: TodayPayload }) {
     const { ok, status, data } = await post('/api/attempt/open', { caseId: pc.id, index: i });
     setBusy(null);
     if (!ok) return handleError(status, data);
-    track('file_open');
-    track(`file_open_${i + 1}`);
+    track('file_open', { file: i + 1, title: pc.files[i].title, nth: data.opened.length, case: pc.caseNumber });
+    try {
+      window.clarity?.('event', `file_open_${i + 1}`);
+    } catch {}
     sync(data.serverNow);
     setAtt((a) => {
       const base = a ?? playerView(emptyAttempt(), { evidence: [], causes: [] } as unknown as StoredCase);
@@ -173,7 +179,17 @@ export default function Game({ initial }: { initial: TodayPayload }) {
     setAtt(data.attempt);
     setSelected(null);
     if (data.final) setFinal(data.final);
-    track(data.result === 'correct' ? 'case_solved' : data.result === 'unsolved' ? 'case_unsolved' : 'accuse_wrong');
+    const a = data.attempt as PlayerView;
+    track(data.result === 'correct' ? 'case_solved' : data.result === 'unsolved' ? 'case_unsolved' : 'accuse_wrong', {
+      case: pc.caseNumber,
+      cause: selected,
+      files: a.opened.length,
+      wrong: a.wrong.length,
+      seconds: a.elapsedSeconds,
+      score: a.score,
+      par: pc.par,
+      under_par: a.opened.length <= pc.par,
+    });
     if (data.result !== 'wrong') {
       tag('result', data.result);
       tag('files_opened', data.attempt.opened.length);
@@ -198,7 +214,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
       setBonusPick(null);
       return handleError(status, data);
     }
-    track(data.bonusCorrect ? 'bonus_correct' : 'bonus_wrong');
+    track(data.bonusCorrect ? 'bonus_correct' : 'bonus_wrong', { case: pc.caseNumber });
     setAtt(data.attempt);
     setFinal(data.final);
   }
@@ -213,7 +229,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
       causes: pc.causes.map((label, i) => ({ label, feedback: reveal.practice.feedback[i] })),
       answer_index: reveal.answerIndex, bonus: reveal.bonus, explanation: reveal.explanation,
     };
-    track('practice_start');
+    track('practice_start', { case: pc.caseNumber });
     setPractice({ attempt: emptyAttempt(), c, bonusPick: null });
     setSelected(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -227,7 +243,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
 
   async function copyShare(text: string) {
     try {
-      track('share_copy');
+      track('share_copy', { case: pc.caseNumber });
       await navigator.clipboard.writeText(text);
       setCopied('Copied. Paste it anywhere.');
     } catch {
@@ -237,7 +253,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
 
   async function nativeShare(text: string) {
     try {
-      track('share_native');
+      track('share_native', { case: pc.caseNumber });
       await navigator.share({ text });
     } catch {}
   }

@@ -36,7 +36,7 @@ export default function Preview() {
       initial={{
         serverNow: new Date().toISOString(),
         case: publicCase(c),
-        me: { email: 'preview@example.com', username: 'you_detective' },
+        me: { id: 'preview-user', email: 'preview@example.com', username: 'you_detective' },
         attempt: playerView(attempt, c),
         final: {
           rank: 14,

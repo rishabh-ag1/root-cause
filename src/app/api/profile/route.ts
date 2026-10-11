@@ -14,7 +14,7 @@ export async function GET() {
   try {
     const { data, error } = await adminClient().from('profiles').select('username').eq('id', user.id).maybeSingle();
     if (error) throw error;
-    return json({ me: { email: user.email ?? null, username: (data as { username: string } | null)?.username ?? null } });
+    return json({ me: { id: user.id, email: user.email ?? null, username: (data as { username: string } | null)?.username ?? null } });
   } catch (e) {
     return handleError(e);
   }
