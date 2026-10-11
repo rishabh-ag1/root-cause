@@ -34,7 +34,7 @@ src/components/Game.tsx    the Today screen
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API → `service_role` key. **Server only, never expose.** |
 | `LAUNCH_DATE` | IST date of Case #1, `YYYY-MM-DD` |
 | `NEXT_PUBLIC_SITE_URL` | e.g. `https://rootcause.in` (used in share text and OG tags) |
-| `NEXT_PUBLIC_CLARITY_ID` | Optional. Microsoft Clarity project ID (clarity.microsoft.com → Settings → Overview). Enables session recordings and heatmaps. |
+| `NEXT_PUBLIC_CLARITY_ID` | Optional. Overrides the built-in Microsoft Clarity project ID (`yw291uw8mq`). Clarity only loads on production builds. |
 
 Copy `.env.example` to `.env.local` and fill it in.
 
@@ -78,7 +78,7 @@ Copy `.env.example` to `.env.local` and fill it in.
 
 ## Analytics (Microsoft Clarity)
 
-Set `NEXT_PUBLIC_CLARITY_ID` and redeploy. Besides recordings and heatmaps, the app sends these custom events (filter recordings or build funnels with them in Clarity):
+Clarity loads on every production page (project `yw291uw8mq`). Besides recordings and heatmaps, the app sends these custom events (filter recordings or build funnels with them in Clarity):
 
 `signin_prompt` → `signin_code_sent` → `signin_verified` → `username_set` · `file_open` and `file_open_N` (which of the files) · `accuse_wrong` · `case_solved` / `case_unsolved` · `bonus_correct` / `bonus_wrong` · `share_copy` / `share_native` · `practice_start`.
 
