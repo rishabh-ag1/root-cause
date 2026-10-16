@@ -6,6 +6,8 @@ import type { CaseFile } from './caseSchema';
 
 /** The signed-in admin, or null. Admin is a flag on the profile, set in the database. */
 export async function getAdmin(): Promise<User | null> {
+  // Local development only: DEV_ADMIN_BYPASS=1 lets you view /admin without signing in. Never active in production.
+  if (process.env.NODE_ENV !== 'production' && process.env.DEV_ADMIN_BYPASS === '1') return { id: 'dev-admin' } as User;
   const user = await currentUser();
   if (!user) return null;
   const { data } = await adminClient().from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
