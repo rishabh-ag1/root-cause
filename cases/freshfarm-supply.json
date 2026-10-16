@@ -1,0 +1,256 @@
+{
+  "difficulty": "hard",
+  "title": "The deal that doubled orders",
+  "company": "FreshFarm Supply",
+  "units_note": "All money figures in ₹ lakh unless marked. Costs and deductions are shown in brackets, e.g. (280).",
+  "brief": {
+    "tag": "Case file · FreshFarm Supply · Bengaluru",
+    "headline": "Sales up 25%. Biggest customer up 55%. Now losing money.",
+    "story": "FreshFarm buys fruit and vegetables at the mandi every morning and supplies quick-commerce dark stores and restaurants across Bengaluru. In July it signed new terms with ZipCart, its biggest customer, and ZipCart's orders jumped 55%. The quarter still ended in a loss. The founder blames the monsoon spike in tomato prices and wants to raise rates across the board.",
+    "facts": [
+      { "label": "Invoiced sales", "value": "₹4.0 Cr → ₹5.0 Cr" },
+      { "label": "ZipCart orders", "value": "+55%" },
+      { "label": "EBITDA", "value": "₹14L → −₹28L", "tone": "down" },
+      { "label": "Period", "value": "Apr-Jun → Jul-Sep" }
+    ]
+  },
+  "evidence": [
+    {
+      "title": "Profit & loss statement",
+      "teaser": "Every line, Q1 vs Q2",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Q1 (Apr-Jun)", "Q2 (Jul-Sep)"],
+          "rows": [
+            ["Invoiced sales", "400", "500"],
+            ["Chargebacks for unsold stock", "(8)", { "v": "(62)", "tone": "up" }],
+            ["Produce purchases", "(280)", "(355)"],
+            ["Own-warehouse wastage", "(12)", "(14)"],
+            ["Cold-chain transport", "(36)", "(45)"],
+            ["Staff", "(30)", "(31)"],
+            ["Rent & power", "(14)", "(14)"],
+            ["Other", "(6)", "(7)"]
+          ],
+          "total": ["EBITDA", "14", "(28)"],
+          "sum_check": { "columns": [1, 2] }
+        }
+      ]
+    },
+    {
+      "title": "Sales by customer",
+      "teaser": "Invoiced sales to each customer",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Q1", "Q2"],
+          "rows": [
+            ["ZipCart (quick commerce)", "200", { "v": "310", "tone": "down" }],
+            ["Minutely (quick commerce)", "120", "115"],
+            ["Restaurants & hotels", "80", "75"]
+          ],
+          "total": ["Total", "400", "500"],
+          "sum_check": { "columns": [1, 2] }
+        }
+      ]
+    },
+    {
+      "title": "Customer terms",
+      "teaser": "Contract terms with each customer",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Customer", "Terms", "Who sets quantities", "Payment"],
+          "rows": [
+            ["ZipCart (from 1 Jul)", "Sale or return: unsold produce at day-end is charged back at invoice value", "ZipCart's demand forecast", "30 days"],
+            ["ZipCart (until 30 Jun)", "Firm sale", "FreshFarm, from ZipCart's orders", "30 days"],
+            ["Minutely", "Firm sale", "Minutely", "21 days"],
+            ["Restaurants & hotels", "Firm sale", "Restaurant", "15 days"]
+          ]
+        },
+        { "type": "note", "text": "Prices to ZipCart are on the same price list as before the new terms." }
+      ]
+    },
+    {
+      "title": "Deductions by customer",
+      "teaser": "What customers deducted from invoices",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Chargebacks, ₹ lakh", "Q1", "Q2"],
+          "rows": [
+            ["ZipCart", "3", { "v": "57", "tone": "up" }],
+            ["Minutely", "3", "3"],
+            ["Restaurants & hotels", "2", "2"]
+          ],
+          "total": ["Total", "8", "62"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "TDS deducted by customers (0.1% of sales) is shown separately and isn't a cost." }
+      ]
+    },
+    {
+      "title": "ZipCart sell-through",
+      "teaser": "How much of what ZipCart ordered it sold",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Q1", "Q2"],
+          "rows": [
+            ["Ordered and invoiced", "200", "310"],
+            ["Sold to shoppers", "197", "253"],
+            ["Unsold, charged back", "3", "57"],
+            ["Sell-through", "98.5%", { "v": "81.6%", "tone": "up" }]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Mandi prices",
+      "teaser": "What FreshFarm paid at the market",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Produce (per kg)", "Q1", "Q2"],
+          "rows": [
+            ["Tomato", "₹22", { "v": "₹26", "tone": "up" }],
+            ["Onion", "₹30", "₹31"],
+            ["Potato", "₹24", "₹24"],
+            ["Leafy greens", "₹48", "₹51"]
+          ]
+        },
+        { "type": "note", "text": "Weighted across everything bought, prices rose about 3%. Purchases were 70% of invoiced sales in Q1 and 71% in Q2." }
+      ]
+    },
+    {
+      "title": "Own-warehouse wastage",
+      "teaser": "Spoilage at FreshFarm's own warehouse",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Wastage, % of invoiced sales", "3.0%", "2.8%"],
+            ["Average days produce sits in our warehouse", "1.2", "1.2"],
+            ["Crates rejected at customer docks for quality", "1.1%", "1.2%"]
+          ]
+        },
+        { "type": "note", "text": "Crates rejected at the dock come back to us and are counted in own-warehouse wastage." }
+      ]
+    },
+    {
+      "title": "Cold-chain transport",
+      "teaser": "Refrigerated delivery costs",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Produce delivered (lakh kg)", "8.0", "10.0"],
+            ["Cost per kg", "₹4.50", "₹4.50"]
+          ]
+        },
+        { "type": "note", "text": "Weights are checked at every customer dock and matched what left the warehouse." }
+      ]
+    },
+    {
+      "title": "Receivables",
+      "teaser": "Money owed by customers",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "End Jun", "End Sep"],
+          "rows": [
+            ["Owed by customers", "₹68L", "₹96L"],
+            ["Overdue", "₹0", "₹0"]
+          ]
+        },
+        { "type": "note", "text": "ZipCart pays every invoice on day 30, net of chargebacks." }
+      ]
+    },
+    {
+      "title": "Staff & payroll",
+      "teaser": "Headcount and salaries",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Staff", "62", "64"],
+            ["Staff cost", "₹30L", "₹31L"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Rent & power",
+      "teaser": "Warehouse and cold room",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Warehouse rent", "₹9L", "₹9L"],
+            ["Cold room power", "₹5L", "₹5L"]
+          ],
+          "total": ["Total", "₹14L", "₹14L"],
+          "sum_check": { "columns": [1, 2] }
+        }
+      ]
+    },
+    {
+      "title": "Team chat",
+      "teaser": "Messages from the quarter",
+      "body": [
+        { "type": "quote", "text": "“ZipCart doubled their orders after we agreed to sale-or-return. Huge win, team!”", "source": "Head of sales · 18 Jul" },
+        { "type": "quote", "text": "“Tomatoes at ₹26 again this morning. This monsoon is brutal.”", "source": "Mandi buyer · 2 Aug" },
+        { "type": "quote", "text": "“Why are ZipCart's payments so much lower than our invoices?”", "source": "Accountant · 30 Sep" }
+      ]
+    }
+  ],
+  "causes": [
+    { "label": "Mandi prices rose in the monsoon", "feedback": "Prices rose about 3% overall; purchases went from 70% to 71% of sales, roughly ₹5L. Not ₹42L." },
+    { "label": "Produce is rotting in FreshFarm's own warehouse", "feedback": "Own-warehouse wastage fell, from 3.0% to 2.8%." },
+    { "label": "Cold-chain transport got more expensive", "feedback": "Still ₹4.50 a kg; it rose only with volume." },
+    { "label": "A new sale-or-return deal lets the biggest customer charge back everything it doesn't sell, and it is over-ordering", "feedback": null },
+    { "label": "Customers are rejecting produce for poor quality", "feedback": "Dock rejections moved from 1.1% to 1.2%, and they're counted in own wastage, which fell." },
+    { "label": "ZipCart is paying late", "feedback": "ZipCart pays on day 30, every time. Late payment would hit cash, not profit." },
+    { "label": "Minutely cut its orders", "feedback": "Minutely dipped ₹5L in sales. Small, and those sales are firm." },
+    { "label": "Losing restaurant customers", "feedback": "Restaurant sales dipped ₹5L. Small." },
+    { "label": "Staff costs went up", "feedback": "Up ₹1L, for two more people." },
+    { "label": "Prices were cut to win ZipCart's volume", "feedback": "ZipCart is on the same price list as before." },
+    { "label": "Produce is being stolen in transit", "feedback": "Dock weights matched dispatch weights." },
+    { "label": "Rent and power", "feedback": "Flat at ₹14L." },
+    { "label": "FreshFarm is overstocking its warehouse", "feedback": "Produce still sits 1.2 days in FreshFarm's warehouse. The overstock is at ZipCart's dark stores, at FreshFarm's expense." },
+    { "label": "Customers are deducting tax at source", "feedback": "TDS is 0.1%, shown separately, and isn't a cost." },
+    { "label": "ZipCart demanded lower prices", "feedback": "Prices didn't change. ZipCart got something more expensive: the right to send back what it doesn't sell." },
+    { "label": "The tomato price spike", "feedback": "Tomatoes rose ₹4 a kg, but they're one item. All purchases together rose about 3%." }
+  ],
+  "answer_index": 3,
+  "par": 3,
+  "bonus": {
+    "question": "What should the founder push ZipCart for first?",
+    "options": [
+      "A 15% price increase on everything ZipCart buys",
+      "End sale-or-return, or cap returns at about 3% of orders with FreshFarm setting the quantities",
+      "Stop supplying ZipCart altogether",
+      "Faster payment, in 15 days instead of 30"
+    ],
+    "answer_index": 1,
+    "explanation": "Under sale-or-return, ZipCart orders generously because unsold stock costs it nothing; FreshFarm pays for every crate it doesn't sell. Capping or removing returns makes ZipCart order what it can sell. A price rise doesn't fix over-ordering, and faster payment helps cash, not profit."
+  },
+  "explanation": {
+    "answer": "From 1 July ZipCart buys on sale-or-return and sets its own order quantities. It ordered 55% more but sold only 81.6% of it, and charged back the rest at invoice value. ZipCart's chargebacks jumped from ₹3L to ₹57L, and FreshFarm still paid for the produce and its transport. The ₹54L jump in chargebacks is more than the whole ₹42L swing into loss.",
+    "fastest_path": [
+      "Open the P&L. Chargebacks for unsold stock jumped from ₹8L to ₹62L; everything else moved with volume.",
+      "Open deductions by customer. Almost all of it is ZipCart: ₹57L.",
+      "Open customer terms. ZipCart moved to sale-or-return on 1 July, and it decides how much to order."
+    ],
+    "traps": [
+      "ZipCart's 55% growth is the misleading number: much of it was stock that came back.",
+      "The tomato spike and monsoon mandi prices are the founder's story, and they're in the team chat every day. Overall they added about ₹5L.",
+      "\"FreshFarm is overstocking\" is the near-miss: the overstock sits in ZipCart's dark stores, and FreshFarm pays for it."
+    ],
+    "lesson": "Revenue a customer can send back isn't revenue yet."
+  }
+}

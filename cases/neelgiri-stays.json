@@ -1,0 +1,254 @@
+{
+  "difficulty": "hard",
+  "title": "The fullest monsoon ever",
+  "company": "Neelgiri Stays",
+  "units_note": "All money figures in ₹ lakh unless marked. Costs are shown in brackets, e.g. (95.0). Figures compare July to September this year with the same quarter last year.",
+  "brief": {
+    "tag": "Case file · Neelgiri Stays · Ooty",
+    "headline": "Occupancy up from 52% to 71%. Profit down 25%.",
+    "story": "Neelgiri Stays runs three hill hotels in Ooty with 120 rooms between them. The monsoon quarter is usually its slowest, but this year the hotels were busier than ever and revenue rose 12%. Yet EBITDA fell from ₹85L to ₹64L. The general manager says it's OTA commissions and a competitor's price war. The owners want the real answer before the December peak season.",
+    "facts": [
+      { "label": "Occupancy", "value": "52% → 71%" },
+      { "label": "Revenue", "value": "₹372.8L → ₹419.4L" },
+      { "label": "EBITDA", "value": "₹85.0L → ₹63.5L", "tone": "down" },
+      { "label": "Period", "value": "Jul-Sep, last year → this year" }
+    ]
+  },
+  "evidence": [
+    {
+      "title": "Profit & loss statement",
+      "teaser": "Every line, this monsoon vs last",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Last year", "This year"],
+          "rows": [
+            ["Room revenue", "292.8", "291.2"],
+            ["Food & beverage revenue", "80.0", "79.0"],
+            ["Corporate package revenue", "0.0", "49.2"],
+            ["Room operating costs", "(63.2)", { "v": "(86.2)", "tone": "up" }],
+            ["Food & beverage costs", "(28.0)", { "v": "(72.5)", "tone": "up" }],
+            ["OTA commissions", "(31.6)", "(31.5)"],
+            ["Staff", "(95.0)", "(95.5)"],
+            ["Power & utilities", "(30.0)", "(30.2)"],
+            ["Maintenance & other", "(40.0)", "(40.0)"]
+          ],
+          "total": ["EBITDA", "85.0", "63.5"],
+          "sum_check": { "columns": [1, 2] }
+        }
+      ]
+    },
+    {
+      "title": "Occupancy & rates",
+      "teaser": "Rooms sold, ADR and RevPAR",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Last year", "This year"],
+          "rows": [
+            ["Room-nights available", "11,040", "11,040"],
+            ["Room-nights sold", "5,741", "7,838"],
+            ["Occupancy", "52%", { "v": "71%", "tone": "down" }],
+            ["Average daily rate (ADR), all rooms", "₹5,100", "₹4,343"],
+            ["RevPAR (room & package revenue per available room)", "₹2,652", { "v": "₹3,083", "tone": "down" }]
+          ]
+        },
+        { "type": "note", "text": "Free upgrades: 14 room-nights last year, 12 this year." }
+      ]
+    },
+    {
+      "title": "Bookings by segment",
+      "teaser": "Who stayed",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Room-nights", "Last year", "This year"],
+          "rows": [
+            ["Leisure, booked direct", "2,296", "2,240"],
+            ["Leisure, booked via OTAs", "3,445", "3,360"],
+            ["Corporate (TechNova contract)", "0", "2,238"]
+          ],
+          "total": ["Total", "5,741", "7,838"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "Leisure ADR: ₹5,100 last year, ₹5,200 this year." }
+      ]
+    },
+    {
+      "title": "Corporate contract",
+      "teaser": "The TechNova offsite deal",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Term", "Detail"],
+          "rows": [
+            ["Client", "TechNova IT Services"],
+            ["Period", "1 Jul to 31 Dec"],
+            ["Volume", "About 24 rooms a night; 2,238 room-nights stayed in Jul-Sep"],
+            ["Rate", "₹2,200 per room-night, all-inclusive"],
+            ["Includes", "Room, breakfast, lunch, dinner, evening tea"],
+            ["Payment", "Within 30 days; all invoices paid on time"]
+          ]
+        },
+        { "type": "quote", "text": "“Signed TechNova to fill the monsoon. Bulk business at a bulk rate.”", "source": "General manager · June board note" }
+      ]
+    },
+    {
+      "title": "Kitchen costing",
+      "teaser": "Food cost per guest",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Meal", "Food cost per guest"],
+          "rows": [
+            ["Breakfast", "₹320"],
+            ["Lunch", "₹780"],
+            ["Dinner", "₹900"],
+            ["Full day (all meals)", "₹2,000"]
+          ]
+        },
+        { "type": "note", "text": "Leisure guests pay for food separately; food costs are 35% of leisure F&B revenue. TechNova rooms have one guest each. Cost per cover matches the menu costing, so there's no sign of waste or theft." }
+      ]
+    },
+    {
+      "title": "Housekeeping & room costs",
+      "teaser": "Cost of each occupied room-night",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Per occupied room-night", "Last year", "This year"],
+          "rows": [
+            ["Cleaning & housekeeping labour", "₹430", "₹430"],
+            ["Laundry & linen", "₹290", "₹290"],
+            ["Amenities", "₹160", "₹160"],
+            ["Room power & water", "₹220", "₹220"]
+          ],
+          "total": ["Total", "₹1,100", "₹1,100"],
+          "sum_check": { "columns": [1, 2] }
+        }
+      ]
+    },
+    {
+      "title": "OTA commissions",
+      "teaser": "Online travel agency fees",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Last year", "This year"],
+          "rows": [
+            ["Commission rate", "18%", "18%"],
+            ["Share of leisure room revenue via OTAs", "60%", "60%"],
+            ["Commission paid", "₹31.6L", "₹31.5L"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Staff & overtime",
+      "teaser": "Headcount and extra hours",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Last year", "This year"],
+          "rows": [
+            ["Staff", "210", "210"],
+            ["Overtime hours", "1,900", "2,350"],
+            ["Staff cost", "₹95.0L", "₹95.5L"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Utilities",
+      "teaser": "Power and water bills",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Last year", "This year"],
+          "rows": [
+            ["Power tariff (per unit)", "₹8.40", "₹8.55"],
+            ["Common-area power & water", "₹30.0L", "₹30.2L"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Guest reviews",
+      "teaser": "What guests said this monsoon",
+      "body": [
+        { "type": "note", "text": "Average rating 4.4 → 4.3 · 680 reviews" },
+        { "type": "quote", "text": "“Dinner hall was noisy with a big corporate group.”", "source": "Leisure guest · OTA review" },
+        { "type": "quote", "text": "“Great offsite. The food was unlimited and fantastic!”", "source": "TechNova employee · Google" },
+        { "type": "quote", "text": "“Rain all week but the hotel was lovely.”", "source": "Leisure guest · Google" }
+      ]
+    },
+    {
+      "title": "Maintenance log",
+      "teaser": "Repairs and upkeep",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Last year", "This year"],
+          "rows": [
+            ["Planned maintenance", "₹28.0L", "₹27.6L"],
+            ["Breakdown repairs", "₹12.0L", "₹12.4L"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Competitor rates",
+      "teaser": "What nearby hotels charged",
+      "body": [
+        { "type": "note", "text": "Hill View Resort cut its monsoon rates by 10% this year. Two smaller Ooty hotels closed for renovation in August." },
+        { "type": "quote", "text": "“Hill View is cheaper, but Neelgiri's views are worth it.”", "source": "Leisure guest · OTA review" }
+      ]
+    }
+  ],
+  "causes": [
+    { "label": "OTA commissions went up", "feedback": "The rate stayed at 18% and commissions were ₹31.6L and ₹31.5L." },
+    { "label": "A competitor's price war forced room rates down", "feedback": "Leisure ADR went up, from ₹5,100 to ₹5,200. The overall ADR falls only because the cheap corporate rooms are mixed in." },
+    { "label": "Staff overtime from the higher occupancy", "feedback": "Staff cost rose ₹0.5L." },
+    { "label": "Power and utility costs rose", "feedback": "Common-area utilities rose ₹0.2L." },
+    { "label": "The corporate all-inclusive contract is priced below what each room-night costs to serve", "feedback": null },
+    { "label": "Food prices and kitchen waste in the restaurants", "feedback": "Leisure food costs held at 35% of F&B revenue, and cost per cover matches the menu. The jump in food costs is the corporate meals." },
+    { "label": "Fewer leisure guests", "feedback": "Leisure room-nights dipped 2%, and leisure revenue was flat." },
+    { "label": "Maintenance spending", "feedback": "Flat at ₹40L." },
+    { "label": "More rooms in use means higher cost per room", "feedback": "Cost per occupied room-night was ₹1,100 in both years. Volume isn't the problem; the price paid for some of that volume is." },
+    { "label": "Noisy corporate groups drove away leisure guests", "feedback": "One review complains, but leisure bookings and rates held." },
+    { "label": "The corporate client is paying late", "feedback": "TechNova pays within 30 days, with every invoice paid." },
+    { "label": "Direct bookings shifted to OTAs", "feedback": "The OTA share stayed at 60%." },
+    { "label": "Too many free upgrades", "feedback": "Upgrades fell, from 14 room-nights to 12." },
+    { "label": "Monsoon road closures cut arrivals", "feedback": "Occupancy rose to a record 71%." },
+    { "label": "Kitchen staff are stealing food", "feedback": "Cost per cover matches the menu costing exactly." },
+    { "label": "The corporate room rate is too low compared with leisure rates", "feedback": "Bulk rates are normally lower than leisure rates. The real problem is that ₹2,200 is below the ₹3,100 it costs to serve that room-night." }
+  ],
+  "answer_index": 4,
+  "par": 4,
+  "bonus": {
+    "question": "The TechNova contract runs to December. If it's renegotiated to ₹3,400 per room-night, all-inclusive, at the same ~2,238 room-nights a quarter, roughly how much does quarterly EBITDA change compared with staying at ₹2,200?",
+    "options": [
+      "About +₹6.7L",
+      "About +₹26.9L",
+      "About +₹49.2L",
+      "No change; costs rise with the rate"
+    ],
+    "answer_index": 1,
+    "explanation": "The costs of serving TechNova don't change with the price, so every extra rupee is profit: ₹1,200 more × 2,238 room-nights ≈ ₹26.9L a quarter. At ₹3,400 each room-night earns ₹300 above its ₹3,100 cost instead of losing ₹900."
+  },
+  "explanation": {
+    "answer": "The TechNova contract pays ₹2,200 per room-night for a room plus three meals. Serving that room-night costs ₹1,100 in housekeeping and ₹2,000 in food: ₹3,100. Every one of the 2,238 corporate room-nights lost ₹900, about ₹20.2L in the quarter. That's 94% of the ₹21.5L drop.",
+    "fastest_path": [
+      "Open the P&L. A new package revenue line appeared, and food costs jumped from ₹28L to ₹72.5L.",
+      "Open the corporate contract. 2,238 room-nights at ₹2,200, all meals included.",
+      "Open kitchen costing. Three meals cost ₹2,000 per guest.",
+      "Open housekeeping & room costs. Each occupied room-night costs another ₹1,100. ₹3,100 to serve, ₹2,200 earned."
+    ],
+    "traps": [
+      "Occupancy and RevPAR both look fantastic. They're the misleading file: they count the loss-making rooms as success.",
+      "The competitor's 10% price cut and OTA commissions are the GM's story, but leisure rates rose and commissions were flat.",
+      "\"The corporate rate is too low compared with leisure\" is the near-miss: a bulk discount is normal, a rate below cost isn't."
+    ],
+    "lesson": "Filling rooms is only good business if each room earns more than it costs to serve."
+  }
+}

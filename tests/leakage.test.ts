@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { applyOpen, emptyAttempt, playerView, publicCase, type StoredCase } from '@/lib/game';
 import { validateCase, parseNum } from '@/lib/caseSchema';
@@ -75,4 +75,16 @@ describe('case validation', () => {
     broken.causes[0].feedback = '';
     expect(validateCase(broken).ok).toBe(false);
   });
+});
+
+describe('every case file in cases/', () => {
+  const dir = path.resolve(import.meta.dirname, '../cases');
+  for (const f of readdirSync(dir).filter((x) => x.endsWith('.json'))) {
+    it(`${f} validates and has one answer with no feedback`, () => {
+      const raw = JSON.parse(readFileSync(path.join(dir, f), 'utf8'));
+      const r = validateCase(raw);
+      expect(r.ok ? [] : r.errors).toEqual([]);
+      if (r.ok) expect(r.data.causes.filter((c) => !c.feedback).length).toBe(1);
+    });
+  }
 });

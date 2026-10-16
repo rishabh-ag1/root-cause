@@ -1,0 +1,214 @@
+{
+  "difficulty": "medium",
+  "title": "Bigger orders, smaller profit",
+  "company": "Thread & Loom Exports",
+  "units_note": "All money figures in ₹ lakh unless marked. Costs are shown in brackets, e.g. (405). The export incentive scheme is simplified for this case.",
+  "brief": {
+    "tag": "Case file · Thread & Loom Exports · Tiruppur",
+    "headline": "Shipments up. Prices steady. ₹30 lakh of profit gone.",
+    "story": "Thread & Loom makes cotton knitwear in Tiruppur for retailers in the UK, Germany and the US. July to September was a strong quarter: more shipments, buyers happy, prices holding. Yet EBITDA fell from ₹1.35 Cr to ₹1.05 Cr. The managing director blames cotton and freight. The CFO isn't so sure.",
+    "facts": [
+      { "label": "Export sales", "value": "₹9.00 Cr → ₹9.30 Cr" },
+      { "label": "EBITDA", "value": "₹1.35 Cr → ₹1.05 Cr", "tone": "down" },
+      { "label": "Shipments", "value": "64 → 66" },
+      { "label": "Period", "value": "Apr-Jun → Jul-Sep" }
+    ]
+  },
+  "evidence": [
+    {
+      "title": "Profit & loss statement",
+      "teaser": "Every line, Q1 vs Q2",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Q1 (Apr-Jun)", "Q2 (Jul-Sep)"],
+          "rows": [
+            ["Export sales (FOB)", "900", "930"],
+            ["Export incentives (RoDTEP & drawback)", "36", { "v": "4", "tone": "up" }],
+            ["Yarn & fabric", "(405)", "(419)"],
+            ["Wages", "(180)", "(186)"],
+            ["Dyeing & processing", "(90)", "(93)"],
+            ["Freight & clearing", "(45)", "(48)"],
+            ["Power", "(27)", "(28)"],
+            ["Other", "(54)", "(55)"]
+          ],
+          "total": ["EBITDA", "135", "105"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "Interest sits below EBITDA and was ₹8L in both quarters." }
+      ]
+    },
+    {
+      "title": "Shipments",
+      "teaser": "What shipped, to whom",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Buyer country", "Q1 ₹L", "Q2 ₹L"],
+          "rows": [
+            ["United Kingdom", "380", "392"],
+            ["Germany", "310", "318"],
+            ["United States", "210", "220"]
+          ],
+          "total": ["Total FOB", "900", "930"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "Shipping bills filed: 64 in Q1, 66 in Q2. The September stock audit found no shortages." }
+      ]
+    },
+    {
+      "title": "Export incentive register",
+      "teaser": "Incentive credits earned per shipment",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Shipping bills filed", "64", "66"],
+            ["Bills with incentive claimed", "64", { "v": "6", "tone": "up" }],
+            ["Incentive rate (on FOB)", "4.0%", "4.0%"],
+            ["Credit earned", "₹36L", "₹4L"]
+          ]
+        },
+        { "type": "note", "text": "The credit is only earned if the claim is declared on the shipping bill when it's filed." }
+      ]
+    },
+    {
+      "title": "Customs agent change",
+      "teaser": "Who files the export paperwork",
+      "body": [
+        { "type": "note", "text": "From 15 July, export documentation moved from Ganesh Shipping Services to QuickClear Logistics, whose fees are 30% lower." },
+        { "type": "quote", "text": "“QuickClear has been brilliant: faster filing, cheaper, and no queries from customs so far.”", "source": "Logistics manager · email, 2 Sep" },
+        { "type": "note", "text": "QuickClear files using its standard template for all clients. Ganesh Shipping used a checklist written for Thread & Loom." }
+      ]
+    },
+    {
+      "title": "Cotton yarn prices",
+      "teaser": "What the mill pays for yarn",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["30s combed yarn (per kg)", "₹285", "₹290"],
+            ["Yarn used (tonnes)", "142", "145"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Wages & headcount",
+      "teaser": "Workers and pay",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Workers", "820", "830"],
+            ["Wages", "₹180L", "₹186L"]
+          ]
+        },
+        { "type": "note", "text": "The minimum wage revision took effect on 1 April, so it's in both quarters." }
+      ]
+    },
+    {
+      "title": "Buyer pricing",
+      "teaser": "Price per piece and exchange rate",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Average price per piece", "$4.10", "$4.08"],
+            ["Average USD/INR", "83.2", "83.4"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Freight rates",
+      "teaser": "Container costs to Europe and the US",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["40 ft container, Chennai → Felixstowe", "$2,450", { "v": "$2,600", "tone": "up" }],
+            ["Freight & clearing total", "₹45L", "₹48L"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Power & processing",
+      "teaser": "Electricity tariff and dyeing charges",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Power tariff (per unit)", "₹7.20", "₹7.20"],
+            ["Dyeing charge (per kg fabric)", "₹62", "₹62"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Quality claims",
+      "teaser": "Buyer rejections and penalties",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Claims as % of sales", "0.8%", "0.9%"],
+            ["Late-delivery penalties", "₹0", "₹0"]
+          ]
+        }
+      ]
+    }
+  ],
+  "causes": [
+    { "label": "Cotton yarn got more expensive", "feedback": "Yarn rose 1.8% a kilo. Yarn cost grew ₹14L, almost all of it from making more." },
+    { "label": "Wages went up", "feedback": "Wages rose ₹6L with 10 more workers, in step with production." },
+    { "label": "Freight rates jumped", "feedback": "Container rates rose about 6%, adding ₹3L. Not ₹30L." },
+    { "label": "Export incentives stopped being claimed after the customs agent changed", "feedback": null },
+    { "label": "The rupee moved against them", "feedback": "The rupee weakened slightly (83.2 → 83.4), which helps an exporter." },
+    { "label": "Buyers pushed prices down", "feedback": "Price per piece moved from $4.10 to $4.08. Half a percent." },
+    { "label": "The government cut the incentive rate", "feedback": "The rate was 4.0% in both quarters. The claims weren't made." },
+    { "label": "More rejections and penalties", "feedback": "Claims moved from 0.8% to 0.9% and there were no penalties." },
+    { "label": "Power tariff hike", "feedback": "The tariff was ₹7.20 a unit in both quarters." },
+    { "label": "Losing a major buyer", "feedback": "Sales to all three countries grew." },
+    { "label": "The dyeing unit is overcharging", "feedback": "Dyeing charges are unchanged per kg and rose only with volume." },
+    { "label": "The new customs agent's fees are higher", "feedback": "QuickClear is 30% cheaper. The fee saving is real; what it cost is elsewhere." },
+    { "label": "Finished goods are going missing", "feedback": "The September stock audit found no shortages." },
+    { "label": "Interest costs rose", "feedback": "Interest is below EBITDA and was ₹8L in both quarters." }
+  ],
+  "answer_index": 3,
+  "par": 3,
+  "bonus": {
+    "question": "What should the CFO do first?",
+    "options": [
+      "Switch back to Ganesh Shipping for all future shipments",
+      "Ask customs to amend the 60 unclaimed shipping bills to add the incentive claim, and add the claim to QuickClear's filing checklist",
+      "Renegotiate the yarn contract",
+      "Raise prices to buyers by 3%"
+    ],
+    "answer_index": 1,
+    "explanation": "The ₹33L is earned money that simply wasn't claimed. Recover what can be recovered from the filed bills and fix the checklist so every future bill carries the claim. Switching agents again throws away the 30% fee saving without fixing the process."
+  },
+  "explanation": {
+    "answer": "Since 15 July the new customs agent has filed shipping bills on its standard template, without declaring the export incentive claim. Only 6 of 66 bills earned the 4% credit. At 4% of ₹930L, Q2 should have earned about ₹37L; it earned ₹4L. That ₹33L more than explains the ₹30L drop.",
+    "fastest_path": [
+      "Open the P&L. Costs grew with volume, but export incentives collapsed from ₹36L to ₹4L.",
+      "Open the incentive register. Only 6 of 66 shipping bills claimed it, at an unchanged 4% rate.",
+      "Open the customs agent change. A new agent with a generic template took over on 15 July."
+    ],
+    "traps": [
+      "Cotton and freight are what everyone in Tiruppur complains about, and both rose, but by ₹3L, not ₹30L.",
+      "\"The government cut the incentive\" is the near-miss: the rate didn't change, the claims did.",
+      "The cheaper agent looks like a pure win, which is exactly why nobody checked what changed."
+    ],
+    "lesson": "A cost saving on one line can quietly delete income on another."
+  }
+}

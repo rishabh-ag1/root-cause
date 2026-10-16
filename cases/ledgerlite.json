@@ -1,0 +1,214 @@
+{
+  "difficulty": "medium",
+  "title": "The customers who didn't mean to leave",
+  "company": "LedgerLite",
+  "units_note": "All money figures in ₹ lakh of monthly recurring revenue (MRR) unless marked. Reductions are shown in brackets, e.g. (2.5).",
+  "brief": {
+    "tag": "Case file · LedgerLite · Pune",
+    "headline": "New sales up. Upgrades up. MRR went backwards.",
+    "story": "LedgerLite sells accounting and GST-filing software to small businesses on monthly plans, paid by card or UPI AutoPay. The sales team beat its target in July to September, and existing customers upgraded more than ever. Yet monthly recurring revenue shrank for the first time. The board blames June's price rise and a rival's new free plan. The CEO wants proof before reversing either.",
+    "facts": [
+      { "label": "MRR", "value": "₹55.0L → ₹52.5L", "tone": "down" },
+      { "label": "New MRR sold", "value": "₹6.0L → ₹6.4L" },
+      { "label": "Paying customers", "value": "4,280 → 3,952" },
+      { "label": "Period", "value": "Apr-Jun → Jul-Sep" }
+    ]
+  },
+  "evidence": [
+    {
+      "title": "MRR bridge",
+      "teaser": "How MRR moved each quarter",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh MRR", "Q1 (Apr-Jun)", "Q2 (Jul-Sep)"],
+          "rows": [
+            ["Opening MRR", "50.0", "55.0"],
+            ["New customers", "6.0", "6.4"],
+            ["Upgrades & extra seats", "1.5", "1.6"],
+            ["Churned", "(2.5)", { "v": "(10.5)", "tone": "up" }]
+          ],
+          "total": ["Closing MRR", "55.0", "52.5"],
+          "sum_check": { "columns": [1, 2] }
+        }
+      ]
+    },
+    {
+      "title": "Churn by reason",
+      "teaser": "Why accounts stopped paying",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1 accounts", "Q1 MRR ₹L", "Q2 accounts", "Q2 MRR ₹L"],
+          "rows": [
+            ["Cancelled by the customer", "160", "2.0", "168", "2.1"],
+            ["Lapsed: renewal payment failed", "40", "0.5", { "v": "672", "tone": "up" }, "8.4"]
+          ],
+          "total": ["Total churn", "200", "2.5", "840", "10.5"],
+          "sum_check": { "columns": [1, 2, 3, 4] }
+        },
+        { "type": "note", "text": "A subscription lapses automatically after three failed renewal attempts over 7 days." }
+      ]
+    },
+    {
+      "title": "Payment gateway report",
+      "teaser": "Renewal success by payment method",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Renewal success rate", "Q1", "Q2"],
+          "rows": [
+            ["Credit & debit cards", "97%", { "v": "71%", "tone": "up" }],
+            ["UPI AutoPay", "98%", "98%"]
+          ]
+        },
+        { "type": "note", "text": "From 1 July our card partner requires customers to re-approve recurring card mandates. Customers were notified by the bank, not by LedgerLite. Only 64% of card customers have re-approved so far." },
+        { "type": "note", "text": "Chargebacks: 0.1% of payments in both quarters. No duplicate charges were found." }
+      ]
+    },
+    {
+      "title": "Customers & plans",
+      "teaser": "Accounts and average revenue",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "End Q1", "End Q2"],
+          "rows": [
+            ["Paying customers", "4,280", "3,952"],
+            ["Average MRR per customer", "₹1,285", "₹1,328"],
+            ["Share paying by card", "44%", "41%"]
+          ]
+        },
+        { "type": "note", "text": "No single customer is more than 1% of MRR." }
+      ]
+    },
+    {
+      "title": "Pricing change",
+      "teaser": "The June price rise",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Plan", "Before 1 Jun", "From 1 Jun"],
+          "rows": [
+            ["Starter", "₹999", "₹1,199"],
+            ["Growth", "₹2,499", "₹2,499"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Competitor news",
+      "teaser": "What rivals launched",
+      "body": [
+        { "type": "note", "text": "KhataPro launched a free plan for businesses with under ₹20L turnover in July, with a big push on YouTube." },
+        { "type": "quote", "text": "“Moving to KhataPro's free tier, LedgerLite is too pricey for my shop now.”", "source": "Cancellation survey · Q2" }
+      ]
+    },
+    {
+      "title": "Cancellation survey",
+      "teaser": "Why customers who cancelled say they left",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Reason (customer-cancelled accounts)", "Q1", "Q2"],
+          "rows": [
+            ["Too expensive", "48", "52"],
+            ["Switched to another product", "40", "42"],
+            ["Business closed", "36", "36"],
+            ["Missing features", "36", "38"]
+          ],
+          "total": ["Total", "160", "168"],
+          "sum_check": { "columns": [1, 2] }
+        }
+      ]
+    },
+    {
+      "title": "Product usage",
+      "teaser": "Are customers still using the software?",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Weekly active companies", "78%", "77%"],
+            ["Lapsed accounts that logged in during their last week", "—", "62%"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Support tickets",
+      "teaser": "What customers asked for help with",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Tickets", "3,100", "3,470"],
+            ["Top topic", "GST return filing", "GST return filing"],
+            ["Median first response", "2.1 hrs", "2.4 hrs"]
+          ]
+        },
+        { "type": "quote", "text": "“My account got locked, I didn't cancel anything!”", "source": "Support ticket · Aug" }
+      ]
+    },
+    {
+      "title": "Sales report",
+      "teaser": "New business won",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["New customers", "480", "512"],
+            ["Average MRR per new customer", "₹1,250", "₹1,250"],
+            ["Average discount given", "6%", "5%"]
+          ]
+        }
+      ]
+    }
+  ],
+  "causes": [
+    { "label": "The June price rise drove customers away", "feedback": "Customers who chose to cancel went from 160 to 168. The price rise isn't what changed." },
+    { "label": "A competitor's free plan lured customers", "feedback": "Same: voluntary cancellations barely moved, and \"switched\" went from 40 to 42." },
+    { "label": "Card renewals are failing since card mandates needed re-approval, so subscriptions lapse", "feedback": null },
+    { "label": "New sales slowed down", "feedback": "New MRR grew from ₹6.0L to ₹6.4L." },
+    { "label": "Customers downgraded their plans", "feedback": "Upgrades grew, and average MRR per customer rose." },
+    { "label": "The product got worse", "feedback": "Weekly usage held at 77–78%, and most lapsed accounts were active in their final week." },
+    { "label": "A support backlog frustrated customers", "feedback": "Tickets rose 12%, but customer-initiated cancellations stayed flat." },
+    { "label": "Seasonal slowdown after year-end", "feedback": "New sales and upgrades both grew." },
+    { "label": "A big customer left", "feedback": "No customer is more than 1% of MRR. This is 672 accounts." },
+    { "label": "The sales team is over-discounting", "feedback": "The average discount fell, from 6% to 5%." },
+    { "label": "UPI AutoPay payments are failing", "feedback": "UPI AutoPay renewals held at 98%. The failures are all card renewals." },
+    { "label": "Fraud and chargebacks", "feedback": "Chargebacks were 0.1% in both quarters." },
+    { "label": "Small businesses are shutting down", "feedback": "\"Business closed\" was 36 in both quarters, and lapsed accounts were still logging in." },
+    { "label": "A billing bug double-charged customers", "feedback": "The gateway found no duplicate charges." }
+  ],
+  "answer_index": 2,
+  "par": 3,
+  "bonus": {
+    "question": "What should the CEO do first?",
+    "options": [
+      "Reverse the June price rise",
+      "Ask card customers, by email and in the app, to re-approve the mandate or switch to UPI AutoPay, and pause suspensions with a grace period",
+      "Launch a free plan to match KhataPro",
+      "Hire more support agents"
+    ],
+    "answer_index": 1,
+    "explanation": "672 accounts didn't choose to leave; their card simply stopped renewing. Most were still using the product. Winning them back is a payment fix and an email, not a price cut or a new plan."
+  },
+  "explanation": {
+    "answer": "From 1 July the card partner made customers re-approve recurring card payments, and many never did. Card renewals fell from 97% to 71%, and 672 accounts lapsed after failed payments, taking ₹8.4L of MRR. Customers who chose to cancel stayed flat (160 → 168). Without the lapses, MRR would have grown to about ₹60L.",
+    "fastest_path": [
+      "Open the MRR bridge. New sales and upgrades grew, but churn jumped from ₹2.5L to ₹10.5L.",
+      "Open churn by reason. Customer cancellations were flat; lapses after failed payments jumped from 40 accounts to 672.",
+      "Open the payment gateway report. Card renewals fell to 71% when the mandate rule started on 1 July. UPI stayed at 98%."
+    ],
+    "traps": [
+      "The June price rise and KhataPro's free plan are the board's theories, and the cancellation survey has quotes that seem to back them. The numbers behind those quotes didn't move.",
+      "\"The product got worse\" looks plausible when 672 customers vanish, but most of them were using it the week they lapsed.",
+      "\"UPI AutoPay payments are failing\" is the near-miss: it's card mandates only."
+    ],
+    "lesson": "Not all churn is a customer saying no. Some of it is a payment that never got the chance to say yes."
+  }
+}

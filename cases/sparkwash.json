@@ -1,0 +1,186 @@
+{
+  "difficulty": "easy",
+  "title": "Busier than ever, earning less",
+  "company": "SparkWash",
+  "units_note": "All money figures in ₹ lakh unless marked. Costs are shown in brackets, e.g. (14.0).",
+  "brief": {
+    "tag": "Case file · SparkWash · Hyderabad",
+    "headline": "Orders up 12%. Revenue down 5%. Nobody can explain it.",
+    "story": "SparkWash runs 9 laundry stores across Hyderabad, plus app-based pickup and drop. September was its busiest month ever: 11,000 orders and more clothes washed than ever. Yet revenue fell and profit nearly vanished. Prices haven't changed since April. The founder wants an answer before paying salaries on the 1st.",
+    "facts": [
+      { "label": "Orders", "value": "9,800 → 11,000" },
+      { "label": "Revenue", "value": "₹44.0L → ₹41.7L", "tone": "down" },
+      { "label": "EBITDA", "value": "₹6.0L → ₹2.2L", "tone": "down" },
+      { "label": "Period", "value": "Aug → Sep" }
+    ]
+  },
+  "evidence": [
+    {
+      "title": "Profit & loss statement",
+      "teaser": "Every cost line, August vs September",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Aug", "Sep"],
+          "rows": [
+            ["Revenue", "44.0", { "v": "41.7", "tone": "up" }],
+            ["Staff", "(14.0)", "(14.3)"],
+            ["Store rent", "(9.0)", "(9.0)"],
+            ["Water & power", "(5.5)", "(5.9)"],
+            ["Detergent & consumables", "(3.3)", "(3.6)"],
+            ["Pickup & delivery", "(4.2)", "(4.6)"],
+            ["Other", "(2.0)", "(2.1)"]
+          ],
+          "total": ["EBITDA", "6.0", "2.2"],
+          "sum_check": { "columns": [1, 2] }
+        }
+      ]
+    },
+    {
+      "title": "Revenue by service",
+      "teaser": "Standard wash, express, dry cleaning",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Aug", "Sep"],
+          "rows": [
+            ["Standard wash & fold", "27.0", "28.4"],
+            ["Express (same day)", "10.8", { "v": "6.9", "tone": "up" }],
+            ["Dry cleaning", "6.2", "6.4"]
+          ],
+          "total": ["Total", "44.0", "41.7"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "Revenue is after discounts. Discounts were ₹0.8L in both months. Refunds for late pickups were ₹0.2L in both months." }
+      ]
+    },
+    {
+      "title": "Orders & kilos by service",
+      "teaser": "How much laundry came in",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Aug", "Sep"],
+          "rows": [
+            ["Standard wash, kg", "30,000", "31,500"],
+            ["Express, kg", "6,000", "7,400"],
+            ["Dry cleaning, pieces", "4,130", "4,270"],
+            ["Total orders", "9,800", "11,000"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Price list",
+      "teaser": "What customers should be charged",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Service", "Price"],
+          "rows": [
+            ["Standard wash & fold", "₹90 / kg"],
+            ["Express (same day)", "₹180 / kg"],
+            ["Dry cleaning", "₹150 / piece"]
+          ]
+        },
+        { "type": "note", "text": "Unchanged since 1 April." }
+      ]
+    },
+    {
+      "title": "App release notes",
+      "teaser": "Recent changes to the customer app",
+      "body": [
+        { "type": "note", "text": "v3.4, released 2 Sep: new one-page checkout. Standard and express items now go into a single cart, and pickup slots are faster to book." },
+        { "type": "note", "text": "v3.3, released 4 Aug: dark mode, saved addresses." }
+      ]
+    },
+    {
+      "title": "Store performance",
+      "teaser": "Revenue for each of the 9 stores",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Store", "Aug ₹L", "Sep ₹L", "Change"],
+          "rows": [
+            ["Banjara Hills", "6.4", "6.1", "−5%"],
+            ["Jubilee Hills", "6.2", "5.9", "−5%"],
+            ["Gachibowli", "5.8", "5.5", "−5%"],
+            ["Madhapur", "5.5", "5.2", "−5%"],
+            ["Kondapur", "4.6", "4.4", "−4%"],
+            ["Kukatpally", "4.4", "4.1", "−7%"],
+            ["Begumpet", "4.0", "3.8", "−5%"],
+            ["Ameerpet", "3.8", "3.6", "−5%"],
+            ["Secunderabad", "3.3", "3.1", "−6%"]
+          ],
+          "total": ["Total", "44.0", "41.7", "−5%"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "92% of orders are prepaid in the app. Cash is taken only at store counters." }
+      ]
+    },
+    {
+      "title": "Customer reviews",
+      "teaser": "What customers said in September",
+      "body": [
+        { "type": "quote", "text": "“Express is such good value now. Same-day for the normal price!”", "source": "Google · Gachibowli" },
+        { "type": "quote", "text": "“Pickup was 40 minutes late on Sunday.”", "source": "App review" },
+        { "type": "quote", "text": "“New checkout is much faster.”", "source": "App review" }
+      ]
+    },
+    {
+      "title": "Utilities & supplies",
+      "teaser": "Water, power and detergent rates",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Aug", "Sep"],
+          "rows": [
+            ["Water tariff (per kilolitre)", "₹28", "₹30"],
+            ["Power (per unit)", "₹8.1", "₹8.1"],
+            ["Detergent (per kg)", "₹142", "₹149"]
+          ]
+        }
+      ]
+    }
+  ],
+  "causes": [
+    { "label": "Customers switched from express to standard wash", "feedback": "Express kilos went up, from 6,000 to 7,400." },
+    { "label": "A competitor undercut SparkWash's prices", "feedback": "Orders rose 12%. Customers came in record numbers." },
+    { "label": "Water and power costs went up", "feedback": "Costs rose a little, but costs don't reduce revenue. Revenue itself fell." },
+    { "label": "Express orders are being charged at the standard price", "feedback": null },
+    { "label": "Too many discounts and coupons", "feedback": "Discounts were ₹0.8L in both months." },
+    { "label": "One store is underperforming", "feedback": "Every store fell about 5%. This is across the board." },
+    { "label": "Dry-cleaning demand collapsed", "feedback": "Dry cleaning grew from ₹6.2L to ₹6.4L." },
+    { "label": "Customers are sending less laundry per order", "feedback": "Kilos per order barely moved, and total kilos rose." },
+    { "label": "Refunds for late pickups", "feedback": "Refunds were ₹0.2L in both months." },
+    { "label": "Staff are pocketing cash at the counter", "feedback": "92% of orders are prepaid in the app, and every store fell by the same amount." },
+    { "label": "Pickup and delivery got more expensive", "feedback": "That's a cost. It can't make revenue fall." },
+    { "label": "Detergent prices went up", "feedback": "Detergent rose 5%, about ₹0.3L. That's a cost, not revenue." }
+  ],
+  "answer_index": 3,
+  "par": 2,
+  "bonus": {
+    "question": "What should SparkWash do first?",
+    "options": [
+      "Raise all prices by 10%",
+      "Fix the app checkout so express items are charged ₹180/kg again",
+      "Close the Secunderabad store",
+      "Stop offering express service"
+    ],
+    "answer_index": 1,
+    "explanation": "The price list is right; the app is charging the wrong price. Fixing the checkout restores about ₹6L a month. Raising prices or cutting express punishes customers for a software bug."
+  },
+  "explanation": {
+    "answer": "Since the 2 Sep app update merged standard and express into one cart, express orders are being charged ₹90/kg instead of ₹180/kg. Express kilos rose 23% but express revenue fell 36%: ₹6.9L for 7,400 kg is about ₹93 a kilo. At the correct price September revenue would have been about ₹48L, up 9%.",
+    "fastest_path": [
+      "Open revenue by service. Express fell from ₹10.8L to ₹6.9L while everything else grew.",
+      "Open orders & kilos. Express kilos rose to 7,400. ₹6.9L ÷ 7,400 kg is about ₹93/kg, roughly the standard rate, not ₹180."
+    ],
+    "traps": [
+      "Rising water and detergent costs are real, but costs can't lower revenue.",
+      "\"Customers switched to standard\" is the natural guess, but express kilos went up.",
+      "The happy review (\"same-day for the normal price!\") is the clue hiding in plain sight."
+    ],
+    "lesson": "When volume goes up and revenue goes down, check the price actually charged, not the price list."
+  }
+}

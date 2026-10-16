@@ -1,0 +1,193 @@
+{
+  "difficulty": "easy",
+  "title": "More orders than ever. Half the profit.",
+  "company": "Masala Box",
+  "units_note": "All money figures in ₹ lakh unless marked. Costs are shown in brackets, e.g. (25.0).",
+  "brief": {
+    "tag": "Case file · Masala Box · Delhi",
+    "headline": "More orders than ever. Revenue up. Profit down 70%.",
+    "story": "Masala Box sells premium ground spices and blends online across India. September was its busiest month: more orders than August and slightly more revenue. But EBITDA fell from ₹7.0L to ₹2.1L. The founder suspects a competitor is squeezing them and wants to know before the board call on Friday.",
+    "facts": [
+      { "label": "Revenue", "value": "₹60.0L → ₹61.2L" },
+      { "label": "EBITDA", "value": "₹7.0L → ₹2.1L", "tone": "down" },
+      { "label": "Orders", "value": "41,000 → 46,500" },
+      { "label": "Period", "value": "Aug → Sep" }
+    ]
+  },
+  "evidence": [
+    {
+      "title": "Profit & loss statement",
+      "teaser": "Every cost line, August vs September",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Aug", "Sep"],
+          "rows": [
+            ["Revenue", "60.0", "61.2"],
+            ["Cost of goods", "(25.0)", { "v": "(30.8)", "tone": "up" }],
+            ["Marketing", "(12.0)", "(12.2)"],
+            ["Salaries", "(8.0)", "(8.0)"],
+            ["Shipping & logistics", "(5.4)", "(5.5)"],
+            ["Other opex", "(2.6)", "(2.6)"]
+          ],
+          "total": ["EBITDA", "7.0", "2.1"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "Gross margin fell from 58% to 50%." }
+      ]
+    },
+    {
+      "title": "Sales by product",
+      "teaser": "Revenue and units for each product line",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Aug", "Sep"],
+          "rows": [
+            ["Premium tins (200 g, ₹240)", "42.0", "27.0"],
+            ["Signature blends", "18.0", "18.4"],
+            ["Value pouch (500 g, ₹199) · new", "0.0", "15.8"]
+          ],
+          "total": ["Total", "60.0", "61.2"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        {
+          "type": "table",
+          "columns": ["Units sold", "Aug", "Sep"],
+          "rows": [
+            ["Premium tins", "17,500", "11,250"],
+            ["Value pouches", "—", "7,940"]
+          ]
+        },
+        { "type": "note", "text": "The value pouch launched on 1 Sep: two and a half times the spice of a tin, for ₹41 less." }
+      ]
+    },
+    {
+      "title": "Margin by product",
+      "teaser": "Gross margin on each product line",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Product", "Gross margin"],
+          "rows": [
+            ["Premium tins", "62%"],
+            ["Signature blends", "50%"],
+            ["Value pouch", "28%"]
+          ]
+        },
+        { "type": "note", "text": "The value pouch was priced to win shoppers who buy loose spices at kirana stores." }
+      ]
+    },
+    {
+      "title": "Supplier prices",
+      "teaser": "What Masala Box pays for raw spices",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Spice", "Aug ₹/kg", "Sep ₹/kg"],
+          "rows": [
+            ["Kashmiri chilli", "310", "310"],
+            ["Turmeric", "160", "158"],
+            ["Cumin", "520", { "v": "541", "tone": "up" }],
+            ["Coriander", "120", "120"]
+          ]
+        },
+        { "type": "note", "text": "Cumin is about 8% of material cost." }
+      ]
+    },
+    {
+      "title": "Customer survey",
+      "teaser": "Who is buying the new pouch, and why",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Value pouch buyers in September", "Share"],
+          "rows": [
+            ["Had bought premium tins before", "78%"],
+            ["New to Masala Box", "22%"]
+          ]
+        },
+        { "type": "quote", "text": "“Switched to the big pouch. Same taste, way cheaper per gram.”", "source": "Repeat customer · Gurugram" },
+        { "type": "quote", "text": "“Finally a pack size that lasts a month for a family of five.”", "source": "Repeat customer · Lucknow" }
+      ]
+    },
+    {
+      "title": "Marketing report",
+      "teaser": "Ad spend and new customers",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Aug", "Sep"],
+          "rows": [
+            ["Ad spend", "₹12.0L", "₹12.2L"],
+            ["New customers", "3,100", "3,300"],
+            ["Cost per new customer", "₹387", "₹370"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Warehouse & shipping",
+      "teaser": "Shipping cost, returns, stock counts",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Aug", "Sep"],
+          "rows": [
+            ["Shipping cost per order", "₹13.2", "₹11.8"],
+            ["Returns & damaged", "1.2%", "1.3%"],
+            ["Stock count vs books", "−0.2%", "−0.2%"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Competitor watch",
+      "teaser": "What rival brands did this month",
+      "body": [
+        { "type": "note", "text": "Tadka Co cut prices 10% on its 100 g packs in mid-September. Spice Route launched on a quick-commerce app in Delhi." },
+        { "type": "quote", "text": "“Tadka is cheaper on Blinkit now, but I like Masala Box's chilli more.”", "source": "Instagram comment" }
+      ]
+    }
+  ],
+  "causes": [
+    { "label": "Raw spice prices went up", "feedback": "Only cumin rose (4%), and it's a small part of material cost. Cost of goods rose because of what was sold, not what it cost to buy." },
+    { "label": "A competitor's price cut took customers away", "feedback": "Orders went up, not down, and revenue held. Customers didn't leave. They changed what they bought." },
+    { "label": "Marketing became less efficient", "feedback": "Ad spend rose only ₹0.2L and the cost per new customer actually fell." },
+    { "label": "The new value pouch pulled existing customers away from the high-margin tins", "feedback": null },
+    { "label": "Shipping costs jumped", "feedback": "Shipping rose ₹0.1L in total, and the cost per order fell." },
+    { "label": "Returns and damaged goods", "feedback": "Returns moved from 1.2% to 1.3%. Far too small to explain a ₹4.9L drop." },
+    { "label": "A hiring spree", "feedback": "Salaries were flat at ₹8.0L." },
+    { "label": "Discounting on the premium tins", "feedback": "Tins still sold at ₹240 each. Fewer tins sold; the price didn't change." },
+    { "label": "Signature blends stopped selling", "feedback": "Blends grew from ₹18.0L to ₹18.4L." },
+    { "label": "Payment gateway fees went up", "feedback": "Gateway fees sit in other opex, which was flat at ₹2.6L." },
+    { "label": "The value pouch is sold at a loss", "feedback": "The pouch makes a 28% gross margin, so it's profitable. The problem is what it replaced." },
+    { "label": "Stock is going missing from the warehouse", "feedback": "Stock counts matched the books within 0.2% in both months." }
+  ],
+  "answer_index": 3,
+  "par": 2,
+  "bonus": {
+    "question": "What should the founder do first?",
+    "options": [
+      "Discontinue the value pouch immediately",
+      "Fence the value pouch: sell it only where tin buyers don't shop (kirana stores, marketplaces) and stop showing it to existing customers",
+      "Cut ad spend to save money",
+      "Renegotiate the cumin contract"
+    ],
+    "answer_index": 1,
+    "explanation": "The pouch does win some new customers (22% of buyers). The damage comes from showing it to people who already pay ₹240 for a tin. Keep it for new channels, hide it from existing customers, and the premium sales come back without losing the new ones."
+  },
+  "explanation": {
+    "answer": "The new value pouch cannibalised the premium tins. Tin sales fell ₹15.0L while the pouch sold ₹15.8L. Moving ₹15L of sales from a 62% margin product to a 28% one costs about ₹4.6L of gross profit, which is 94% of the ₹4.9L drop. 78% of pouch buyers were existing tin customers.",
+    "fastest_path": [
+      "Open sales by product. Revenue barely moved, but tins fell ₹15.0L and the new pouch added ₹15.8L.",
+      "Open margin by product. Tins make 62%, the pouch 28%. The same rupees now earn far less."
+    ],
+    "traps": [
+      "The competitor's price cut sounds like the answer, but orders rose and revenue held.",
+      "Cost of goods jumped, which points at spice prices, but only cumin moved and only 4%.",
+      "\"The pouch is sold at a loss\" is close but wrong: it's profitable, just much less so than the tin it replaced."
+    ],
+    "lesson": "A cheaper product doesn't grow you if your best customers are the ones buying it."
+  }
+}

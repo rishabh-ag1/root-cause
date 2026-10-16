@@ -1,0 +1,249 @@
+{
+  "difficulty": "hard",
+  "title": "The client that grew them into a loss",
+  "company": "Swift Parcel",
+  "units_note": "All money figures in ₹ lakh unless marked. Costs are shown in brackets, e.g. (234). Shipments are in lakh parcels.",
+  "brief": {
+    "tag": "Case file · Swift Parcel · Delhi NCR",
+    "headline": "Shipments up 30%. A ₹18L profit became a ₹16L loss.",
+    "story": "Swift Parcel is a courier aggregator: it picks up parcels from online sellers and hands them to national carriers, charging sellers a per-parcel rate and paying carriers for each parcel they move. In July it signed Bazaarly, a fast-growing marketplace, and volume jumped 30%. The quarter ended in a loss anyway. The founder thinks the carriers are overcharging and wants to start a fight with them.",
+    "facts": [
+      { "label": "Shipments", "value": "6.0 lakh → 7.8 lakh" },
+      { "label": "Revenue", "value": "₹3.00 Cr → ₹3.54 Cr" },
+      { "label": "EBITDA", "value": "₹18L → −₹16L", "tone": "down" },
+      { "label": "Period", "value": "Apr-Jun → Jul-Sep" }
+    ]
+  },
+  "evidence": [
+    {
+      "title": "Profit & loss statement",
+      "teaser": "Every line, Q1 vs Q2",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Q1 (Apr-Jun)", "Q2 (Jul-Sep)"],
+          "rows": [
+            ["Revenue", "300", "354"],
+            ["Carrier costs", "(234)", { "v": "(322)", "tone": "up" }],
+            ["Staff", "(30)", "(30)"],
+            ["Tech & software", "(8)", "(8)"],
+            ["Office & warehouse rent", "(6)", "(6)"],
+            ["Other", "(4)", "(4)"]
+          ],
+          "total": ["EBITDA", "18", "(16)"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "Gross margin (revenue minus carrier costs) fell from 22% to 9%." }
+      ]
+    },
+    {
+      "title": "Revenue by client",
+      "teaser": "Existing sellers vs Bazaarly",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Q1", "Q2"],
+          "rows": [
+            ["Existing 120 sellers", "300", "290"],
+            ["Bazaarly (from 1 Jul)", "0", "64"]
+          ],
+          "total": ["Total", "300", "354"],
+          "sum_check": { "columns": [1, 2] }
+        }
+      ]
+    },
+    {
+      "title": "Shipments by client",
+      "teaser": "Parcels and billed weight",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Lakh parcels", "Q1", "Q2"],
+          "rows": [
+            ["Existing sellers", "6.0", "5.8"],
+            ["Bazaarly", "0.0", "2.0"]
+          ],
+          "total": ["Total", "6.0", "7.8"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        {
+          "type": "table",
+          "columns": ["Average weight Swift bills on", "Q1", "Q2"],
+          "rows": [
+            ["Existing sellers", "1.1 kg", "1.1 kg"],
+            ["Bazaarly", "—", "0.5 kg"]
+          ]
+        },
+        { "type": "note", "text": "70% of Bazaarly parcels go to metro pin codes, the same mix as existing sellers." }
+      ]
+    },
+    {
+      "title": "Rate card & contracts",
+      "teaser": "What Swift charges sellers",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Weight slab", "Rate per parcel"],
+          "rows": [
+            ["Up to 0.5 kg", "₹32"],
+            ["0.5 to 1 kg", "₹44"],
+            ["1 to 2 kg", "₹58"],
+            ["2 to 5 kg", "₹85"]
+          ]
+        },
+        { "type": "note", "text": "Existing sellers are billed on the weight the carrier measures. Bazaarly's contract bills on the weight its sellers declare at booking, a condition Bazaarly asked for before signing. Bazaarly pays the standard rate card, with no extra discount." }
+      ]
+    },
+    {
+      "title": "Carrier invoices",
+      "teaser": "What carriers charge Swift",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Existing sellers: carrier cost per parcel", "₹39", "₹39"],
+            ["Bazaarly: carrier cost per parcel", "—", { "v": "₹48", "tone": "up" }],
+            ["Bazaarly: average weight measured by carrier", "—", "1.5 kg"]
+          ]
+        },
+        { "type": "note", "text": "Carriers bill on the higher of actual weight and volumetric (box size) weight, measured by scanners at their hubs. Return-to-origin charges are included in these per-parcel costs." }
+      ]
+    },
+    {
+      "title": "Weight disputes",
+      "teaser": "Swift's challenges to carrier weights",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Disputes raised with carriers", "120", "9,400"],
+            ["Disputes won by Swift", "61%", { "v": "4%", "tone": "up" }]
+          ]
+        },
+        { "type": "note", "text": "Carriers attach scanner photos to each rejected dispute. Most show Bazaarly parcels in oversized boxes with air pillows." }
+      ]
+    },
+    {
+      "title": "Fuel surcharge",
+      "teaser": "Carrier fuel surcharges",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Fuel surcharge on base rate", "12%", "13%"]
+          ]
+        },
+        { "type": "note", "text": "Already included in the carrier cost per parcel." }
+      ]
+    },
+    {
+      "title": "Returns (RTO)",
+      "teaser": "Parcels sent back to sellers",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Return-to-origin rate, existing sellers", "8%", "8%"],
+            ["Return-to-origin rate, Bazaarly", "—", "11%"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Cash-on-delivery remittances",
+      "teaser": "Money collected on behalf of sellers",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "End Jun", "End Sep"],
+          "rows": [
+            ["COD collected, not yet passed to sellers", "₹42L", "₹71L"],
+            ["Bazaarly invoices overdue", "—", "₹0"]
+          ]
+        },
+        { "type": "note", "text": "Bazaarly pays Swift's invoices within 15 days." }
+      ]
+    },
+    {
+      "title": "Team & operations",
+      "teaser": "Headcount and hub performance",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Staff", "84", "84"],
+            ["Pickups on time", "96%", "95%"],
+            ["Damage & loss claims", "0.2%", "0.2%"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Client feedback",
+      "teaser": "What clients say",
+      "body": [
+        { "type": "quote", "text": "“Swift is the cheapest shipping partner we've found in NCR.”", "source": "Bazaarly logistics head · Aug" },
+        { "type": "quote", "text": "“Pickups are reliable as ever.”", "source": "Existing seller · Okhla" }
+      ]
+    },
+    {
+      "title": "Sales team notes",
+      "teaser": "How the Bazaarly deal was won",
+      "body": [
+        { "type": "quote", "text": "“Signed Bazaarly! 2 lakh parcels a quarter. They insisted on declared-weight billing, which everyone in the market is offering now. Small price for the biggest deal of the year.”", "source": "Head of sales · 25 Jun" },
+        { "type": "note", "text": "Sales commission: 2% of revenue, about ₹1.3L on Bazaarly in Q2." }
+      ]
+    }
+  ],
+  "causes": [
+    { "label": "Carrier fuel surcharges went up", "feedback": "Fuel moved from 12% to 13% of the base rate, about ₹2L. Existing sellers' cost per parcel didn't change at all." },
+    { "label": "Carriers are overcharging on weight", "feedback": "Swift lost 96% of its weight disputes, and the scanner photos show bulky boxes. The parcels really do weigh 1.5 kg." },
+    { "label": "More parcels are being returned to sellers", "feedback": "Bazaarly's return rate is higher, but return charges are already inside the ₹48 per parcel, worth a couple of lakh at most." },
+    { "label": "The new client is billed on declared weight but carriers charge real weight, so every one of its parcels loses money", "feedback": null },
+    { "label": "Existing sellers negotiated lower rates", "feedback": "Existing revenue per parcel held at ₹50, and their margin barely moved." },
+    { "label": "Existing sellers are leaving", "feedback": "Existing parcels dipped 3% and revenue fell ₹10L, but their gross margin only fell about ₹2L." },
+    { "label": "Staff costs went up", "feedback": "Staff costs were ₹30L in both quarters." },
+    { "label": "Cash-on-delivery money is stuck", "feedback": "More COD cash is held, but that's a cash timing issue, not a loss." },
+    { "label": "Tech and software costs", "feedback": "Flat at ₹8L." },
+    { "label": "Bazaarly is paying late", "feedback": "Bazaarly pays within 15 days, with nothing overdue." },
+    { "label": "Bazaarly got too big a volume discount", "feedback": "Bazaarly pays the standard rate card, with no extra discount. The problem is which weight the rate is applied to." },
+    { "label": "Sales commissions on the big deal", "feedback": "About ₹1.3L. Not ₹34L." },
+    { "label": "Carriers raised their rates for everyone", "feedback": "Existing sellers' parcels still cost ₹39 to ship." },
+    { "label": "Damaged and lost parcel claims", "feedback": "Claims held at 0.2%." },
+    { "label": "Office and warehouse rent went up", "feedback": "Flat at ₹6L." },
+    { "label": "More parcels going to remote areas", "feedback": "Bazaarly's pin-code mix is the same as existing sellers'." }
+  ],
+  "answer_index": 3,
+  "par": 4,
+  "bonus": {
+    "question": "If Swift moves Bazaarly to carrier-measured weight on the standard rate card, and volume and weights stay the same, what happens to its quarterly gross profit on Bazaarly?",
+    "options": [
+      "It stays negative",
+      "It turns positive, to about +₹20L a quarter",
+      "It breaks even exactly",
+      "It can't be estimated without fuel prices"
+    ],
+    "answer_index": 1,
+    "explanation": "A 1.5 kg parcel falls in the 1–2 kg slab, billed at ₹58. It costs ₹48 to ship, so Swift earns about ₹10 a parcel instead of losing ₹16. On 2 lakh parcels that's about +₹20L a quarter, turning the ₹32L loss into a profit, before any volume Bazaarly might move elsewhere."
+  },
+  "explanation": {
+    "answer": "Bazaarly is billed on the weight its sellers declare (0.5 kg, ₹32 a parcel), but carriers charge Swift on the weight their scanners measure (1.5 kg, ₹48 a parcel). Each of Bazaarly's 2 lakh parcels loses ₹16, about ₹32L for the quarter. That's 94% of the ₹34L swing from profit to loss.",
+    "fastest_path": [
+      "Open the P&L. Carrier costs jumped far faster than revenue; gross margin fell from 22% to 9%.",
+      "Open revenue by client. All the growth is Bazaarly: ₹64L of revenue.",
+      "Open carrier invoices. Bazaarly parcels cost ₹48 each and weigh 1.5 kg; 2 lakh of them cost ₹96L against ₹64L billed.",
+      "Open rate card & contracts. Bazaarly is billed on declared weight, so a 1.5 kg parcel is charged as 0.5 kg."
+    ],
+    "traps": [
+      "\"Carriers are overcharging\" is what the founder believes. The dispute log shows the carriers are right.",
+      "Fuel surcharges and returns both rose, but both are small and already priced into the per-parcel costs.",
+      "\"Too big a volume discount\" is the near-miss: the rate is standard. It's applied to the wrong weight."
+    ],
+    "lesson": "Volume you lose money on isn't growth. It's a faster way to shrink."
+  }
+}

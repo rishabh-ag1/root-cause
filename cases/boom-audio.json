@@ -1,0 +1,255 @@
+{
+  "difficulty": "hard",
+  "title": "Cheaper to make, costlier to keep",
+  "company": "Boom Audio",
+  "units_note": "All money figures in ₹ lakh unless marked. Costs are shown in brackets, e.g. (290).",
+  "brief": {
+    "tag": "Case file · Boom Audio · Noida",
+    "headline": "Sales up 20%. Costs per unit down. And a ₹20L profit became a ₹20L loss.",
+    "story": "Boom Audio designs wireless earbuds in Noida and sells them on Amazon, Flipkart and its own website. July to September was its biggest quarter ever, and it even cut the cost of each unit by switching suppliers. Yet it swung to a loss. The customer service team says couriers are smashing parcels. The founder is about to switch logistics partners.",
+    "facts": [
+      { "label": "Revenue", "value": "₹5.0 Cr → ₹6.0 Cr" },
+      { "label": "Units sold", "value": "1.0 lakh → 1.2 lakh" },
+      { "label": "EBITDA", "value": "₹20L → −₹20L", "tone": "down" },
+      { "label": "Period", "value": "Apr-Jun → Jul-Sep" }
+    ]
+  },
+  "evidence": [
+    {
+      "title": "Profit & loss statement",
+      "teaser": "Every line, Q1 vs Q2",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Q1 (Apr-Jun)", "Q2 (Jul-Sep)"],
+          "rows": [
+            ["Revenue (after refunds)", "500", "600"],
+            ["Cost of goods", "(290)", "(342)"],
+            ["Warranty replacements", "(10)", { "v": "(66)", "tone": "up" }],
+            ["Marketplace fees", "(75)", "(90)"],
+            ["Marketing", "(50)", "(60)"],
+            ["Logistics", "(25)", "(30)"],
+            ["Salaries", "(20)", "(21)"],
+            ["Other", "(10)", "(11)"]
+          ],
+          "total": ["EBITDA", "20", "(20)"],
+          "sum_check": { "columns": [1, 2] }
+        }
+      ]
+    },
+    {
+      "title": "Sales by channel",
+      "teaser": "Amazon, Flipkart and website",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Q1", "Q2"],
+          "rows": [
+            ["Amazon", "300", "360"],
+            ["Flipkart", "150", "175"],
+            ["Website", "50", "65"]
+          ],
+          "total": ["Total", "500", "600"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "Average selling price held at about ₹500 per unit." }
+      ]
+    },
+    {
+      "title": "Returns report",
+      "teaser": "Why customers sent products back",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Return reason (as logged)", "Q1", "Q2"],
+          "rows": [
+            ["Damaged in transit", "31%", { "v": "58%", "tone": "up" }],
+            ["Changed mind", "34%", "20%"],
+            ["Not as described", "20%", "12%"],
+            ["Defective", "15%", "10%"]
+          ]
+        },
+        { "type": "note", "text": "Return rate (refunds within 7 days): 6% in Q1, 7% in Q2. Refunds are already deducted from revenue." }
+      ]
+    },
+    {
+      "title": "Warranty claims log",
+      "teaser": "Replacements under the 1-year warranty",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Warranty claims", "2,000", { "v": "13,200", "tone": "up" }],
+            ["Claims as % of units sold", "2%", "11%"],
+            ["Cost per replacement (unit + shipping)", "₹500", "₹500"],
+            ["Typical time from purchase to claim", "4–8 months", "30–90 days"]
+          ]
+        },
+        {
+          "type": "table",
+          "columns": ["Q2 claims by production batch", "Units shipped", "Claims"],
+          "rows": [
+            ["B-0712 and B-0715", "48,000", "11,760"],
+            ["All other batches", "72,000", "1,440"]
+          ],
+          "total": ["Total", "1,20,000", "13,200"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "Claims come from all three models (Boom Pods, Boom Pro, Boom Lite). Every claim is checked against a genuine serial number. Of B-0712 units sold in July, now past 90 days, 34% have claimed." }
+      ]
+    },
+    {
+      "title": "Repair centre lab report",
+      "teaser": "What's actually wrong with returned units",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Finding (400 units tested)", "Share"],
+          "rows": [
+            ["Battery swollen or won't hold charge", "81%"],
+            ["Physical damage (cracked case, broken hinge)", "6%"],
+            ["No fault found", "13%"]
+          ]
+        },
+        { "type": "note", "text": "92% of the battery failures came from batches B-0712 and B-0715." }
+      ]
+    },
+    {
+      "title": "Supplier & batch register",
+      "teaser": "Where the components came from",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Batches", "Battery cell supplier", "Cell price", "Units", "Shipped"],
+          "rows": [
+            ["B-0601 to B-0630", "Amperon", "₹118", "1,00,000", "Apr–Jun"],
+            ["B-0712, B-0715", "VoltCell", "₹97", "48,000", "Jul–Aug"],
+            ["B-0801 to B-0822", "Amperon", "₹118", "72,000", "Aug–Sep"]
+          ]
+        },
+        { "type": "note", "text": "VoltCell was trialled to cut cost per unit. Its samples passed the charge test on arrival." }
+      ]
+    },
+    {
+      "title": "Courier performance",
+      "teaser": "Damage claims filed with couriers",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Parcels with damage claims against couriers", "0.4%", "0.4%"],
+            ["On-time delivery", "94%", "95%"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Customer service team",
+      "teaser": "How returns get logged",
+      "body": [
+        { "type": "note", "text": "The support script defaults the reason to \"Damaged in transit\" whenever a customer says a product \"doesn't work\". Agents are measured on call length, so most don't change the default." },
+        { "type": "quote", "text": "“Couriers are killing us. Half our returns are damaged in transit!”", "source": "Head of customer service · Sep review" }
+      ]
+    },
+    {
+      "title": "Import & landed cost",
+      "teaser": "What each unit costs to land in India",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Landed cost per unit", "₹290", "₹285"],
+            ["USD/INR", "83.1", "83.4"],
+            ["Customs duty", "Unchanged", "Unchanged"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Marketplace fees",
+      "teaser": "Commission and fulfilment fees",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Fees as % of revenue", "15%", "15%"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Marketing report",
+      "teaser": "Ad spend and returns",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Q1", "Q2"],
+          "rows": [
+            ["Ad spend", "₹50L", "₹60L"],
+            ["Revenue per rupee of ads", "₹10.0", "₹10.0"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Customer reviews",
+      "teaser": "Ratings and recent comments",
+      "body": [
+        { "type": "note", "text": "Average rating 4.2 → 3.8 on Amazon" },
+        { "type": "quote", "text": "“Stopped charging after six weeks. Replacement arrived fast, though.”", "source": "Amazon review · Boom Pods" },
+        { "type": "quote", "text": "“Box arrived a bit dented but earbuds were fine.”", "source": "Flipkart review" },
+        { "type": "quote", "text": "“Left case puffed up and won't close.”", "source": "Amazon review · Boom Pro" }
+      ]
+    }
+  ],
+  "causes": [
+    { "label": "Couriers are damaging parcels in transit", "feedback": "Damage claims against couriers held at 0.4%. \"Damaged in transit\" is just the support script's default reason." },
+    { "label": "More customers are returning products for refunds", "feedback": "Refund returns went from 6% to 7%, and refunds are already netted out of revenue. The cost that jumped is warranty replacements." },
+    { "label": "Marketplace fees rose", "feedback": "Fees held at 15% of revenue." },
+    { "label": "Ad spend became inefficient", "feedback": "Ads still return ₹10 of revenue per rupee." },
+    { "label": "The rupee weakened and pushed up import costs", "feedback": "Landed cost per unit fell, from ₹290 to ₹285." },
+    { "label": "Cheaper battery cells from a new supplier are failing, driving warranty replacements", "feedback": null },
+    { "label": "Customers are making fake warranty claims", "feedback": "Every claim matches a genuine serial, and the lab confirmed real battery failures." },
+    { "label": "Counterfeit Boom products on the marketplaces", "feedback": "The failing units carry genuine serials from two specific batches." },
+    { "label": "Logistics costs went up", "feedback": "Logistics rose ₹5L, in line with 20% more units." },
+    { "label": "Prices were cut to compete", "feedback": "The average selling price held at about ₹500." },
+    { "label": "Sales shifted to low-margin models", "feedback": "Cost of goods actually fell as a share of revenue." },
+    { "label": "Salaries went up", "feedback": "Up ₹1L." },
+    { "label": "The new earbud model has a design flaw", "feedback": "Claims come from all three models, but only from two batches made with VoltCell cells." },
+    { "label": "Website sales were cannibalised by Amazon", "feedback": "Every channel grew, and the mix barely moved." },
+    { "label": "A customs duty hike", "feedback": "Duty was unchanged." },
+    { "label": "Customer service is approving replacements too generously", "feedback": "The warranty policy didn't change, and the lab confirmed the failures are real." }
+  ],
+  "answer_index": 5,
+  "par": 4,
+  "bonus": {
+    "question": "Batches B-0712 and B-0715 shipped 48,000 units and have 11,760 claims so far. Claims usually arrive 30–90 days after sale, and 34% of the oldest B-0712 units (past 90 days) have claimed. What's the best estimate of claims still to come from these two batches?",
+    "options": [
+      "None; the problem has peaked",
+      "About 4,500 more, roughly ₹23L of further replacement cost",
+      "About 11,800 more, roughly ₹59L",
+      "All 48,000 units will eventually fail"
+    ],
+    "answer_index": 1,
+    "explanation": "If 34% of units eventually claim, the two batches will produce about 48,000 × 34% ≈ 16,300 claims. 11,760 have arrived, so about 4,500 more are coming, at ₹500 each ≈ ₹23L. The founder should set that money aside now and recall or pre-emptively replace units still in stock."
+  },
+  "explanation": {
+    "answer": "In July Boom switched to cheaper battery cells from VoltCell. Two batches built with them (48,000 units) are failing: 11,760 warranty claims, with the lab finding swollen or dead batteries. Warranty replacement costs jumped from ₹10L to ₹66L. That ₹56L jump is more than the whole ₹40L fall in profit; growth elsewhere covered the rest. The ₹21 saved per cell is costing ₹500 per claim.",
+    "fastest_path": [
+      "Open the P&L. Warranty replacements jumped from ₹10L to ₹66L; everything else moved with sales.",
+      "Open the warranty claims log. Claims jumped to 13,200, mostly from batches B-0712 and B-0715, arriving 30–90 days after purchase.",
+      "Open the repair centre lab report. 81% of tested units have battery failures, 92% of them from those two batches.",
+      "Open the supplier & batch register. Those are exactly the batches built with VoltCell's cheaper cells."
+    ],
+    "traps": [
+      "The returns report is the misleading file: \"damaged in transit\" is the support script's default, and courier damage claims never moved.",
+      "Customer service believes it's couriers, and the founder is about to change logistics partners. That would fix nothing.",
+      "\"A design flaw in the new model\" is the near-miss: every model fails, but only in the VoltCell batches."
+    ],
+    "lesson": "A cheaper part is only cheaper until it fails in the customer's hand."
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "difficulty": "medium",
+  "title": "More members, less money",
+  "company": "FitKaro",
+  "units_note": "All money figures in ₹ lakh unless marked. Bookings are cash sales in the month, excluding GST.",
+  "brief": {
+    "tag": "Case file · FitKaro · Bengaluru",
+    "headline": "Record sign-ups. Bookings down 24%.",
+    "story": "FitKaro is a home-workout app with live classes and diet plans, sold as a ₹399 monthly or ₹2,999 annual subscription. September brought more paying members than any month before, and the app's ratings held up. But cash bookings fell by almost a quarter. The founders are about to raise a seed round and need to explain the dip.",
+    "facts": [
+      { "label": "New paying members", "value": "12,000 → 12,600" },
+      { "label": "Bookings", "value": "₹99.1L → ₹75.4L", "tone": "down" },
+      { "label": "Prices", "value": "Unchanged" },
+      { "label": "Period", "value": "Aug → Sep" }
+    ]
+  },
+  "evidence": [
+    {
+      "title": "Bookings statement",
+      "teaser": "Cash sales by plan",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Aug", "Sep"],
+          "rows": [
+            ["Annual plan, full price", "58.8", { "v": "18.0", "tone": "up" }],
+            ["Annual plan, with a coupon", "0.4", "17.1"],
+            ["Monthly plan", "39.9", "40.3"]
+          ],
+          "total": ["Total bookings", "99.1", "75.4"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "Refunds were ₹0.6L in August and ₹0.7L in September. GST is excluded and the rate didn't change." }
+      ]
+    },
+    {
+      "title": "Members sold",
+      "teaser": "New paying members by plan",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Aug", "Sep"],
+          "rows": [
+            ["Annual, full price (₹2,999)", "1,960", "600"],
+            ["Annual, with a coupon", "40", "1,900"],
+            ["Monthly (₹399)", "10,000", "10,100"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Price list",
+      "teaser": "Current plans",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Plan", "Price"],
+          "rows": [
+            ["Monthly", "₹399"],
+            ["Annual", "₹2,999"]
+          ]
+        },
+        { "type": "note", "text": "Unchanged since January." }
+      ]
+    },
+    {
+      "title": "Coupon report",
+      "teaser": "Active discount codes and uses",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Code", "Offer", "Aug uses", "Sep uses"],
+          "rows": [
+            ["WELCOME10", "10% off first month", "1,200", "1,150"],
+            ["FIT70", "70% off annual (₹900)", "40", { "v": "1,900", "tone": "up" }]
+          ]
+        },
+        { "type": "note", "text": "FIT70 was created on 20 Aug for one influencer campaign. It has no usage limit and no expiry date." }
+      ]
+    },
+    {
+      "title": "Traffic sources",
+      "teaser": "Where visitors to the sign-up page came from",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["Source", "Aug visits", "Sep visits"],
+          "rows": [
+            ["Instagram & YouTube ads", "61,000", "63,500"],
+            ["Google search", "22,400", "23,100"],
+            ["Influencer links", "5,200", "4,900"],
+            ["desideals.in", "0", { "v": "14,800", "tone": "up" }]
+          ]
+        },
+        { "type": "note", "text": "desideals.in is a coupon and deals aggregator." }
+      ]
+    },
+    {
+      "title": "Marketing spend",
+      "teaser": "Ads and influencer fees",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Aug", "Sep"],
+          "rows": [
+            ["Meta & Google ads", "₹18.0L", "₹18.5L"],
+            ["Influencer fees", "₹2.0L", "₹2.0L"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "App store reviews",
+      "teaser": "Ratings and recent comments",
+      "body": [
+        { "type": "note", "text": "Rating 4.5 → 4.5 · 2,300 reviews in September" },
+        { "type": "quote", "text": "“Got a whole year for ₹900 with FIT70, crazy deal.”", "source": "Play Store" },
+        { "type": "quote", "text": "“Live class froze twice this week.”", "source": "App Store" },
+        { "type": "quote", "text": "“Best diet plans I've used.”", "source": "Play Store" }
+      ]
+    },
+    {
+      "title": "Churn & cancellations",
+      "teaser": "How many members leave",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Aug", "Sep"],
+          "rows": [
+            ["Monthly plan churn", "7.1%", "7.0%"],
+            ["Annual cancellations within 7 days", "1.8%", "1.9%"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Payments",
+      "teaser": "Checkout success rates",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Aug", "Sep"],
+          "rows": [
+            ["Payment success rate", "96.2%", "96.0%"],
+            ["UPI share of payments", "71%", "72%"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Competitor pricing",
+      "teaser": "What rival apps charge",
+      "body": [
+        { "type": "note", "text": "Rival app Pulse launched a ₹1,999 annual plan on 5 September, backed by a TV campaign." },
+        { "type": "note", "text": "FitKaro trainers' fees rose ₹1L in September for two new class formats." }
+      ]
+    }
+  ],
+  "causes": [
+    { "label": "Members are cancelling faster", "feedback": "Monthly churn was flat at about 7%, and early annual cancellations barely moved." },
+    { "label": "A competitor's cheaper plan took the full-price buyers", "feedback": "New members went up. The full-price buyers didn't leave; most of them paid ₹900 with FIT70 instead." },
+    { "label": "Payments are failing at checkout", "feedback": "Payment success held at about 96%." },
+    { "label": "An influencer's 70%-off code leaked to a deals site, and full-price buyers used it", "feedback": null },
+    { "label": "Prices were cut", "feedback": "The list prices haven't changed since January." },
+    { "label": "Monthly members stopped renewing", "feedback": "Monthly bookings rose slightly, to ₹40.3L." },
+    { "label": "Ad spend became inefficient", "feedback": "Ad spend rose only ₹0.5L and traffic grew. The problem is what people paid, not how many came." },
+    { "label": "Refunds spiked", "feedback": "Refunds were ₹0.6L and ₹0.7L." },
+    { "label": "App bugs drove people away", "feedback": "Ratings held at 4.5 and member numbers grew." },
+    { "label": "The WELCOME10 offer got expensive", "feedback": "WELCOME10 uses actually fell, and it's only 10% off one month." },
+    { "label": "Trainer fees went up", "feedback": "That's a cost of ₹1L. It doesn't change bookings." },
+    { "label": "Fewer people visited the sign-up page", "feedback": "Visits went up, mostly from one new source." },
+    { "label": "A GST rate change", "feedback": "Bookings exclude GST, and the rate didn't change." },
+    { "label": "Influencer marketing is too expensive", "feedback": "Influencer fees were flat at ₹2L. The influencer isn't the problem; an uncapped code is." }
+  ],
+  "answer_index": 3,
+  "par": 3,
+  "bonus": {
+    "question": "What should the founders do first?",
+    "options": [
+      "Cancel every subscription bought with FIT70",
+      "Cap or expire FIT70 now, honour the people who already bought, and give each influencer a unique, limited code",
+      "Cut the annual price to ₹1,999 to match Pulse",
+      "Stop working with influencers"
+    ],
+    "answer_index": 1,
+    "explanation": "Every day FIT70 stays open, full-price buyers keep paying ₹900. Closing it stops the leak today. Cancelling existing buyers' subscriptions would turn a pricing mistake into a trust problem, and a ₹1,999 price cut gives away revenue that isn't being lost to Pulse."
+  },
+  "explanation": {
+    "answer": "FIT70, a 70%-off annual code made for one influencer, had no limit or expiry. It reached desideals.in in early September, and 1,900 people paid ₹900 for a ₹2,999 plan. Full-price annual sales fell from 1,960 to 600, so about 1,400 people who would have paid ₹2,999 paid ₹900. That's roughly ₹42L lost against ₹17L collected: ₹25L, the whole drop.",
+    "fastest_path": [
+      "Open the bookings statement. Full-price annual sales collapsed from ₹58.8L to ₹18.0L while a coupon line jumped to ₹17.1L.",
+      "Open the coupon report. FIT70 went from 40 uses to 1,900, with no cap or expiry.",
+      "Open traffic sources. 14,800 visits came from a coupon site that didn't exist in August."
+    ],
+    "traps": [
+      "Pulse's ₹1,999 plan launched the same month and is the easy story for investors. But new members rose.",
+      "Record sign-ups make it look like growth. The members are real; the price they paid wasn't.",
+      "\"Influencer marketing is too expensive\" is close, but the fee was flat. The leak was the code's settings."
+    ],
+    "lesson": "Every discount code is a price list someone else can publish."
+  }
+}

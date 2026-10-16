@@ -1,0 +1,183 @@
+{
+  "difficulty": "easy",
+  "title": "The rent went down. So did the profit.",
+  "company": "Kirana Konnect",
+  "units_note": "All money figures in ₹ lakh unless marked. Costs are shown in brackets, e.g. (96.0).",
+  "brief": {
+    "tag": "Case file · Kirana Konnect · Jaipur",
+    "headline": "Sales flat, rent halved, and profit fell 44%.",
+    "story": "Kirana Konnect distributes packaged foods and personal-care products to 1,200 kirana stores across Jaipur, delivering daily with a fleet of hired vans. In August it moved to a bigger, cheaper warehouse and cut its rent in half. Sales held steady. Profit didn't. The owner wants to know what went wrong before signing a five-year lease extension.",
+    "facts": [
+      { "label": "Revenue", "value": "₹120.0L → ₹120.6L" },
+      { "label": "EBITDA", "value": "₹9.6L → ₹5.4L", "tone": "down" },
+      { "label": "Stores served", "value": "1,200" },
+      { "label": "Period", "value": "Jul → Aug" }
+    ]
+  },
+  "evidence": [
+    {
+      "title": "Profit & loss statement",
+      "teaser": "Every cost line, July vs August",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Jul", "Aug"],
+          "rows": [
+            ["Revenue", "120.0", "120.6"],
+            ["Cost of goods", "(96.0)", "(96.5)"],
+            ["Delivery (van hire & fuel)", "(6.0)", { "v": "(11.4)", "tone": "up" }],
+            ["Warehouse rent", "(3.0)", { "v": "(1.5)", "tone": "down" }],
+            ["Salaries", "(4.0)", "(4.2)"],
+            ["Other opex", "(1.4)", "(1.6)"]
+          ],
+          "total": ["EBITDA", "9.6", "5.4"],
+          "sum_check": { "columns": [1, 2] }
+        },
+        { "type": "note", "text": "Gross margin held at 20%." }
+      ]
+    },
+    {
+      "title": "Delivery operations",
+      "teaser": "Routes, kilometres and drops",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Jul", "Aug"],
+          "rows": [
+            ["Routes per day", "40", "40"],
+            ["Stores per route", "30", "30"],
+            ["Average km per route", "62", { "v": "118", "tone": "up" }],
+            ["Total van km in the month", "64,480", "1,22,720"],
+            ["Van hire rate", "₹9.30 / km", "₹9.30 / km"]
+          ]
+        },
+        { "type": "note", "text": "All vans are GPS-tracked. The warehouse moved on 1 Aug from near Johari Bazaar to the Bagru industrial area, about 28 km west of the city." }
+      ]
+    },
+    {
+      "title": "Warehouse & lease",
+      "teaser": "Old and new warehouse terms",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Old (city centre)", "New (Bagru)"],
+          "rows": [
+            ["Area", "12,000 sq ft", "20,000 sq ft"],
+            ["Monthly rent", "₹3.0L", "₹1.5L"],
+            ["Lease offered", "Month to month", "5 years"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Fuel & van rates",
+      "teaser": "What the van operators charge",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Jul", "Aug"],
+          "rows": [
+            ["Diesel, Jaipur (per litre)", "₹94.5", "₹94.7"],
+            ["Van hire rate (fuel included)", "₹9.30 / km", "₹9.30 / km"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Sales by category",
+      "teaser": "What the stores bought",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["₹ lakh", "Jul", "Aug"],
+          "rows": [
+            ["Staples (atta, rice, oil)", "54.0", "54.2"],
+            ["Personal care", "30.0", "30.1"],
+            ["Beverages", "21.0", "21.4"],
+            ["Snacks", "15.0", "14.9"]
+          ],
+          "total": ["Total", "120.0", "120.6"],
+          "sum_check": { "columns": [1, 2] }
+        }
+      ]
+    },
+    {
+      "title": "Staff & payroll",
+      "teaser": "Headcount and salaries",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Jul", "Aug"],
+          "rows": [
+            ["Warehouse staff", "22", "24"],
+            ["Salaries", "₹4.0L", "₹4.2L"]
+          ]
+        },
+        { "type": "note", "text": "Two loaders were hired for the larger warehouse. Drivers come with the hired vans." }
+      ]
+    },
+    {
+      "title": "Retailer feedback",
+      "teaser": "What the kirana owners are saying",
+      "body": [
+        { "type": "quote", "text": "“Van used to come by 11. Now it's after 2 most days.”", "source": "Store owner · Malviya Nagar" },
+        { "type": "quote", "text": "“Order is always complete, no complaints there.”", "source": "Store owner · Vaishali Nagar" },
+        { "type": "note", "text": "Damaged or returned goods: 0.6% of sales in both months." }
+      ]
+    },
+    {
+      "title": "Collections",
+      "teaser": "How fast stores pay",
+      "body": [
+        {
+          "type": "table",
+          "columns": ["", "Jul", "Aug"],
+          "rows": [
+            ["Average days to collect", "12", "12"],
+            ["Overdue more than 30 days", "₹1.1L", "₹1.0L"]
+          ]
+        }
+      ]
+    }
+  ],
+  "causes": [
+    { "label": "Diesel prices went up", "feedback": "Diesel moved 20 paise a litre, and the van rate (fuel included) didn't change." },
+    { "label": "Rent went up", "feedback": "Rent fell, from ₹3.0L to ₹1.5L." },
+    { "label": "Stores are paying late", "feedback": "Collection days were 12 in both months, and late payment doesn't hit profit anyway." },
+    { "label": "The new warehouse is far from the stores, so every route got much longer", "feedback": null },
+    { "label": "Drivers are padding their kilometres", "feedback": "Vans are GPS-tracked, and km rose on every route the day the warehouse moved." },
+    { "label": "Product margins fell", "feedback": "Gross margin held at 20%." },
+    { "label": "A hiring spree", "feedback": "Two loaders, ₹0.2L." },
+    { "label": "Sales dropped", "feedback": "Sales were flat, ₹120.0L to ₹120.6L." },
+    { "label": "More damaged goods", "feedback": "Returns were 0.6% in both months." },
+    { "label": "The van operators raised their rates", "feedback": "Still ₹9.30 a km." },
+    { "label": "Stores are ordering smaller amounts, so more trips", "feedback": "Same 40 routes a day, same 30 stores a route." },
+    { "label": "The snacks category is losing money", "feedback": "Snacks dipped ₹0.1L. Tiny." }
+  ],
+  "answer_index": 3,
+  "par": 2,
+  "bonus": {
+    "question": "What should the owner do first?",
+    "options": [
+      "Negotiate the van rate down to ₹8.50/km",
+      "Load the vans closer to the city again: move back, or rent a small city cross-dock, because ₹5.4L of extra driving costs more than the ₹1.5L rent saved",
+      "Let go of the two new loaders",
+      "Raise prices to stores by 3%"
+    ],
+    "answer_index": 1,
+    "explanation": "The move saved ₹1.5L of rent and added ₹5.4L of driving. Anything that cuts the extra 56 km per route fixes the problem at its source. A lower van rate helps, but the routes would still be twice as long. Signing the 5-year lease locks the problem in."
+  },
+  "explanation": {
+    "answer": "The new warehouse is 28 km from the city, so every route nearly doubled from 62 to 118 km. At ₹9.30/km that's ₹5.4L more delivery cost, against ₹1.5L of rent saved. Net, the move cost ₹3.9L, which is 93% of the ₹4.2L profit drop.",
+    "fastest_path": [
+      "Open the P&L. Delivery nearly doubled (+₹5.4L) while rent fell ₹1.5L. Everything else is flat.",
+      "Open delivery operations. Same routes, same stores, but 118 km per route instead of 62, starting the day of the move."
+    ],
+    "traps": [
+      "Lower rent looks like a win, but it's the reason the trucks drive further.",
+      "Fuel prices are the obvious suspect for a delivery cost jump, but diesel and the van rate didn't move.",
+      "Late deliveries in the feedback point at drivers. They're late because the trip is longer."
+    ],
+    "lesson": "Saving on rent is easy to see. The cost it moves somewhere else rarely sits on the same line."
+  }
+}
