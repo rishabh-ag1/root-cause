@@ -34,6 +34,9 @@ src/components/Game.tsx    the Today screen
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API → `service_role` key. **Server only, never expose.** |
 | `LAUNCH_DATE` | IST date of Case #1, `YYYY-MM-DD` |
 | `NEXT_PUBLIC_SITE_URL` | e.g. `https://rootcause.in` (used in share text and OG tags) |
+| `CRON_SECRET` | Any long random string. Vercel Cron sends it to `/api/cron/release` at 09:00 IST. |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | Mail server for new-case emails. Gmail: `smtp.gmail.com`, `465`, your address, a 16-character [app password](https://myaccount.google.com/apppasswords). Resend: `smtp.resend.com`, `465`, `resend`, your API key. |
+| `EMAIL_FROM` | e.g. `Root Cause <you@gmail.com>` (Gmail always sends from the signed-in address). |
 | `NEXT_PUBLIC_CLARITY_ID` | Optional. Overrides the built-in Microsoft Clarity project ID (`yw291uw8mq`). Clarity only loads on production builds. |
 
 Copy `.env.example` to `.env.local` and fill it in.
@@ -58,13 +61,26 @@ Copy `.env.example` to `.env.local` and fill it in.
 2. Add the five env vars above for Production (and Preview).
 3. Deploy. In Supabase → Authentication → URL Configuration, set the Site URL to your Vercel/production URL.
 
+## Admin dashboard (`/admin`)
+
+Admins are flagged in the database: `update profiles set is_admin = true where id = '<user id>'`. The Account page shows an **Admin dashboard** button for them. For local development, `DEV_ADMIN_BYPASS=1 npm run dev` opens `/admin` without signing in (ignored in production).
+
+- **Overview:** DAU/WAU/MAU, stickiness, next-case retention, streaks, the sign-up → solve funnel, a 30-day chart of new vs returning players, per-case stats (solve rate, score, files vs par, time, bonus accuracy, quits), which files players open and which wrong answers they pick, plus plain-language insights. Everything is computed from the database on load; no emails or usernames are returned.
+- **Schedule:** a 3-week calendar and the case library. Pick a date and press Schedule; the case goes live at 09:00 IST that day and gets its case number then. Unschedule sends it back to the library. Dates lock once a case is live or has been played, and only one case can sit on each date.
+- **Emails:** whether email and the 9am job are configured, a send log, and a manual "send now" for today's case.
+
+## New-case emails
+
+At 03:30 UTC (09:00 IST) Vercel Cron calls `/api/cron/release`. If a case went live today, every verified player who hasn't unsubscribed gets one email (brief teaser + play link). Each case is emailed at most once (`case_emails` row), so retries never double-send. Every email has a signed one-click unsubscribe link; players can also toggle it on the Account page. On Vercel's Hobby plan the cron can fire any time within the 09:00 hour.
+
+Gmail limits a personal account to about 500 emails a day. Move to Resend on your own domain before that matters.
+
 ## Add a new case
 
-1. Copy `cases/001-saltwater-labs.json` to `cases/NNN-your-slug.json` (`NNN` = case number, zero-padded). It publishes on `LAUNCH_DATE + NNN − 1`.
+1. Copy any file in `cases/` to `cases/your-slug.json`. The file name is the case's permanent id. Don't set `case_number` or `publish_date`; you choose the date in `/admin`.
 2. Write the brief, evidence (structured `table` / `note` / `quote` blocks), causes (feedback for every wrong one), `answer_index`, bonus question, explanation and par. Follow the content rules in `SPEC.md` §7: one cause explains ≥90% of the gap, at least two traps, par is reachable, fictional Indian companies, original content only.
 3. Tables use `columns`, `rows` and an optional `total` row. Write negatives in brackets, e.g. `(152)`. For a total that should reconcile, add `"sum_check": { "columns": [1, 2] }`.
-4. `npm run validate-cases`, then `npm run seed-cases`.
-5. Use `"status": "draft"` to keep a case hidden.
+4. `npm run validate-cases`, then `npm run seed-cases`. New cases land in the admin library as drafts; re-running only refreshes their content and never changes dates you set.
 
 ## Scripts
 
