@@ -5,7 +5,7 @@ import { browserClient } from '@/lib/supabase/browser';
 import SignIn from '@/components/SignIn';
 import { resetIdentity, track } from '@/lib/track';
 
-type Me = { id: string; email: string | null; username: string | null } | null;
+type Me = { id: string; email: string | null; username: string | null; isAdmin?: boolean; emailOptOut?: boolean } | null;
 
 export default function Settings() {
   const [me, setMe] = useState<Me | undefined>(undefined);
@@ -23,6 +23,18 @@ export default function Settings() {
   useEffect(() => {
     load();
   }, []);
+
+  async function setEmails(on: boolean) {
+    if (!me) return;
+    setMe({ ...me, emailOptOut: !on });
+    const res = await fetch('/api/profile', { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ emailOptOut: !on }) });
+    if (!res.ok) {
+      setMe({ ...me });
+      return setMsg('Could not save that. Try again.');
+    }
+    track(on ? 'emails_on' : 'emails_off');
+    setMsg(on ? "You'll get an email when each new case goes live." : 'New-case emails turned off.');
+  }
 
   async function signOut() {
     await browserClient().auth.signOut();
@@ -64,7 +76,13 @@ export default function Settings() {
             <div className="accuse-row">
               {!me.username && <button className="btn primary" onClick={() => setSheet('username')}>Pick a username</button>}
               <button className="btn ghost" onClick={signOut}>Sign out</button>
+              {me.isAdmin && <Link className="btn ink" href="/admin">Admin dashboard</Link>}
             </div>
+            <label className="toggle">
+              <input type="checkbox" checked={!me.emailOptOut} onChange={(e) => setEmails(e.target.checked)} />
+              <span className="track" aria-hidden="true" />
+              <span>Email me when a new case goes live (9am IST)</span>
+            </label>
           </>
         )}
         {msg && <p className="copied">{msg}</p>}
@@ -86,7 +104,7 @@ export default function Settings() {
       <section className="page">
         <h2>Privacy</h2>
         <p>
-          We store your email, your username and your game results. We use them to run the leaderboard and, if you opt in later, to send your daily result. We don&apos;t sell data or show your email to anyone. See the <Link href="/privacy">privacy notice</Link>.
+          We store your email, your username and your game results. We use them to run the leaderboard and to email you when a new case goes live (you can turn that off above). We don&apos;t sell data or show your email to anyone. See the <Link href="/privacy">privacy notice</Link>.
         </p>
       </section>
 

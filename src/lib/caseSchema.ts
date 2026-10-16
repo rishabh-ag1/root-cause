@@ -44,7 +44,8 @@ export const DIFFICULTIES = ['easy', 'medium', 'hard', 'expert', 'mon', 'tue', '
 
 export const CaseFile = z
   .object({
-    case_number: z.number().int().positive(),
+    /** Optional: assigned by the admin when the case is scheduled. */
+    case_number: z.number().int().positive().optional(),
     slug: z.string().regex(/^[a-z0-9-]+$/).optional(),
     /** Ignored by the seed script, which derives it from LAUNCH_DATE. Allowed so authored files validate. */
     publish_date: z.string().optional(),

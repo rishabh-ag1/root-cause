@@ -1,6 +1,6 @@
 import 'server-only';
 import { adminClient } from './supabase/server';
-import { istDate } from './dates';
+import { caseDay } from './dates';
 import { emptyAttempt, type Attempt, type StoredCase } from './game';
 
 const CASE_COLS = 'id, case_number, publish_date, difficulty, title, company, brief, evidence, causes, answer_index, bonus, explanation, par, status';
@@ -14,7 +14,7 @@ export async function getTodayCase(): Promise<StoredCase | null> {
     .from('cases')
     .select(CASE_COLS)
     .neq('status', 'draft')
-    .lte('publish_date', istDate())
+    .lte('publish_date', caseDay())
     .order('publish_date', { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -22,14 +22,15 @@ export async function getTodayCase(): Promise<StoredCase | null> {
   return (data as StoredCase | null) ?? null;
 }
 
+/** A playable case: scheduled and already live. Future and draft cases are never playable or readable by players. */
 export async function getCaseById(id: number): Promise<StoredCase | null> {
-  const { data, error } = await adminClient().from('cases').select(CASE_COLS).eq('id', id).neq('status', 'draft').maybeSingle();
+  const { data, error } = await adminClient().from('cases').select(CASE_COLS).eq('id', id).neq('status', 'draft').lte('publish_date', caseDay()).maybeSingle();
   if (error) throw error;
   return (data as StoredCase | null) ?? null;
 }
 
 export async function getCaseByNumber(n: number): Promise<StoredCase | null> {
-  const { data, error } = await adminClient().from('cases').select(CASE_COLS).eq('case_number', n).neq('status', 'draft').lte('publish_date', istDate()).maybeSingle();
+  const { data, error } = await adminClient().from('cases').select(CASE_COLS).eq('case_number', n).neq('status', 'draft').lte('publish_date', caseDay()).maybeSingle();
   if (error) throw error;
   return (data as StoredCase | null) ?? null;
 }
@@ -136,7 +137,7 @@ export type WeekRow = { rank: number; username: string; score: number; played: n
 
 export async function weekLeaderboard(userId: string | null) {
   const sb = adminClient();
-  const end = istDate();
+  const end = caseDay();
   const cols = 'rank, username, score, played, elapsed_seconds';
   const [top, mine] = await Promise.all([
     sb.rpc('leaderboard_week', { p_end_date: end }).select(cols).range(0, 99),

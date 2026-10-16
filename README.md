@@ -11,7 +11,7 @@ A daily business detective game. One case a day: a business has a problem, the c
 - **One ranked attempt per account per case** is enforced by `unique (user_id, case_id)` on `attempts`. Concurrent requests are guarded by a `rev` column (optimistic locking).
 - **The clock** starts at the server timestamp of the first file opened or first accusation. A correct accusation ends the attempt and locks the score.
 - **The bonus question is just for fun.** It is asked after solving, one try, and never changes the score or the leaderboard.
-- **Cases roll over at 00:00 IST.** Case number = days since `LAUNCH_DATE` + 1.
+- **New cases go live at 09:00 IST.** The live case is the latest scheduled case whose date is on or before the current "case day" (the IST date, rolling over at 9am). Case number = days since `LAUNCH_DATE` + 1, assigned when the admin schedules it.
 - RLS is on for every table. `cases` has no policies, so only the service role (server) can read it. Leaderboard SQL functions are executable by the service role only.
 
 ```

@@ -7,6 +7,7 @@ import {
 } from '@/lib/game';
 import type { TodayPayload } from '@/lib/today';
 import type { ResultPayload } from '@/lib/result';
+import { msToNextRelease } from '@/lib/dates';
 import { Blocks, Rich } from './Blocks';
 import SignIn from './SignIn';
 import { identify, tag, track } from '@/lib/track';
@@ -19,10 +20,6 @@ async function post(url: string, body: unknown) {
   return { ok: res.ok, status: res.status, data };
 }
 
-function msToIstMidnight(now: number) {
-  const ist = now + 5.5 * 3600_000;
-  return 86_400_000 - (ist % 86_400_000);
-}
 
 function fmtCountdown(ms: number) {
   const s = Math.floor(ms / 1000);
@@ -290,7 +287,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
         <div className="banner">
           <span>
             You played today&apos;s case: <b>{att.solved ? `${att.score} points` : 'unsolved'}</b>
-            {final?.rank ? <> · <b>#{final.rank}</b> of {final.total.toLocaleString('en-IN')}</> : null}. Next case in <b>{fmtCountdown(msToIstMidnight(serverNow))}</b>.
+            {final?.rank ? <> · <b>#{final.rank}</b> of {final.total.toLocaleString('en-IN')}</> : null}. Next case in <b>{fmtCountdown(msToNextRelease(serverNow))}</b>.
           </span>
           <a className="btn ghost small" href="#verdict">See result</a>
         </div>
@@ -383,7 +380,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
             onShare={nativeShare}
             copied={copied}
             onPractice={startPractice}
-            nextIn={fmtCountdown(msToIstMidnight(serverNow))}
+            nextIn={fmtCountdown(msToNextRelease(serverNow))}
           />
         </section>
       )}
@@ -468,7 +465,7 @@ function Verdict(p: {
             <span className="copied">{p.copied}</span>
           </div>
           <LeaderPreview final={final} />
-          <p className="foot">Next case in {p.nextIn} (midnight IST).</p>
+          <p className="foot">Next case in {p.nextIn} (9am IST).</p>
         </>
       )}
       {!p.ranked && (

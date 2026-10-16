@@ -27,7 +27,8 @@ export function elapsedSeconds(start: string | Date | null, end: string | Date |
 }
 
 /** A case as stored in the DB (the case file plus its row id and publish date). */
-export type StoredCase = Omit<CaseFile, 'slug' | 'publish_date' | 'units_note'> & { id: number; publish_date: string };
+/** A live case always has a number and a date (unscheduled library cases never reach players). */
+export type StoredCase = Omit<CaseFile, 'slug' | 'publish_date' | 'units_note' | 'case_number'> & { id: number; case_number: number; publish_date: string };
 
 export type Attempt = {
   started_at: string | null;

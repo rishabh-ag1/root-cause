@@ -3,9 +3,9 @@ import { loadCases } from './cases';
 const { loaded, errors } = loadCases();
 let bad = errors.length;
 
-for (const { file, result } of loaded) {
+for (const { file, slug, result } of loaded) {
   if (result.ok) {
-    console.log(`✓ ${file}  (#${result.data.case_number}, ${result.data.evidence.length} files, par ${result.data.par})`);
+    console.log(`✓ ${slug.padEnd(28)} ${result.data.difficulty.padEnd(7)} ${result.data.evidence.length} files · ${result.data.causes.length} causes · par ${result.data.par}`);
   } else {
     bad++;
     console.log(`✗ ${file}`);

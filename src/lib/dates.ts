@@ -1,4 +1,22 @@
-/** Today's date in India (Asia/Kolkata), as YYYY-MM-DD. The daily case rolls over at 00:00 IST. */
+/** New cases go live at 09:00 IST. */
+export const RELEASE_HOUR_IST = 9;
+const IST_OFFSET_MS = 5.5 * 3600_000;
+
+/**
+ * The "case day" whose case is live right now: the IST date, rolling over at 09:00 IST
+ * (so 08:59 IST on the 12th still shows the 11th's case).
+ */
+export function caseDay(at: Date = new Date()): string {
+  return new Date(at.getTime() + IST_OFFSET_MS - RELEASE_HOUR_IST * 3600_000).toISOString().slice(0, 10);
+}
+
+/** Milliseconds until the next 09:00 IST release. */
+export function msToNextRelease(nowMs: number = Date.now()): number {
+  const day = 86_400_000;
+  return day - ((nowMs + IST_OFFSET_MS - RELEASE_HOUR_IST * 3600_000) % day + day) % day;
+}
+
+/** Today's calendar date in India (Asia/Kolkata), as YYYY-MM-DD. */
 export function istDate(at: Date = new Date()): string {
   // en-CA formats as YYYY-MM-DD.
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(at);

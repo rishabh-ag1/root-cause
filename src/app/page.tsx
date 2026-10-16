@@ -10,7 +10,7 @@ export default async function Today() {
       <main className="wrap" style={{ marginTop: 20 }}>
         <section className="page">
           <div className="tag">Root Cause</div>
-          <h1>The first case drops at midnight IST.</h1>
+          <h1>The next case goes live at 9am IST.</h1>
           <p>One business mystery a day. Open as few evidence files as you can, name the root cause, and see where you rank.</p>
         </section>
       </main>

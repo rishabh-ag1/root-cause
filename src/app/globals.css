@@ -240,6 +240,15 @@ pre.share { margin: 0; background: var(--bg); border: 1px solid var(--line); bor
 .steps span { height: 3px; flex: 1; background: var(--line); border-radius: 2px; transition: background .3s; }
 .steps span.on { background: var(--stamp); }
 
+/* ---------- toggle ---------- */
+.toggle { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; }
+.toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.toggle .track { width: 38px; height: 22px; border-radius: 11px; background: var(--line); position: relative; transition: background .2s; flex: none; }
+.toggle .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--paper); box-shadow: 0 1px 2px rgba(0,0,0,.3); transition: transform .2s var(--ease); }
+.toggle input:checked + .track { background: var(--ledger); }
+.toggle input:checked + .track::after { transform: translateX(16px); }
+.toggle input:focus-visible + .track { outline: 2px solid var(--ledger); outline-offset: 2px; }
+
 /* ---------- misc ---------- */
 .toast {
   position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 30; background: var(--ink); color: var(--paper);
@@ -273,4 +282,56 @@ pre.share { margin: 0; background: var(--bg); border: 1px solid var(--line); bor
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* ---------- admin ---------- */
+.admin .hud { margin-bottom: 4px; }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.tile { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; gap: 2px; box-shadow: var(--shadow); animation: rise .35s var(--ease) both; }
+.tile .k { font-family: var(--display); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.tile .v { font-family: var(--display); font-weight: 700; font-size: 34px; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.tile .sub { font-size: 12px; color: var(--muted); }
+.insights { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.insights li { font-size: 14px; padding: 9px 12px 9px 34px; border-radius: 3px; background: var(--bg); position: relative; }
+.insights li::before { position: absolute; left: 12px; top: 9px; font-weight: 700; }
+.insights li.good { background: var(--ledger-soft); } .insights li.good::before { content: "▲"; color: var(--ledger); }
+.insights li.warn { background: var(--stamp-soft); } .insights li.warn::before { content: "!"; color: var(--stamp); left: 15px; }
+.insights li.info::before { content: "•"; color: var(--muted); }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.bars { display: flex; flex-direction: column; gap: 9px; }
+.bar-label { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; }
+.bar-label b { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.bar-track { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; margin-top: 3px; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width .6s var(--ease); }
+.bar-fill.ink { background: var(--ink); } .bar-fill.stamp { background: var(--stamp); }
+.chart svg { width: 100%; height: auto; display: block; }
+.chart .grid { stroke: var(--line); stroke-dasharray: 3 4; }
+.chart .axis { fill: var(--muted); font-family: var(--mono); font-size: 11px; }
+.chart .b-ret { fill: var(--ledger); } .chart .b-new { fill: var(--hl); stroke: var(--ledger); stroke-width: 1; }
+.chart .l-sign { fill: none; stroke: var(--stamp); stroke-width: 2; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; border-radius: 2px; vertical-align: -1px; }
+.lg-new::before { background: var(--hl); border: 1px solid var(--ledger); } .lg-ret::before { background: var(--ledger); } .lg-sign::before { background: var(--stamp); height: 3px !important; vertical-align: 3px !important; }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.slot { border: 1px dashed var(--line); border-radius: 4px; padding: 8px; min-height: 96px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; min-width: 0; }
+.slot.filled { border-style: solid; background: var(--bg); }
+.slot.today { border-color: var(--stamp); }
+.slot-date { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; }
+.slot b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; }
+.slot-actions { margin-top: auto; display: flex; gap: 10px; }
+.pill { align-self: flex-start; font-family: var(--mono); font-size: 11px; padding: 1px 7px; border-radius: 10px; border: 1px solid var(--line); }
+.pill.easy { background: var(--ledger-soft); border-color: var(--ledger); }
+.pill.medium { background: var(--hl); border-color: var(--ink); }
+.pill.hard, .pill.expert { background: var(--stamp-soft); border-color: var(--stamp); }
+.lib { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.libcard { border: 1px solid var(--line); border-radius: 4px; padding: 12px; display: flex; flex-direction: column; gap: 6px; background: var(--bg); }
+.libcard-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+input.date { font: inherit; font-family: var(--mono); font-size: 13px; padding: 7px 8px; border: 1px solid var(--line); border-radius: 3px; background: var(--paper); color: var(--ink); }
+.sheet.preview { max-width: 760px; max-height: 88vh; overflow-y: auto; }
+.sheet.preview .card { background: var(--sealed); }
+.sheet.preview .card.open { background: var(--bg); }
+@media (max-width: 860px) {
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .two { grid-template-columns: 1fr; }
+  .cal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
