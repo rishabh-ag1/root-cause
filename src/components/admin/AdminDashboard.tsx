@@ -406,10 +406,22 @@ function Preview({ id, onClose }: { id: number; onClose: () => void }) {
 function Emails({ data, onSend }: { data: CasesResp; onSend: (id: number) => void }) {
   const live = data.cases.filter((c) => c.state === 'live' || c.state === 'past').sort((a, b) => (b.publish_date ?? '').localeCompare(a.publish_date ?? ''));
   const today = data.cases.find((c) => c.state === 'live');
+  const [test, setTest] = useState<{ ok: boolean; text: string } | null>(null);
+  const [testing, setTesting] = useState(false);
+  async function sendTest() {
+    setTesting(true);
+    const r = await api<{ to: string; from: string }>('/api/admin/email/test', { method: 'POST' });
+    setTesting(false);
+    setTest(r.ok ? { ok: true, text: `Sent to ${r.data.to} from ${r.data.from}. Check your inbox (and spam).` } : { ok: false, text: r.data.error?.message ?? 'Failed.' });
+  }
   return (
     <>
       <section className="board">
         <h2>Setup <span>New-case emails go out automatically at 9:00 IST</span></h2>
+        <div className="accuse-row">
+          <button className="btn ghost small" onClick={sendTest} disabled={testing}>{testing ? 'Sending…' : 'Send me a test email'}</button>
+          {test && <span className={test.ok ? 'copied' : 'err'} style={{ fontSize: 13 }}>{test.text}</span>}
+        </div>
         <ul className="insights">
           <li className={data.mailer ? 'good' : 'warn'}>{data.mailer ? 'Email sending is configured (SMTP).' : 'Email sending is not configured: add the SMTP_* settings in Vercel.'}</li>
           <li className={data.cron ? 'good' : 'warn'}>{data.cron ? 'The 9am job is configured (CRON_SECRET set).' : 'The 9am job is not set up yet: add CRON_SECRET in Vercel.'}</li>

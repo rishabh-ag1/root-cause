@@ -6,29 +6,58 @@ import nodemailer, { type Transporter } from 'nodemailer';
  * SMTP mailer. Works with Gmail (smtp.gmail.com:465 + an app password) today and with
  * Resend/Postmark/SES SMTP later by changing env vars only.
  */
+/** Env values pasted into dashboards often carry stray spaces or quotes; strip them. */
+const clean = (v: string | undefined) => (v ?? '').trim().replace(/^["']|["']$/g, '').trim();
+const smtp = () => ({
+  host: clean(process.env.SMTP_HOST),
+  port: Number(clean(process.env.SMTP_PORT) || 465),
+  user: clean(process.env.SMTP_USER),
+  // Gmail shows app passwords as "abcd efgh ijkl mnop"; the spaces aren't part of it.
+  pass: clean(process.env.SMTP_PASS).replace(/\s+/g, ''),
+});
+
 export function mailerConfigured() {
-  return !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+  const s = smtp();
+  return !!(s.host && s.user && s.pass);
 }
 
 let transport: Transporter | null = null;
 function mailer() {
   if (!mailerConfigured()) throw new Error('Email is not configured: set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS and EMAIL_FROM.');
-  const port = Number(process.env.SMTP_PORT || 465);
+  const s = smtp();
   transport ??= nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port,
-    secure: port === 465,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-    pool: true,
-    maxConnections: 3,
+    host: s.host,
+    port: s.port,
+    secure: s.port === 465,
+    auth: { user: s.user, pass: s.pass },
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 15_000,
   });
   return transport;
 }
 
-export const fromAddress = () => process.env.EMAIL_FROM || `Root Cause <${process.env.SMTP_USER}>`;
+export const fromAddress = () => clean(process.env.EMAIL_FROM) || `Root Cause <${smtp().user}>`;
 
 export async function sendMail(m: { to: string; subject: string; html: string; text: string; headers?: Record<string, string> }) {
-  await mailer().sendMail({ from: fromAddress(), ...m });
+  try {
+    await mailer().sendMail({ from: fromAddress(), ...m });
+  } catch (e) {
+    transport = null; // don't reuse a broken connection
+    throw e;
+  }
+}
+
+/** A readable reason for an SMTP failure, safe to show to admins (never includes the password). */
+export function smtpErrorHint(e: unknown) {
+  const err = e as { code?: string; responseCode?: number; response?: string; message?: string };
+  const raw = `${err.code ?? ''} ${err.responseCode ?? ''} ${err.response ?? err.message ?? ''}`.trim();
+  if (err.code === 'EAUTH' || err.responseCode === 535)
+    return `Gmail rejected the login (${raw.slice(0, 120)}). Check SMTP_USER is the full Gmail address and SMTP_PASS is a 16-character app password from myaccount.google.com/apppasswords (2-Step Verification must be on).`;
+  if (err.code === 'ETIMEDOUT' || err.code === 'ECONNECTION' || err.code === 'ESOCKET')
+    return `Couldn't connect to the mail server (${raw.slice(0, 120)}). Check SMTP_HOST is smtp.gmail.com and SMTP_PORT is 465.`;
+  if (err.code === 'EENVELOPE') return `The sender or recipient address was rejected (${raw.slice(0, 120)}). Check EMAIL_FROM.`;
+  return raw.slice(0, 240) || 'Unknown email error.';
 }
 
 /** The public site origin, e.g. https://playrootcause.vercel.app */

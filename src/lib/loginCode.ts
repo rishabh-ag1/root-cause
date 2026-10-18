@@ -1,7 +1,7 @@
 import 'server-only';
 import { createHmac, randomInt, timingSafeEqual } from 'node:crypto';
 import { adminClient } from './supabase/server';
-import { sendMail, siteUrl } from './email';
+import { sendMail, siteUrl, smtpErrorHint } from './email';
 
 /**
  * Our own 4-digit email sign-in codes (Supabase's minimum is 6 digits).
@@ -13,6 +13,9 @@ const TTL_MS = 10 * 60_000;
 const MAX_ATTEMPTS = 5;
 const MAX_SENDS_PER_HOUR = 5;
 const RESEND_AFTER_MS = 30_000;
+
+/** Our mailer failed; the caller should fall back to Supabase's own code email. */
+export class MailError extends Error {}
 
 export class CodeError extends Error {
   constructor(public code: string, message: string) {
@@ -65,7 +68,12 @@ export async function requestCode(rawEmail: string) {
   </div>
   <p style="font-size:12px;color:#6c675b;margin:14px 0 0"><a href="${siteUrl()}" style="color:#6c675b">${siteUrl().replace(/^https?:\/\//, '')}</a></p>
 </div></body></html>`;
-  await sendMail({ to: email, subject: `${code} is your Root Cause code`, html, text: `Your Root Cause sign-in code is ${code}. It expires in 10 minutes.` });
+  try {
+    await sendMail({ to: email, subject: `${code} is your Root Cause code`, html, text: `Your Root Cause sign-in code is ${code}. It expires in 10 minutes.` });
+  } catch (e) {
+    await sb.from('login_codes').delete().eq('email', email);
+    throw new MailError(smtpErrorHint(e));
+  }
 }
 
 /** Checks the code. On success, returns a one-time token hash that signs the user in (creating them if new). */
