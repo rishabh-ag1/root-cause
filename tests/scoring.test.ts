@@ -111,8 +111,8 @@ describe('game transitions', () => {
 
 describe('share text', () => {
   it('matches the format and never names the answer', () => {
-    const s = shareText({ caseNumber: 12, company: 'Saltwater Labs', fileCount: 12, opened: [5, 10], wrong: 1, solved: true, bonusCorrect: true, score: 655, rank: 14, seconds: 102, par: 2, site: 'rootcause.in' });
-    expect(s).toBe('Root Cause #12 🕵️ Saltwater Labs\n⬛⬛⬛⬛⬛🟩⬛⬛⬛⬛🟩⬛\n❌✅ ⭐ · 655 pts · #14 today\n2 files (par) · 1:42\nrootcause.in');
+    const s = shareText({ caseNumber: 12, company: 'Saltwater Labs', fileCount: 12, opened: [5, 10], wrong: 1, solved: true, bonusCorrect: true, score: 655, rank: 14, seconds: 102, par: 2, site: 'rootcause.in/?c=sherlock' });
+    expect(s).toBe('Root Cause #12 🕵️ Saltwater Labs\n⬛⬛⬛⬛⬛🟩⬛⬛⬛⬛🟩⬛\n❌✅ ⭐ · 655 pts · #14 today\n2 files (par) · 1:42\nCan you beat me? rootcause.in/?c=sherlock');
     expect(s).not.toMatch(/receivable|quick|60 days/i);
   });
 });

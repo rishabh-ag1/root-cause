@@ -53,6 +53,8 @@ export const CaseFile = z
     title: z.string().min(1),
     company: z.string().min(1),
     units_note: z.string().optional(),
+    /** The business skill this case builds, shown to players (e.g. "Cash flow"). */
+    skills: z.array(z.string().min(1).max(30)).max(3).optional(),
     brief: z.object({
       tag: z.string().min(1).optional(),
       units_note: z.string().optional(),

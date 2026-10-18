@@ -1,16 +1,18 @@
 'use client';
-import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   applyAccuse, applyBonus, applyOpen, CARD_COST, elapsedSeconds, emptyAttempt, fmtClock, MAX_WRONG,
-  parText, playerView, START_POINTS, timePenalty, TIME_CAP, WRONG_COST, type Attempt, type PlayerView, type StoredCase,
+  playerView, START_POINTS, timePenalty, WRONG_COST, type Attempt, type PlayerView, type StoredCase,
 } from '@/lib/game';
 import type { TodayPayload } from '@/lib/today';
 import type { ResultPayload } from '@/lib/result';
 import { msToNextRelease } from '@/lib/dates';
-import { Blocks, Rich } from './Blocks';
-import SignIn from './SignIn';
 import { identify, tag, track } from '@/lib/track';
+import { Blocks } from './Blocks';
+import SignIn from './SignIn';
+import Sheet from './ui/Sheet';
+import HowToPlay from './game/HowToPlay';
+import Result, { type Challenge } from './game/Result';
 
 type Practice = { attempt: Attempt; c: StoredCase; bonusPick: number | null };
 
@@ -20,45 +22,60 @@ async function post(url: string, body: unknown) {
   return { ok: res.ok, status: res.status, data };
 }
 
-
 function fmtCountdown(ms: number) {
   const s = Math.floor(ms / 1000);
-  return `${Math.floor(s / 3600)}h ${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}m`;
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  return h ? `${h}h ${String(m).padStart(2, '0')}m` : `${m}m`;
 }
 
-const scrollTo = (el: HTMLElement | null) => setTimeout(() => el?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+const LEVEL: Record<string, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard', expert: 'Expert' };
+const HOWTO_KEY = 'rc-howto-seen';
 
 export default function Game({ initial }: { initial: TodayPayload }) {
   const pc = initial.case;
   const [me, setMe] = useState(initial.me);
   const [att, setAtt] = useState<PlayerView | null>(initial.attempt);
   const [final, setFinal] = useState<ResultPayload | null>(initial.final);
+  const [stats, setStats] = useState(initial.stats);
   const [offset, setOffset] = useState(() => new Date(initial.serverNow).getTime() - Date.now());
   const [now, setNow] = useState(() => Date.now());
-  const [selected, setSelected] = useState<number | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
-  const [sheet, setSheet] = useState<null | 'email' | 'username'>(null);
+  const [signIn, setSignIn] = useState<null | 'email' | 'username'>(null);
   const [practice, setPractice] = useState<Practice | null>(null);
   const [bonusPick, setBonusPick] = useState<number | null>(null);
   const [hitKey, setHitKey] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
   const [copied, setCopied] = useState('');
+  const [viewing, setViewing] = useState<number | null>(null);
+  const [accusing, setAccusing] = useState(false);
+  const [picked, setPicked] = useState<number | null>(null);
+  const [lastWrong, setLastWrong] = useState<string | null>(null);
+  const [showResult, setShowResult] = useState(false);
+  const [howTo, setHowTo] = useState(false);
+  const [storyOpen, setStoryOpen] = useState(false);
+  const [challenge, setChallenge] = useState<Challenge | null>(null);
   const pending = useRef<null | { kind: 'open'; index: number } | { kind: 'accuse' }>(null);
-  const alreadyPlayed = useRef(!!initial.attempt?.finished);
-  const verdictRef = useRef<HTMLDivElement>(null);
 
   const view: PlayerView | null = practice ? playerView(practice.attempt, practice.c) : att;
   const ranked = !practice;
   const finished = !!view?.finished;
-  const fileCount = pc.files.length;
   const opened = view?.opened ?? [];
   const wrong = view?.wrong ?? [];
+  const livesLeft = MAX_WRONG - wrong.length;
 
+  // ---- first visit, analytics, challenge links
   useEffect(() => {
     tag('case', pc.caseNumber);
-    track('case_view', { case: pc.caseNumber, difficulty: pc.difficulty });
     tag('signed_in', !!initial.me);
     tag('played_today', !!initial.attempt?.finished);
+    track('case_view', { case: pc.caseNumber, difficulty: pc.difficulty });
+    try {
+      if (!localStorage.getItem(HOWTO_KEY) && !initial.attempt) setHowTo(true);
+    } catch {}
+    const c = new URLSearchParams(location.search).get('c');
+    if (c && /^[A-Za-z0-9_]{3,20}$/.test(c))
+      fetch('/api/challenge?u=' + encodeURIComponent(c)).then(async (r) => r.ok && setChallenge(await r.json())).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
@@ -76,12 +93,10 @@ export default function Game({ initial }: { initial: TodayPayload }) {
 
   const serverNow = practice ? now : now + offset;
   const secs = view?.startedAt ? view.elapsedSeconds ?? elapsedSeconds(view.startedAt, new Date(serverNow).toISOString()) : 0;
-  const livePoints = finished
-    ? view!.score ?? 0
-    : Math.max(0, START_POINTS - CARD_COST * opened.length - WRONG_COST * wrong.length - timePenalty(secs));
+  const points = finished ? view!.score ?? 0 : Math.max(0, START_POINTS - CARD_COST * opened.length - WRONG_COST * wrong.length - timePenalty(secs));
+  const nextIn = fmtCountdown(msToNextRelease(serverNow));
 
-  const sync = useCallback((serverIso: string) => setOffset(new Date(serverIso).getTime() - Date.now()), []);
-
+  const sync = useCallback((iso: string) => setOffset(new Date(iso).getTime() - Date.now()), []);
   const refresh = useCallback(async () => {
     const res = await fetch('/api/case/today', { cache: 'no-store' });
     if (!res.ok) return null;
@@ -90,118 +105,131 @@ export default function Game({ initial }: { initial: TodayPayload }) {
     setMe(p.me);
     setAtt(p.attempt);
     setFinal(p.final);
-    alreadyPlayed.current = !!p.attempt?.finished;
+    setStats(p.stats);
     return p;
   }, [sync]);
+
+  function closeHowTo() {
+    setHowTo(false);
+    try {
+      localStorage.setItem(HOWTO_KEY, '1');
+    } catch {}
+  }
 
   function handleError(status: number, data: { error?: { code?: string; message?: string } }) {
     if (status === 401) {
       setMe(null);
-      setSheet('email');
+      setSignIn('email');
       return;
     }
-    if (status === 403 && data.error?.code === 'username') {
-      setSheet('username');
-      return;
-    }
+    if (status === 403 && data.error?.code === 'username') return setSignIn('username');
     setToast(data.error?.message ?? 'Something went wrong. Try again.');
     if (status === 409) refresh();
   }
 
-  /** Ranked actions need an account. Remember what the player tapped and resume after sign-in. */
   function needAccount(action: NonNullable<typeof pending.current>) {
     if (practice) return false;
     if (!me || !me.username) {
       pending.current = action;
       track('signin_prompt');
-      setSheet(me ? 'username' : 'email');
+      setSignIn(me ? 'username' : 'email');
       return true;
     }
     return false;
   }
 
   async function onSignedIn(username: string) {
-    setSheet(null);
-    setToast(`Signed in as ${username}`);
+    setSignIn(null);
+    setToast(`Welcome, ${username}`);
     const p = await refresh();
     const action = pending.current;
     pending.current = null;
     if (!p || p.attempt?.finished || !action) return;
     if (action.kind === 'open') openFile(action.index, p.attempt);
+    else setAccusing(true);
   }
 
-  // ---- open a file
+  function finishUp() {
+    setAccusing(false);
+    setViewing(null);
+    setTimeout(() => setShowResult(true), 250);
+  }
+
+  // ---- files
   async function openFile(i: number, current: PlayerView | null = att) {
+    if (view?.bodies[i]) return setViewing(i);
+    if (finished) return;
     if (practice) {
       const { attempt } = applyOpen(practice.attempt, practice.c, i, new Date().toISOString());
       setPractice({ ...practice, attempt });
       setHitKey((k) => k + 1);
-      return;
+      return setViewing(i);
     }
     if (needAccount({ kind: 'open', index: i })) return;
-    if (current?.bodies[i]) return;
+    if (current?.bodies[i]) return setViewing(i);
     setBusy('open' + i);
     const { ok, status, data } = await post('/api/attempt/open', { caseId: pc.id, index: i });
     setBusy(null);
     if (!ok) return handleError(status, data);
     track('file_open', { file: i + 1, title: pc.files[i].title, nth: data.opened.length, case: pc.caseNumber });
-    try {
-      window.clarity?.('event', `file_open_${i + 1}`);
-    } catch {}
     sync(data.serverNow);
     setAtt((a) => {
       const base = a ?? playerView(emptyAttempt(), { evidence: [], causes: [] } as unknown as StoredCase);
       return { ...base, startedAt: data.startedAt, opened: data.opened, bodies: { ...base.bodies, [i]: data.body } };
     });
     setHitKey((k) => k + 1);
+    setViewing(i);
   }
 
   // ---- accuse
+  function startAccuse() {
+    if (finished) return setShowResult(true);
+    if (needAccount({ kind: 'accuse' })) return;
+    setLastWrong(null);
+    setPicked(null);
+    setAccusing(true);
+  }
+
   async function accuse() {
-    if (selected === null || finished) return;
+    if (picked === null || finished) return;
     if (practice) {
-      const { attempt, out } = applyAccuse(practice.attempt, practice.c, selected, new Date().toISOString());
+      const { attempt, out } = applyAccuse(practice.attempt, practice.c, picked, new Date().toISOString());
       setPractice({ ...practice, attempt });
-      setSelected(null);
-      if (out.result === 'wrong') setHitKey((k) => k + 1);
-      else scrollTo(verdictRef.current);
+      setPicked(null);
+      if (out.result === 'wrong') {
+        setLastWrong(out.feedback);
+        setHitKey((k) => k + 1);
+      } else finishUp();
       return;
     }
-    if (needAccount({ kind: 'accuse' })) return;
     setBusy('accuse');
-    const { ok, status, data } = await post('/api/attempt/accuse', { caseId: pc.id, causeIndex: selected });
+    const { ok, status, data } = await post('/api/attempt/accuse', { caseId: pc.id, causeIndex: picked });
     setBusy(null);
     if (!ok) return handleError(status, data);
     sync(data.serverNow);
-    setAtt(data.attempt);
-    setSelected(null);
-    if (data.final) setFinal(data.final);
     const a = data.attempt as PlayerView;
+    setAtt(a);
+    setPicked(null);
     track(data.result === 'correct' ? 'case_solved' : data.result === 'unsolved' ? 'case_unsolved' : 'accuse_wrong', {
-      case: pc.caseNumber,
-      cause: selected,
-      files: a.opened.length,
-      wrong: a.wrong.length,
-      seconds: a.elapsedSeconds,
-      score: a.score,
-      par: pc.par,
-      under_par: a.opened.length <= pc.par,
+      case: pc.caseNumber, cause: picked, files: a.opened.length, wrong: a.wrong.length, seconds: a.elapsedSeconds, score: a.score, par: pc.par, under_par: a.opened.length <= pc.par,
     });
-    if (data.result !== 'wrong') {
-      tag('result', data.result);
-      tag('files_opened', data.attempt.opened.length);
+    if (data.result === 'wrong') {
+      setLastWrong(data.feedback);
+      setHitKey((k) => k + 1);
+      return;
     }
-    if (data.result === 'wrong') setHitKey((k) => k + 1);
-    else scrollTo(verdictRef.current);
+    tag('result', data.result);
+    if (data.final) setFinal(data.final);
+    finishUp();
+    refresh(); // streak, title and rank update
   }
 
-  // ---- bonus (just for fun, never changes the score)
+  // ---- bonus (for fun)
   async function answerBonus(i: number) {
     if (!view?.bonusQuestion) return;
     if (practice) {
       const { attempt } = applyBonus(practice.attempt, practice.c, i);
-      setPractice({ ...practice, attempt, bonusPick: i });
-      return;
+      return setPractice({ ...practice, attempt, bonusPick: i });
     }
     setBusy('bonus');
     setBonusPick(i);
@@ -219,328 +247,212 @@ export default function Game({ initial }: { initial: TodayPayload }) {
   function startPractice() {
     const reveal = att?.reveal;
     if (!reveal?.bonus) return;
+    track('practice_start', { case: pc.caseNumber });
     const c: StoredCase = {
       id: pc.id, case_number: pc.caseNumber, publish_date: pc.publishDate, difficulty: pc.difficulty as StoredCase['difficulty'],
-      title: pc.title, company: pc.company, brief: pc.brief, par: pc.par, status: 'live',
+      title: pc.title, company: pc.company, brief: pc.brief, par: pc.par, status: 'live', skills: pc.skills,
       evidence: pc.files.map((f, i) => ({ ...f, body: reveal.practice.bodies[i] })),
       causes: pc.causes.map((label, i) => ({ label, feedback: reveal.practice.feedback[i] })),
       answer_index: reveal.answerIndex, bonus: reveal.bonus, explanation: reveal.explanation,
     };
-    track('practice_start', { case: pc.caseNumber });
+    setShowResult(false);
     setPractice({ attempt: emptyAttempt(), c, bonusPick: null });
-    setSelected(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function exitPractice() {
-    setPractice(null);
-    setSelected(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  async function copyShare(text: string) {
-    try {
-      track('share_copy', { case: pc.caseNumber });
-      await navigator.clipboard.writeText(text);
-      setCopied('Copied. Paste it anywhere.');
-    } catch {
-      setCopied('Select the text above and copy it.');
+  async function share(via: 'whatsapp' | 'native' | 'copy', text: string) {
+    track('share_' + via, { case: pc.caseNumber });
+    if (via === 'whatsapp') return void window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
+    if (via === 'native') {
+      try {
+        await navigator.share({ text });
+      } catch {}
+      return;
     }
-  }
-
-  async function nativeShare(text: string) {
     try {
-      track('share_native', { case: pc.caseNumber });
-      await navigator.share({ text });
-    } catch {}
+      await navigator.clipboard.writeText(text);
+      setCopied('Copied!');
+    } catch {
+      setCopied('Copy failed');
+    }
+    setTimeout(() => setCopied(''), 2500);
   }
 
   const dateTxt = useMemo(
-    () => new Date(pc.publishDate + 'T00:00:00+05:30').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }).toUpperCase(),
+    () => new Date(pc.publishDate + 'T00:00:00+05:30').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }),
     [pc.publishDate],
   );
-
   const reveal = view?.reveal ?? null;
   const pickedBonus = practice ? practice.bonusPick : bonusPick;
+  const viewingBody = viewing !== null ? view?.bodies[viewing] : null;
 
   return (
-    <main className="wrap">
-      <div className="hud">
-        <div className="brand">
-          Root Cause<small>CASE #{pc.caseNumber} · {dateTxt}</small>
-        </div>
-        <div className="stats">
-          <div className="stat"><span className="k">Points</span><span key={hitKey} className={'v' + (hitKey ? ' hit' : '')}>{livePoints}</span></div>
-          <div className="stat"><span className="k">Files</span><span className="v">{opened.length} / {fileCount}</span></div>
-          <div className="stat"><span className="k">Accusations</span><span className="v dots">{'●'.repeat(MAX_WRONG - wrong.length)}{'○'.repeat(wrong.length)}</span></div>
-          <div className="stat"><span className="k">Clock</span><span className="v">{fmtClock(secs)}</span></div>
-        </div>
+    <main className="wrap game">
+      {/* ---- HUD */}
+      <div className="hud2" role="status" aria-label="Score">
+        <div className="hud2-cell"><span className="k">Points</span><span key={hitKey} className={'v big' + (hitKey ? ' hit' : '')}>{points}</span></div>
+        <div className="hud2-cell"><span className="k">Files</span><span className="v">{opened.length}<small>/{pc.files.length}</small></span></div>
+        <div className="hud2-cell"><span className="k">Guesses</span><span className="v lives" aria-label={`${livesLeft} guesses left`}>{'●'.repeat(livesLeft)}<i>{'●'.repeat(wrong.length)}</i></span></div>
+        <div className="hud2-cell"><span className="k">Clock</span><span className="v">{fmtClock(secs)}</span></div>
       </div>
 
       {practice && (
         <div className="banner warn">
-          <span><b>Practice replay.</b> This run doesn&apos;t count toward the leaderboard.</span>
-          <button className="btn ghost small" onClick={exitPractice}>Back to my result</button>
-        </div>
-      )}
-      {!practice && alreadyPlayed.current && att?.finished && (
-        <div className="banner">
-          <span>
-            You played today&apos;s case: <b>{att.solved ? `${att.score} points` : 'unsolved'}</b>
-            {final?.rank ? <> · <b>#{final.rank}</b> of {final.total.toLocaleString('en-IN')}</> : null}. Next case in <b>{fmtCountdown(msToNextRelease(serverNow))}</b>.
-          </span>
-          <a className="btn ghost small" href="#verdict">See result</a>
+          <span><b>Practice run.</b> Doesn&apos;t count.</span>
+          <button className="btn ghost small" onClick={() => { setPractice(null); window.scrollTo({ top: 0 }); }}>Exit</button>
         </div>
       )}
 
-      <section className="brief">
-        <div className="tag">{pc.brief.tag ?? `Case file · ${pc.company}`}</div>
+      {ranked && challenge && (
+        <div className="challenge-banner">
+          ⚔️ <b>@{challenge.username}</b>{' '}
+          {challenge.finished ? (challenge.solved ? <>scored <b>{challenge.score}</b> on today&apos;s case. Can you beat that?</> : <>couldn&apos;t crack today&apos;s case. Can you?</>) : <>challenged you to today&apos;s case.</>}
+        </div>
+      )}
+
+      {ranked && finished && att && (
+        <button className="result-strip" onClick={() => setShowResult(true)}>
+          <span className={'dot ' + (att.solved ? 'good' : 'bad')} />
+          <span><b>{att.solved ? `${att.score} pts` : 'Unsolved'}</b>{final?.rank ? ` · #${final.rank} of ${final.total}` : ''}{stats ? ` · 🔥 ${stats.streak}` : ''}</span>
+          <span className="go">Results →</span>
+        </button>
+      )}
+
+      {/* ---- brief */}
+      <section className="case">
+        <div className="case-meta">
+          <span>Case #{pc.caseNumber} · {dateTxt}</span>
+          <span className="pill">{LEVEL[pc.difficulty] ?? pc.difficulty}</span>
+          {ranked && stats && stats.streak > 0 && <span className="pill flame-pill">🔥 {stats.streak}</span>}
+          <button className="icon-btn" onClick={() => setHowTo(true)} aria-label="How to play">?</button>
+        </div>
+        <div className="company">{pc.company}</div>
         <h1>{pc.brief.headline}</h1>
-        <p>{pc.brief.story}</p>
+        <p className={'story' + (storyOpen ? ' open' : '')}>{pc.brief.story}</p>
+        {!storyOpen && <button className="linkbtn" onClick={() => setStoryOpen(true)}>Read the full brief</button>}
         <div className="facts">
           {pc.brief.facts.map((f, i) => (
-            <span key={i} className={'fact' + (f.tone === 'down' ? ' down' : '')}>
-              {f.label} <b>{f.value}</b>
-            </span>
+            <span key={i} className={'fact' + (f.tone === 'down' ? ' down' : '')}><span>{f.label}</span><b>{f.value}</b></span>
           ))}
         </div>
-        {pc.brief.units_note && <p className="foot">{pc.brief.units_note}</p>}
-        <div className="rules">
-          <b>How it works.</b> You start with 1,000 points. Opening an evidence file costs <b>{CARD_COST}</b>. A wrong accusation costs <b>{WRONG_COST}</b>, and you get {MAX_WRONG}. The clock starts when you open your first file and costs 1 point every 3 seconds (up to {TIME_CAP}). It stops the moment you name the root cause. This case can be cracked with <b>{pc.par} files</b>. Read the brief as long as you like first.
-        </div>
+        {pc.skills.length > 0 && <div className="skill-line">🧠 Builds your <b>{pc.skills.join(' & ')}</b> instinct</div>}
       </section>
 
-      <section className="section">
-        <h2>Evidence <span>Each file costs {CARD_COST} points to open</span></h2>
-        <div className="evidence">
+      {/* ---- evidence */}
+      <section className="files">
+        <div className="files-head">
+          <h2>Evidence</h2>
+          <span className="foot">Par {pc.par} files · −{CARD_COST} each</span>
+        </div>
+        <ul className="file-list">
           {pc.files.map((f, i) => {
-            const body = view?.bodies[i];
+            const isOpen = !!view?.bodies[i];
             const isBusy = busy === 'open' + i;
             return (
-              <div key={i} className={'card' + (body ? ' open' : '')}>
-                <div className="card-top">
-                  <span className="num">{String(i + 1).padStart(2, '0')}</span>
-                  <div className="card-title"><b>{f.title}</b><i>{f.teaser}</i></div>
-                  {!body && (
-                    <button className={'openbtn' + (isBusy ? ' busy' : '')} disabled={finished || !!busy} onClick={() => openFile(i)}>
-                      {isBusy ? 'Opening…' : `Open · −${CARD_COST}`}
-                    </button>
-                  )}
-                </div>
-                {body && <div className="card-body"><Blocks blocks={body} /></div>}
-              </div>
+              <li key={i}>
+                <button className={'file-row' + (isOpen ? ' opened' : '')} disabled={(!isOpen && finished) || isBusy} onClick={() => openFile(i)}>
+                  <span className="file-ico" aria-hidden="true">{isOpen ? '✓' : String(i + 1).padStart(2, '0')}</span>
+                  <span className="file-text"><b>{f.title}</b><i>{f.teaser}</i></span>
+                  <span className="file-cta">{isBusy ? '…' : isOpen ? 'View' : finished ? '' : `−${CARD_COST}`}</span>
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ul>
+        {lastWrong === null && wrong.length > 0 && !finished && (
+          <p className="foot center">Ruled out: {wrong.length}. {livesLeft} guess{livesLeft === 1 ? '' : 'es'} left.</p>
+        )}
       </section>
 
-      <section className="accuse">
-        <h2>{finished ? 'The accusation' : 'Make your accusation'} <span>{finished ? 'Green is the root cause' : `Wrong answer costs ${WRONG_COST}`}</span></h2>
-        <div className="causes">
+      {/* ---- sticky action */}
+      <div className="cta-bar">
+        {finished ? (
+          <button className="btn primary block" onClick={() => setShowResult(true)}>🏆 Results & leaderboard</button>
+        ) : (
+          <button className="btn primary block" onClick={startAccuse} disabled={!!busy}>🎯 Name the root cause</button>
+        )}
+      </div>
+
+      {/* ---- file viewer */}
+      <Sheet
+        open={viewing !== null && !!viewingBody}
+        onClose={() => setViewing(null)}
+        kicker={viewing !== null ? `File ${String(viewing + 1).padStart(2, '0')}` : ''}
+        title={viewing !== null ? pc.files[viewing].title : ''}
+        size="lg"
+        footer={!finished && (
+          <div className="sheet-actions">
+            <button className="btn ghost" onClick={() => setViewing(null)}>Back to files</button>
+            <button className="btn primary" onClick={() => { setViewing(null); startAccuse(); }}>I know why →</button>
+          </div>
+        )}
+      >
+        {pc.brief.units_note && <p className="foot">{pc.brief.units_note}</p>}
+        {viewingBody && <Blocks blocks={viewingBody} />}
+      </Sheet>
+
+      {/* ---- accuse */}
+      <Sheet
+        open={accusing}
+        onClose={() => setAccusing(false)}
+        kicker={`${livesLeft} guess${livesLeft === 1 ? '' : 'es'} left · wrong costs ${WRONG_COST}`}
+        title="What's the root cause?"
+        size="lg"
+        footer={
+          <button className="btn primary block" disabled={picked === null || busy === 'accuse'} onClick={accuse}>
+            {busy === 'accuse' ? 'Checking…' : picked === null ? 'Pick one' : 'Accuse'}
+          </button>
+        }
+      >
+        {lastWrong !== null && (
+          <div className="fb" key={wrong.length}><b>Not it.</b> {lastWrong}</div>
+        )}
+        <div className="cause-list" role="radiogroup">
           {pc.causes.map((label, i) => {
             const ruled = wrong.some((w) => w.index === i);
-            const isAnswer = finished && reveal?.answerIndex === i;
-            const disabled = ruled || finished;
             return (
-              <label key={i} className={[isAnswer ? 'answer' : ruled ? 'ruled' : '', disabled ? 'disabled' : ''].join(' ')}>
-                <input type="radio" name="cause" value={i} disabled={disabled} checked={selected === i} onChange={() => setSelected(i)} />
-                <span className="box" />
-                <span>{label}</span>
-              </label>
+              <button
+                key={i}
+                role="radio"
+                aria-checked={picked === i}
+                disabled={ruled}
+                className={'cause' + (picked === i ? ' on' : '') + (ruled ? ' ruled' : '')}
+                onClick={() => setPicked(i)}
+              >
+                <span className="box" />{label}
+              </button>
             );
           })}
         </div>
-        {!finished && (
-          <div className="accuse-row">
-            <button className="btn primary" disabled={selected === null || !!busy} onClick={accuse}>{busy === 'accuse' ? 'Checking…' : 'Accuse'}</button>
-            <span className="foot">Pick the single biggest reason for the problem.</span>
-          </div>
-        )}
-        {wrong.length > 0 && (
-          <div className="feedback">
-            {wrong.map((w) => (
-              <div key={w.index} className="fb"><b>Not it.</b> {w.feedback}</div>
-            ))}
-          </div>
-        )}
-      </section>
+        {opened.length === 0 && <p className="foot center">Tip: opening one or two files first usually beats guessing.</p>}
+      </Sheet>
 
-      {finished && view && reveal && (
-        <section id="verdict" ref={verdictRef}>
-          <Verdict
+      {/* ---- result */}
+      <Sheet open={showResult && finished && !!view && !!reveal} onClose={() => setShowResult(false)} size="full" className="result-sheet">
+        {view && reveal && (
+          <Result
             view={view}
             ranked={ranked}
             par={pc.par}
+            caseNumber={pc.caseNumber}
+            skills={pc.skills}
             final={ranked ? final : null}
-            reveal={reveal}
+            stats={ranked ? stats : null}
+            challenge={challenge}
             bonusPick={pickedBonus}
             bonusBusy={busy === 'bonus'}
             onBonus={answerBonus}
-            onCopy={copyShare}
-            onShare={nativeShare}
+            onShare={share}
             copied={copied}
             onPractice={startPractice}
-            nextIn={fmtCountdown(msToNextRelease(serverNow))}
+            nextIn={nextIn}
           />
-        </section>
-      )}
+        )}
+      </Sheet>
 
-      {sheet && <SignIn startAt={sheet} onDone={onSignedIn} onClose={() => { setSheet(null); pending.current = null; }} />}
+      <HowToPlay open={howTo} onClose={closeHowTo} />
+      {signIn && <SignIn startAt={signIn} onDone={onSignedIn} onClose={() => { setSignIn(null); pending.current = null; }} />}
       {toast && <div className="toast" role="status">{toast}</div>}
     </main>
-  );
-}
-
-function Verdict(p: {
-  view: PlayerView;
-  ranked: boolean;
-  par: number;
-  final: ResultPayload | null;
-  reveal: NonNullable<PlayerView['reveal']>;
-  bonusPick: number | null;
-  bonusBusy: boolean;
-  onBonus: (i: number) => void;
-  onCopy: (s: string) => void;
-  onShare: (s: string) => void;
-  copied: string;
-  onPractice: () => void;
-  nextIn: string;
-}) {
-  const { view, reveal, final } = p;
-  const n = view.opened.length;
-  const w = view.wrong.length;
-  const secs = view.elapsedSeconds ?? 0;
-  const solved = !!view.solved;
-  const score = view.score ?? 0;
-  const canShare = typeof navigator !== 'undefined' && 'share' in navigator;
-  const ex = reveal.explanation;
-  const traps = Array.isArray(ex.traps) ? ex.traps : [ex.traps];
-  const bonusLabel = !solved ? '—' : view.bonusCorrect === null ? 'not answered' : view.bonusCorrect ? '⭐ correct' : 'missed';
-
-  return (
-    <div className="verdict">
-      <div className={'stampmark' + (solved ? ' solved' : '')}>{solved ? 'Case closed' : 'Case cold'}</div>
-      <div>
-        <div className="tag">{p.ranked ? "Today's ranked case" : 'Practice replay'}</div>
-        <div className="pts">{score}<small>POINTS</small></div>
-        {p.ranked && final?.rank && (
-          <div className="rankline"><b>#{final.rank}</b> of {final.total.toLocaleString('en-IN')} today</div>
-        )}
-      </div>
-      <div className="breakdown">
-        <div><span>Files opened</span>{n} × {CARD_COST} = −{n * CARD_COST}</div>
-        <div><span>Wrong accusations</span>{w} × {WRONG_COST} = −{w * WRONG_COST}</div>
-        <div><span>Time</span>{fmtClock(secs)} = −{timePenalty(secs)}</div>
-        <div><span>Vs par</span>{n} files, {parText(n, p.par)}</div>
-        <div><span>Bonus (for fun)</span>{bonusLabel}</div>
-      </div>
-
-      {solved && <Bonus view={view} reveal={reveal} pick={p.bonusPick} busy={p.bonusBusy} onPick={p.onBonus} />}
-
-      <div className="explain">
-        <p><b>The answer:</b> <Rich text={ex.answer} /></p>
-        {ex.why?.map((t, i) => <p key={i}><Rich text={t} /></p>)}
-        {ex.cash_bridge && <p><b>The cash bridge:</b> <Rich text={ex.cash_bridge} /></p>}
-        <p><b>The fastest path (par {p.par}):</b></p>
-        <ol>{ex.fastest_path.map((t, i) => <li key={i}><Rich text={t} /></li>)}</ol>
-        <p><b>The traps:</b></p>
-        <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 4 }}>
-          {traps.map((t, i) => <li key={i}><Rich text={t} /></li>)}
-        </ul>
-        {ex.fix && <p><b>The fix:</b> <Rich text={ex.fix} /></p>}
-        {ex.lesson && <p className="lesson"><b>The lesson:</b> <Rich text={ex.lesson} /></p>}
-      </div>
-
-      {p.ranked && final && (
-        <>
-          <pre className="share">{final.share}</pre>
-          <div className="accuse-row">
-            <button className="btn primary" onClick={() => p.onCopy(final.share)}>Copy result</button>
-            {canShare && <button className="btn ink" onClick={() => p.onShare(final.share)}>Share</button>}
-            {reveal.bonus ? (
-              <button className="btn ghost" onClick={p.onPractice}>Replay for practice</button>
-            ) : (
-              <span className="foot">Answer the bonus to unlock practice replay.</span>
-            )}
-            <span className="copied">{p.copied}</span>
-          </div>
-          <LeaderPreview final={final} />
-          <p className="foot">Next case in {p.nextIn} (9am IST).</p>
-        </>
-      )}
-      {!p.ranked && (
-        <div className="accuse-row">
-          <button className="btn ghost" onClick={p.onPractice}>Replay again</button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Bonus({ view, reveal, pick, busy, onPick }: { view: PlayerView; reveal: NonNullable<PlayerView['reveal']>; pick: number | null; busy: boolean; onPick: (i: number) => void }) {
-  const q = view.bonusQuestion;
-  if (q) {
-    return (
-      <div className="bonus">
-        <div className="tag">Bonus question · just for fun · doesn&apos;t change your score</div>
-        <h3>{q.question}</h3>
-        <div className="options">
-          {q.options.map((o, i) => (
-            <button key={i} disabled={busy} onClick={() => onPick(i)} className={pick === i ? 'picked' : ''}>
-              <b>{String.fromCharCode(65 + i)}</b>
-              <span>{o}</span>
-            </button>
-          ))}
-        </div>
-        <span className="foot">{busy ? 'Locking it in…' : 'One try.'}</span>
-      </div>
-    );
-  }
-  const b = reveal.bonus;
-  if (!b) return null;
-  return (
-    <div className="explain">
-      <p>
-        <b>Bonus: {b.question}</b> {view.bonusCorrect ? '⭐ You got it.' : view.bonusCorrect === false ? 'Not quite.' : ''}
-      </p>
-      <div className="options">
-        {b.options.map((o, i) => (
-          <button key={i} disabled className={i === b.answer_index ? 'right' : pick === i ? 'wrongpick' : ''}>
-            <b>{String.fromCharCode(65 + i)}</b><span>{o}</span>
-          </button>
-        ))}
-      </div>
-      <p>{b.explanation}</p>
-    </div>
-  );
-}
-
-function LeaderPreview({ final }: { final: ResultPayload }) {
-  const isMe = (r: { rank: number; username: string }) => !!final.me && r.rank === final.me.rank && r.username === final.me.username;
-  const meInTop = final.preview.some(isMe);
-  return (
-    <div className="explain" style={{ maxWidth: 'none' }}>
-      <h2>Today&apos;s leaderboard <span><Link href="/leaderboard">See all →</Link></span></h2>
-      <div className="tbl">
-        <table>
-          <tbody>
-            {final.preview.map((r, i) => (
-              <tr key={i} style={isMe(r) ? { background: 'var(--hl)' } : undefined}>
-                <td>#{r.rank} {r.username}{isMe(r) ? ' (you)' : ''}</td>
-                <td>{r.score} pts</td>
-                <td>{fmtClock(r.elapsed_seconds)}</td>
-              </tr>
-            ))}
-            {final.me && !meInTop && (
-              <tr style={{ background: 'var(--hl)' }}>
-                <td>#{final.me.rank} {final.me.username} (you)</td>
-                <td>{final.me.score} pts</td>
-                <td>{fmtClock(final.me.elapsed_seconds)}</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
   );
 }

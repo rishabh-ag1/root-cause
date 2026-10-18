@@ -2,8 +2,9 @@ import 'server-only';
 import { adminClient } from './supabase/server';
 import { caseDay } from './dates';
 import { emptyAttempt, type Attempt, type StoredCase } from './game';
+import { computePlayerStats, type StatsCase } from './playerStats';
 
-const CASE_COLS = 'id, case_number, publish_date, difficulty, title, company, brief, evidence, causes, answer_index, bonus, explanation, par, status';
+const CASE_COLS = 'id, case_number, publish_date, difficulty, title, company, brief, evidence, causes, answer_index, bonus, explanation, par, status, skills';
 const ATTEMPT_COLS = 'id, rev, started_at, opened, wrong, solved, solved_at, bonus_correct, finished_at, score, elapsed_seconds, flagged';
 
 type AttemptRow = Attempt & { id: string; rev: number };
@@ -121,8 +122,8 @@ export async function caseLeaderboard(caseId: number, userId: string | null) {
   if (mine.error) throw mine.error;
   const me = (mine.data as BoardRow | null) ?? null;
   let around: BoardRow[] = [];
-  if (me && me.rank > 100) {
-    // Ranks can tie, so take a window of the ordered list around the player's position.
+  if (me) {
+    // The players just above and below you. Ranks can tie, so take a window of the ordered list.
     const { data, error } = await sb
       .rpc('leaderboard_case', { p_case_id: caseId })
       .select(BOARD_COLS)
@@ -146,4 +147,27 @@ export async function weekLeaderboard(userId: string | null) {
   if (top.error) throw top.error;
   if (mine.error) throw mine.error;
   return { top: (top.data as WeekRow[]) ?? [], me: (mine.data as WeekRow | null) ?? null };
+}
+
+/** Streak, title, lifetime points and skills for one player. */
+export async function getPlayerStats(userId: string, todayCaseId: number | null) {
+  const sb = adminClient();
+  const [cases, attempts] = await Promise.all([
+    sb.from('cases').select('id, publish_date, skills').neq('status', 'draft').lte('publish_date', caseDay()),
+    sb.from('attempts').select('case_id, finished_at, solved, score').eq('user_id', userId),
+  ]);
+  if (cases.error) throw cases.error;
+  if (attempts.error) throw attempts.error;
+  return computePlayerStats((cases.data ?? []) as StatsCase[], (attempts.data ?? []) as Parameters<typeof computePlayerStats>[1], todayCaseId);
+}
+
+/** A friend's public result on a case (the same facts the leaderboard shows), for "can you beat them?" links. */
+export async function getChallenge(username: string, caseId: number) {
+  const sb = adminClient();
+  const { data: p } = await sb.from('profiles').select('id, username').eq('username', username).maybeSingle();
+  if (!p) return null;
+  const prof = p as { id: string; username: string };
+  const { data } = await sb.rpc('leaderboard_case', { p_case_id: caseId }).select(BOARD_COLS).eq('user_id', prof.id).maybeSingle();
+  const row = data as BoardRow | null;
+  return { username: prof.username, finished: !!row, score: row?.score ?? null, solved: row?.solved ?? null, rank: row?.rank ?? null, files: row?.files ?? null, seconds: row?.elapsed_seconds ?? null };
 }

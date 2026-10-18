@@ -6,13 +6,15 @@ import { track } from '@/lib/track';
 type Step = 'email' | 'code' | 'username';
 
 /**
- * Email → 6-digit code → username (first time only).
+ * Email → 4-digit code → username (first time only).
+ * Falls back to Supabase's 6-digit code if our own mailer isn't configured.
  * `startAt="username"` is used when someone is signed in but never picked a name.
  */
 export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt?: Step; onDone: (username: string) => void; onClose: () => void }) {
   const [step, setStep] = useState<Step>(startAt);
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
+  const [digits, setDigits] = useState(4);
   const [username, setUsername] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
@@ -41,24 +43,47 @@ export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) return setErr('Enter a valid email address.');
     setBusy(true);
     setErr('');
-    const { error } = await browserClient().auth.signInWithOtp({ email: email.trim(), options: { shouldCreateUser: true } });
-    setBusy(false);
-    if (error) return setErr(error.message);
+    const res = await fetch('/api/auth/code', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: email.trim() }) });
+    const body = await res.json().catch(() => ({}));
+    if (res.status === 501) {
+      // Our mailer isn't set up yet: use Supabase's own email code.
+      const { error } = await browserClient().auth.signInWithOtp({ email: email.trim(), options: { shouldCreateUser: true } });
+      setBusy(false);
+      if (error) return setErr(error.message);
+      setDigits(6);
+    } else {
+      setBusy(false);
+      if (!res.ok) return setErr(body.error?.message ?? 'Could not send a code. Try again.');
+      setDigits(4);
+    }
+    setCode('');
     track('signin_code_sent');
     setStep('code');
-    setResendIn(45);
+    setResendIn(30);
   }
 
-  async function verify(e?: React.FormEvent) {
+  async function verify(e?: React.FormEvent, value = code) {
     e?.preventDefault();
-    const token = code.replace(/\D/g, '');
-    if (token.length < 6) return setErr('Enter the code from your email.');
+    const token = value.replace(/\D/g, '');
+    if (token.length < digits) return setErr('Enter the code from your email.');
     setBusy(true);
     setErr('');
-    const { error } = await browserClient().auth.verifyOtp({ email: email.trim(), token, type: 'email' });
-    if (error) {
-      setBusy(false);
-      return setErr(error.message.includes('expired') || error.message.includes('invalid') ? 'That code is wrong or has expired.' : error.message);
+    if (digits === 4) {
+      const res = await fetch('/api/auth/verify', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: email.trim(), code: token }) });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setBusy(false);
+        setCode('');
+        return setErr(body.error?.message ?? 'That code is wrong or has expired.');
+      }
+      // The server set the session cookie; let the browser client pick it up.
+      await browserClient().auth.getSession();
+    } else {
+      const { error } = await browserClient().auth.verifyOtp({ email: email.trim(), token, type: 'email' });
+      if (error) {
+        setBusy(false);
+        return setErr(error.message.includes('expired') || error.message.includes('invalid') ? 'That code is wrong or has expired.' : error.message);
+      }
     }
     track('signin_verified');
     const res = await fetch('/api/profile', { cache: 'no-store' }).then((r) => r.json());
@@ -91,18 +116,16 @@ export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt
 
         {step === 'email' && (
           <form onSubmit={sendCode} style={{ display: 'contents' }}>
-            <div className="tag">Ranked play</div>
-            <h3 id="signin-title">Sign in to open the evidence</h3>
-            <p>Everyone gets the same case today. Sign in so your score lands on the leaderboard. No password: we email you a 6-digit code.</p>
+            <div className="tag">Join today&apos;s leaderboard</div>
+            <h3 id="signin-title">Sign in to start the clock</h3>
+            <p>No password. We&apos;ll email you a short code.</p>
             <div className="field">
               <label htmlFor="email">Email</label>
               <input ref={input} id="email" type="email" inputMode="email" autoComplete="email" placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="err" role="alert">{err}</div>
-            <button className="btn primary" disabled={busy}>{busy ? 'Sending…' : 'Email me a code'}</button>
-            <p className="privacy">
-              We store your email, a username and your game results, to run the leaderboard and send your daily result. Your email is never shown publicly. You can delete your account any time from Account.
-            </p>
+            <button className="btn primary block" disabled={busy}>{busy ? 'Sending…' : 'Email me a code'}</button>
+            <p className="privacy">We store your email, username and results to run the leaderboard and tell you when a new case is live. Your email is never shown. Delete your account any time.</p>
           </form>
         )}
 
@@ -110,7 +133,7 @@ export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt
           <form onSubmit={verify} style={{ display: 'contents' }}>
             <div className="tag">Check your inbox</div>
             <h3 id="signin-title">Enter the code</h3>
-            <p>We sent a code to <b>{email}</b>.</p>
+            <p>We sent a {digits}-digit code to <b>{email}</b>. Check spam if it&apos;s not there.</p>
             <div className="field">
               <label htmlFor="code">Code</label>
               <input
@@ -119,18 +142,19 @@ export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt
                 className="code"
                 inputMode="numeric"
                 autoComplete="one-time-code"
-                maxLength={10}
-                placeholder="••••••"
+                maxLength={digits}
+                placeholder={'•'.repeat(digits)}
                 value={code}
                 onChange={(e) => {
-                  const v = e.target.value.replace(/\D/g, '');
+                  const v = e.target.value.replace(/\D/g, '').slice(0, digits);
                   setCode(v);
+                  if (v.length === digits && !busy) verify(undefined, v);
                 }}
               />
             </div>
             <div className="err" role="alert">{err}</div>
-            <button className="btn primary" disabled={busy}>{busy ? 'Checking…' : 'Verify'}</button>
-            <div className="accuse-row">
+            <button className="btn primary block" disabled={busy}>{busy ? 'Checking…' : 'Verify'}</button>
+            <div className="accuse-row" style={{ justifyContent: 'space-between' }}>
               <button type="button" className="linkbtn" onClick={() => setStep('email')}>Use a different email</button>
               <button type="button" className="linkbtn" disabled={resendIn > 0 || busy} onClick={() => sendCode()}>
                 {resendIn > 0 ? `Resend in ${resendIn}s` : 'Resend code'}
@@ -143,13 +167,13 @@ export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt
           <form onSubmit={saveUsername} style={{ display: 'contents' }}>
             <div className="tag">One last thing</div>
             <h3 id="signin-title">Pick your detective name</h3>
-            <p>This is what shows on the leaderboard. 3-20 letters, numbers or underscores.</p>
+            <p>It&apos;s what your friends will see on the leaderboard.</p>
             <div className="field">
               <label htmlFor="username">Username</label>
               <input ref={input} id="username" autoComplete="nickname" autoCapitalize="none" spellCheck={false} maxLength={20} placeholder="sherlock_mba" value={username} onChange={(e) => setUsername(e.target.value.replace(/[^A-Za-z0-9_]/g, ''))} />
             </div>
             <div className="err" role="alert">{err}</div>
-            <button className="btn primary" disabled={busy || username.length < 3}>{busy ? 'Saving…' : 'Start the case'}</button>
+            <button className="btn primary block" disabled={busy || username.length < 3}>{busy ? 'Saving…' : 'Start the case'}</button>
           </form>
         )}
       </div>

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Nav from '@/components/Nav';
 import Analytics from '@/components/Analytics';
 import './globals.css';
+import './game.css';
 
 const site = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 

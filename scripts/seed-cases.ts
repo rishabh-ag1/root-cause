@@ -41,6 +41,7 @@ for (const { file, slug, result } of loaded) {
     bonus: c.bonus,
     explanation: c.explanation,
     par: c.par,
+    skills: c.skills ?? [],
   };
   const { error } = have.has(slug)
     ? await sb.from('cases').update(content).eq('slug', slug)

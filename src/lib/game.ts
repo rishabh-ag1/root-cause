@@ -148,7 +148,7 @@ export function shareText(p: {
     grid,
     parts.join(' · '),
     `${p.opened.length} files (${parText(p.opened.length, p.par)}) · ${fmtClock(p.seconds)}`,
-    p.site,
+    `${p.solved ? 'Can you beat me?' : 'Can you crack it?'} ${p.site}`,
   ].join('\n');
 }
 
@@ -162,6 +162,7 @@ export type PublicCase = {
   company: string;
   brief: CaseFile['brief'];
   par: number;
+  skills: string[];
   files: { title: string; teaser: string }[];
   causes: string[];
 };
@@ -176,6 +177,7 @@ export function publicCase(c: StoredCase): PublicCase {
     company: c.company,
     brief: c.brief,
     par: c.par,
+    skills: c.skills ?? [],
     files: c.evidence.map((e) => ({ title: e.title, teaser: e.teaser })),
     causes: c.causes.map((x) => x.label),
   };

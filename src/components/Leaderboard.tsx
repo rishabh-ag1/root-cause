@@ -82,8 +82,20 @@ function CaseTable({ d }: { d: CaseBoard }) {
       <td className="hide-sm">{r.bonus_correct ? '★' : ''}</td>
     </tr>
   );
+  const podium = d.top.length >= 3 ? [d.top[1], d.top[0], d.top[2]] : null;
   return (
     <div className="tbl">
+      {podium && (
+        <div className="podium">
+          {podium.map((r, i) => (
+            <div key={r.username} className={['p2', 'p1', 'p3'][i]}>
+              <span className="medal-big">{['🥈', '🥇', '🥉'][i]}</span>
+              <b>{r.username}{isMe(r) ? ' (you)' : ''}</b>
+              <span>{r.solved ? r.score : '—'} · {fmtClock(r.elapsed_seconds)}</span>
+            </div>
+          ))}
+        </div>
+      )}
       <table>
         <thead>
           <tr><th>Rank</th><th style={{ textAlign: 'left' }}>Detective</th><th>Score</th><th className="hide-sm">Files / misses</th><th>Time</th><th className="hide-sm">Bonus</th></tr>
