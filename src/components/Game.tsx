@@ -288,61 +288,59 @@ export default function Game({ initial }: { initial: TodayPayload }) {
 
   return (
     <main className="wrap game">
-      {/* ---- HUD */}
-      <div className="hud2" role="status" aria-label="Score">
-        <div className="hud2-cell"><span className="k">Points</span><span key={hitKey} className={'v big' + (hitKey ? ' hit' : '')}>{points}</span></div>
-        <div className="hud2-cell"><span className="k">Files</span><span className="v">{opened.length}<small>/{pc.files.length}</small></span></div>
-        <div className="hud2-cell"><span className="k">Guesses</span><span className="v lives" aria-label={`${livesLeft} guesses left`}>{'●'.repeat(livesLeft)}<i>{'●'.repeat(wrong.length)}</i></span></div>
-        <div className="hud2-cell"><span className="k">Clock</span><span className="v">{fmtClock(secs)}</span></div>
+      {/* ---- score bar */}
+      <div className="bar" role="status" aria-label="Score">
+        <span key={hitKey} className={'bar-pts' + (hitKey ? ' hit' : '')}>{points}<small>pts</small></span>
+        <span className="bar-meta">
+          <span>{opened.length}/{pc.files.length} files</span>
+          <span aria-label={`${livesLeft} guesses left`}>{livesLeft} guess{livesLeft === 1 ? '' : 'es'}</span>
+          <span className="mono">{fmtClock(secs)}</span>
+        </span>
       </div>
 
       {practice && (
-        <div className="banner warn">
-          <span><b>Practice run.</b> Doesn&apos;t count.</span>
-          <button className="btn ghost small" onClick={() => { setPractice(null); window.scrollTo({ top: 0 }); }}>Exit</button>
+        <div className="note">
+          <span>Practice run. It doesn&apos;t count.</span>
+          <button className="textbtn" onClick={() => { setPractice(null); window.scrollTo({ top: 0 }); }}>Exit</button>
         </div>
       )}
 
       {ranked && challenge && (
-        <div className="challenge-banner">
-          ⚔️ <b>@{challenge.username}</b>{' '}
-          {challenge.finished ? (challenge.solved ? <>scored <b>{challenge.score}</b> on today&apos;s case. Can you beat that?</> : <>couldn&apos;t crack today&apos;s case. Can you?</>) : <>challenged you to today&apos;s case.</>}
+        <div className="note accent">
+          <span>
+            <b>@{challenge.username}</b>{' '}
+            {challenge.finished ? (challenge.solved ? <>scored {challenge.score} today. Can you beat that?</> : <>couldn&apos;t crack today&apos;s case. Can you?</>) : <>challenged you to today&apos;s case.</>}
+          </span>
         </div>
       )}
 
       {ranked && finished && att && (
-        <button className="result-strip" onClick={() => setShowResult(true)}>
-          <span className={'dot ' + (att.solved ? 'good' : 'bad')} />
-          <span><b>{att.solved ? `${att.score} pts` : 'Unsolved'}</b>{final?.rank ? ` · #${final.rank} of ${final.total}` : ''}{stats ? ` · 🔥 ${stats.streak}` : ''}</span>
-          <span className="go">Results →</span>
+        <button className="note link" onClick={() => setShowResult(true)}>
+          <span><b>{att.solved ? `${att.score} points` : 'Unsolved'}</b>{final?.rank ? ` · #${final.rank} of ${final.total}` : ''}{stats && stats.streak > 0 ? ` · ${stats.streak}-day streak` : ''}</span>
+          <span className="textbtn">Results</span>
         </button>
       )}
 
       {/* ---- brief */}
-      <section className="case">
-        <div className="case-meta">
-          <span>Case #{pc.caseNumber} · {dateTxt}</span>
-          <span className="pill">{LEVEL[pc.difficulty] ?? pc.difficulty}</span>
-          {ranked && stats && stats.streak > 0 && <span className="pill flame-pill">🔥 {stats.streak}</span>}
-          <button className="icon-btn" onClick={() => setHowTo(true)} aria-label="How to play">?</button>
-        </div>
-        <div className="company">{pc.company}</div>
+      <article className="case">
+        <p className="case-meta">Case {pc.caseNumber} · {dateTxt} · {LEVEL[pc.difficulty] ?? pc.difficulty}</p>
+        <p className="company">{pc.company}</p>
         <h1>{pc.brief.headline}</h1>
         <p className={'story' + (storyOpen ? ' open' : '')}>{pc.brief.story}</p>
-        {!storyOpen && <button className="linkbtn" onClick={() => setStoryOpen(true)}>Read the full brief</button>}
-        <div className="facts">
+        {!storyOpen && <button className="textbtn" onClick={() => setStoryOpen(true)}>Read more</button>}
+        <dl className="facts">
           {pc.brief.facts.map((f, i) => (
-            <span key={i} className={'fact' + (f.tone === 'down' ? ' down' : '')}><span>{f.label}</span><b>{f.value}</b></span>
+            <div key={i} className={f.tone === 'down' ? 'down' : ''}><dt>{f.label}</dt><dd>{f.value}</dd></div>
           ))}
-        </div>
-        {pc.skills.length > 0 && <div className="skill-line">🧠 Builds your <b>{pc.skills.join(' & ')}</b> instinct</div>}
-      </section>
+        </dl>
+        <button className="textbtn muted" onClick={() => setHowTo(true)}>How to play</button>
+      </article>
 
       {/* ---- evidence */}
       <section className="files">
         <div className="files-head">
           <h2>Evidence</h2>
-          <span className="foot">Par {pc.par} files · −{CARD_COST} each</span>
+          <span className="muted small">{CARD_COST} points per file · par {pc.par}</span>
         </div>
         <ul className="file-list">
           {pc.files.map((f, i) => {
@@ -351,25 +349,22 @@ export default function Game({ initial }: { initial: TodayPayload }) {
             return (
               <li key={i}>
                 <button className={'file-row' + (isOpen ? ' opened' : '')} disabled={(!isOpen && finished) || isBusy} onClick={() => openFile(i)}>
-                  <span className="file-ico" aria-hidden="true">{isOpen ? '✓' : String(i + 1).padStart(2, '0')}</span>
-                  <span className="file-text"><b>{f.title}</b><i>{f.teaser}</i></span>
-                  <span className="file-cta">{isBusy ? '…' : isOpen ? 'View' : finished ? '' : `−${CARD_COST}`}</span>
+                  <span className="file-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="file-text"><b>{f.title}</b><span>{f.teaser}</span></span>
+                  <span className="file-cta">{isBusy ? '…' : isOpen ? 'Opened' : finished ? '' : `−${CARD_COST}`}</span>
                 </button>
               </li>
             );
           })}
         </ul>
-        {lastWrong === null && wrong.length > 0 && !finished && (
-          <p className="foot center">Ruled out: {wrong.length}. {livesLeft} guess{livesLeft === 1 ? '' : 'es'} left.</p>
-        )}
       </section>
 
       {/* ---- sticky action */}
       <div className="cta-bar">
         {finished ? (
-          <button className="btn primary block" onClick={() => setShowResult(true)}>🏆 Results & leaderboard</button>
+          <button className="btn primary block" onClick={() => setShowResult(true)}>See results</button>
         ) : (
-          <button className="btn primary block" onClick={startAccuse} disabled={!!busy}>🎯 Name the root cause</button>
+          <button className="btn primary block" onClick={startAccuse} disabled={!!busy}>Name the root cause</button>
         )}
       </div>
 
@@ -383,7 +378,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
         footer={!finished && (
           <div className="sheet-actions">
             <button className="btn ghost" onClick={() => setViewing(null)}>Back to files</button>
-            <button className="btn primary" onClick={() => { setViewing(null); startAccuse(); }}>I know why →</button>
+            <button className="btn primary" onClick={() => { setViewing(null); startAccuse(); }}>Name the cause</button>
           </div>
         )}
       >

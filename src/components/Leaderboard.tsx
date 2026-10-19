@@ -8,7 +8,7 @@ type CaseBoard = { range: 'case'; caseNumber: number; company: string; par: numb
 type WeekBoard = { range: 'week'; top: WeekRow[]; me: WeekRow | null };
 
 const REFRESH_MS = 15_000;
-const medal = (r: number) => (r === 1 ? '🥇' : r === 2 ? '🥈' : r === 3 ? '🥉' : `#${r}`);
+const medal = (r: number) => String(r);
 
 export default function Leaderboard() {
   const [range, setRange] = useState<'case' | 'week'>('case');
@@ -89,7 +89,7 @@ function CaseTable({ d }: { d: CaseBoard }) {
         <div className="podium">
           {podium.map((r, i) => (
             <div key={r.username} className={['p2', 'p1', 'p3'][i]}>
-              <span className="medal-big">{['🥈', '🥇', '🥉'][i]}</span>
+              <span className="medal-big">{['2nd', '1st', '3rd'][i]}</span>
               <b>{r.username}{isMe(r) ? ' (you)' : ''}</b>
               <span>{r.solved ? r.score : '—'} · {fmtClock(r.elapsed_seconds)}</span>
             </div>

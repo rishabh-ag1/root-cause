@@ -31,7 +31,7 @@ body {
   font-family: var(--body); font-size: 15px; line-height: 1.55; padding-inline: 16px; padding-block: 0 64px;
   -webkit-font-smoothing: antialiased; min-height: 100dvh;
   /* faint ledger paper grain */
-  background-image: radial-gradient(rgba(0, 0, 0, .025) 1px, transparent 1px); background-size: 4px 4px;
+
 }
 a { color: inherit; }
 .wrap { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
