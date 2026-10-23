@@ -72,7 +72,7 @@ async function main() {
   const today = await call('/api/case/today', { anon: true });
   const pc = today.data.case as { id: number; caseNumber: number; files: unknown[]; causes: string[] } | undefined;
   const home = await fetch(BASE + '/');
-  const homeHtml = await home.text();
+  const homeHtml = (await home.text()).replace(/<!-- -->/g, '');
   check('Home page loads', home.status === 200);
   check('Home page states the three rules in plain words', /each costs 75 points/.test(homeHtml) && /Wrong guesses cost 250/.test(homeHtml) && /leaderboard/.test(homeHtml));
   check('Home page has one Play button', />Play<|See your result/.test(homeHtml));
