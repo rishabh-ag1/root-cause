@@ -77,12 +77,16 @@ function CaseTable({ d }: { d: CaseBoard }) {
       <td className="rk"><span className="medal">{medal(r.rank)}</span></td>
       <td className="user">{r.username}{isMe(r) ? ' (you)' : ''}</td>
       <td>{r.solved ? r.score : '—'}</td>
-      <td className="hide-sm">{r.files} / {'❌'.repeat(r.wrong) || '0'}</td>
+      <td className="hide-sm">{r.files} / {r.wrong}</td>
       <td>{fmtClock(r.elapsed_seconds)}</td>
       <td className="hide-sm">{r.bonus_correct ? '★' : ''}</td>
     </tr>
   );
   const podium = d.top.length >= 3 ? [d.top[1], d.top[0], d.top[2]] : null;
+  // "You" below the top list only when you're not already in it (never list anyone twice).
+  const inTop = (r: BoardRow) => d.top.some((t) => t.rank === r.rank && t.username === r.username);
+  const extra = d.me && !inTop(d.me) ? d.around.filter((r) => !inTop(r)) : [];
+  const rows = podium ? d.top.slice(3) : d.top;
   return (
     <div className="tbl">
       {podium && (
@@ -96,20 +100,20 @@ function CaseTable({ d }: { d: CaseBoard }) {
           ))}
         </div>
       )}
-      <table>
+      {(rows.length > 0 || extra.length > 0) && <table>
         <thead>
           <tr><th>Rank</th><th style={{ textAlign: 'left' }}>Detective</th><th>Score</th><th className="hide-sm">Files / misses</th><th>Time</th><th className="hide-sm">Bonus</th></tr>
         </thead>
         <tbody>
-          {d.top.map(row)}
-          {d.around.length > 0 && (
+          {rows.map((r, i) => row(r, podium ? i + 3 : i))}
+          {extra.length > 0 && (
             <>
               <tr className="gap"><td colSpan={6}>⋯</td></tr>
-              {d.around.map((r, i) => row(r, 100 + i))}
+              {extra.map((r, i) => row(r, 100 + i))}
             </>
           )}
         </tbody>
-      </table>
+      </table>}
     </div>
   );
 }

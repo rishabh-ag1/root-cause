@@ -2,11 +2,14 @@ import 'server-only';
 import { caseLeaderboard } from './repo';
 import { shareText, type Attempt, type StoredCase } from './game';
 
-const siteHostname = () => (process.env.NEXT_PUBLIC_SITE_URL || 'https://playrootcause.vercel.app').replace(/^https?:\/\//, '').replace(/\/$/, '');
+const siteOrigin = () => {
+  const u = (process.env.NEXT_PUBLIC_SITE_URL || 'https://playrootcause.vercel.app').trim().replace(/\/$/, '');
+  return /^https?:\/\//.test(u) ? u : 'https://' + u;
+};
 
-/** The link at the end of the share text: opens today's case with "can you beat @username?". */
+/** The full, clickable link at the end of the share text, tagged as a referral. */
 export function challengeLink(username: string | null) {
-  return `${siteHostname()}/?${username ? `c=${encodeURIComponent(username)}&` : ''}utm_source=share`;
+  return `${siteOrigin()}/?${username ? `c=${encodeURIComponent(username)}&` : ''}utm_source=referral`;
 }
 
 /** Rank, percentile, neighbours, share text and leaderboard preview for a finished attempt. */
@@ -26,16 +29,12 @@ export async function resultPayload(c: StoredCase, a: Attempt, userId: string) {
     share: shareText({
       caseNumber: c.case_number,
       company: c.company,
-      fileCount: c.evidence.length,
-      opened: a.opened,
-      wrong: a.wrong.length,
       solved: !!a.solved,
-      bonusCorrect: !!a.bonus_correct,
       score: a.score ?? 0,
       rank,
+      total: board.total,
       seconds: a.elapsed_seconds ?? 0,
-      par: c.par,
-      site: challengeLink(me?.username ?? null),
+      link: challengeLink(me?.username ?? null),
     }),
     preview: board.top.slice(0, 10),
     me,

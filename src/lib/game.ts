@@ -124,31 +124,30 @@ export function parText(files: number, par: number) {
   return files < par ? `${par - files} under par` : `+${files - par} over par`;
 }
 
+/**
+ * The text people paste into WhatsApp. No grid and nothing that hints at the answer: the game,
+ * what it is, how this player did, and a full https link (WhatsApp only linkifies full URLs).
+ */
 export function shareText(p: {
   caseNumber: number;
   company: string;
-  fileCount: number;
-  opened: number[];
-  wrong: number;
   solved: boolean;
-  bonusCorrect: boolean;
   score: number;
   rank: number | null;
+  total: number;
   seconds: number;
-  par: number;
-  site: string;
+  link: string;
 }) {
-  const grid = Array.from({ length: p.fileCount }, (_, i) => (p.opened.includes(i) ? '🟩' : '⬛')).join('');
-  const tries = '❌'.repeat(p.wrong) + (p.solved ? '✅' : '');
-  const parts = [tries + (p.solved && p.bonusCorrect ? ' ⭐' : '')];
-  parts.push(p.solved ? `${p.score} pts` : 'case unsolved');
-  if (p.rank) parts.push(`#${p.rank} today`);
+  const result = p.solved
+    ? `I cracked today's case (#${p.caseNumber}, ${p.company}) in ${fmtClock(p.seconds)} and scored ${p.score} points${p.rank ? `, ranking #${p.rank} of ${p.total} on today's leaderboard` : ''}.`
+    : `Today's case (#${p.caseNumber}, ${p.company}) beat me${p.rank ? `. I'm #${p.rank} of ${p.total} on today's leaderboard` : ''}.`;
   return [
-    `Root Cause #${p.caseNumber} 🕵️ ${p.company}`,
-    grid,
-    parts.join(' · '),
-    `${p.opened.length} files (${parText(p.opened.length, p.par)}) · ${fmtClock(p.seconds)}`,
-    `${p.solved ? 'Can you beat me?' : 'Can you crack it?'} ${p.site}`,
+    'Root Cause: the daily business mystery. Read the case, open the clues, find out what went wrong.',
+    '',
+    result,
+    '',
+    `${p.solved ? 'Can you beat me?' : 'Can you crack it?'} Play now:`,
+    p.link,
   ].join('\n');
 }
 

@@ -11,7 +11,7 @@ import { identify, tag, track } from '@/lib/track';
 import { Blocks } from './Blocks';
 import SignIn from './SignIn';
 import Sheet from './ui/Sheet';
-import Link from 'next/link';
+import HowToPlay from './game/HowToPlay';
 import { useRouter } from 'next/navigation';
 import { INTRO_KEY } from './landing/StartButton';
 import Result, { type Challenge } from './game/Result';
@@ -53,7 +53,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
   const [lastWrong, setLastWrong] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const router = useRouter();
-  const [storyOpen, setStoryOpen] = useState(false);
+  const [help, setHelp] = useState(false);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const pending = useRef<null | { kind: 'open'; index: number } | { kind: 'accuse' }>(null);
   const answerRef = useRef<HTMLElement>(null);
@@ -316,14 +316,13 @@ export default function Game({ initial }: { initial: TodayPayload }) {
         <p className="case-meta">Case {pc.caseNumber} · {dateTxt} · {LEVEL[pc.difficulty] ?? pc.difficulty}</p>
         <p className="company">{pc.company}</p>
         <h1>{pc.brief.headline}</h1>
-        <p className={'story' + (storyOpen ? ' open' : '')}>{pc.brief.story}</p>
-        {!storyOpen && <button className="textbtn" onClick={() => setStoryOpen(true)}>Read more</button>}
+        <p className="story open">{pc.brief.story}</p>
         <dl className="facts">
           {pc.brief.facts.map((f, i) => (
             <div key={i} className={f.tone === 'down' ? 'down' : ''}><dt>{f.label}</dt><dd>{f.value}</dd></div>
           ))}
         </dl>
-        <Link className="textbtn muted" href="/">How to play</Link>
+        <button className="textbtn muted" onClick={() => setHelp(true)}>How to play</button>
       </article>
 
       {/* ---- evidence: files open in place */}
@@ -422,6 +421,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
         )}
       </Sheet>
 
+      <HowToPlay open={help} onClose={() => setHelp(false)} />
       {signIn && <SignIn startAt={signIn} onDone={onSignedIn} onClose={() => { setSignIn(null); pending.current = null; }} />}
       {toast && <div className="toast" role="status">{toast}</div>}
     </main>

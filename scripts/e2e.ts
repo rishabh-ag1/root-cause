@@ -126,6 +126,8 @@ async function main() {
   const fin = right.data.final as { rank?: number; share?: string } | null;
   check('The right answer closes the case with a score', right.status === 200 && right.data.result === 'correct', right.text.slice(0, 160));
   check('Result includes a rank and a share link with a challenge', !!fin?.rank && !!fin?.share?.includes(`c=${username}`), JSON.stringify(fin)?.slice(0, 160));
+  check('Share text has a full clickable link tagged as a referral', /https://S+?c=w+&utm_source=referral/.test(fin?.share ?? ''), fin?.share);
+  check('Share text has no coloured boxes or spoilers', !/🟩|⬛|❌|✅/.test(fin?.share ?? ''));
   const score = (right.data.attempt as { score?: number })?.score;
   check('Score follows the rules (1000 − 75 − 250 − time)', typeof score === 'number' && score <= 675 && score >= 525, String(score));
   const bonus = await call('/api/attempt/bonus', { body: { caseId: pc.id, optionIndex: 0 } });

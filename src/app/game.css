@@ -214,3 +214,21 @@ details.fold ol, details.fold ul { padding-left: 20px; }
 .cause:disabled:not(.ruled):not(.right) { cursor: default; }
 .answer .btn.block { margin-top: 6px; }
 .cta-bar { animation: rise .2s var(--ease); }
+
+/* Bonus result */
+.bonus-verdict { margin: 0; font-weight: 600; padding: 10px 12px; border-radius: 10px; }
+.bonus-verdict.ok { background: var(--ledger-soft); color: var(--ink); }
+.bonus-verdict.no { background: var(--stamp-soft); color: var(--ink); }
+.bonus-done .options button.right { background: var(--ledger-soft); border-color: var(--ledger); }
+.bonus-done .options button.wrongpick { background: var(--stamp-soft); border-color: var(--stamp); }
+
+/* Top bar: logo + name always visible, one line on phones */
+.logo-name { white-space: nowrap; }
+.nav { flex-wrap: nowrap; }
+.nav-links { flex-wrap: nowrap; }
+@media (max-width: 420px) {
+  .logo { gap: 6px; font-size: 13px; letter-spacing: .1em; }
+  .nav-links { gap: 0; }
+  .nav-links a, .nav-links button { padding: 6px 7px; font-size: 11.5px; }
+  .nav-links button[aria-label^="Theme"] { display: none; }
+}

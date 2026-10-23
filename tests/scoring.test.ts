@@ -110,9 +110,11 @@ describe('game transitions', () => {
 });
 
 describe('share text', () => {
-  it('matches the format and never names the answer', () => {
-    const s = shareText({ caseNumber: 12, company: 'Saltwater Labs', fileCount: 12, opened: [5, 10], wrong: 1, solved: true, bonusCorrect: true, score: 655, rank: 14, seconds: 102, par: 2, site: 'rootcause.in/?c=sherlock' });
-    expect(s).toBe('Root Cause #12 🕵️ Saltwater Labs\n⬛⬛⬛⬛⬛🟩⬛⬛⬛⬛🟩⬛\n❌✅ ⭐ · 655 pts · #14 today\n2 files (par) · 1:42\nCan you beat me? rootcause.in/?c=sherlock');
-    expect(s).not.toMatch(/receivable|quick|60 days/i);
+  it('is plain text with a full link and never names the answer', () => {
+    const s = shareText({ caseNumber: 12, company: 'Saltwater Labs', solved: true, score: 655, rank: 3, total: 41, seconds: 102, link: 'https://playrootcause.vercel.app/?c=sherlock&utm_source=referral' });
+    expect(s).toBe(
+      "Root Cause: the daily business mystery. Read the case, open the clues, find out what went wrong.\n\nI cracked today's case (#12, Saltwater Labs) in 1:42 and scored 655 points, ranking #3 of 41 on today's leaderboard.\n\nCan you beat me? Play now:\nhttps://playrootcause.vercel.app/?c=sherlock&utm_source=referral",
+    );
+    expect(s).not.toMatch(/🟩|⬛|receivable|quick|60 days/i);
   });
 });

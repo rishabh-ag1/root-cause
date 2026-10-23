@@ -124,6 +124,25 @@ export default function Result(p: {
         </section>
       )}
 
+      {solved && !view.bonusQuestion && reveal.bonus && (
+        <section className="r-block bonus-done">
+          <h4>Bonus question</h4>
+          <p className={'bonus-verdict ' + (view.bonusCorrect ? 'ok' : 'no')} role="status">
+            {view.bonusCorrect ? 'Correct! Well spotted.' : view.bonusCorrect === false ? 'Not quite. Here is the right answer.' : 'Here is the answer.'}
+          </p>
+          <p>{reveal.bonus.question}</p>
+          <div className="options">
+            {reveal.bonus.options.map((o, i) => (
+              <button key={i} disabled className={i === reveal.bonus!.answer_index ? 'right' : p.bonusPick === i ? 'wrongpick' : ''}>
+                <b>{String.fromCharCode(65 + i)}</b>
+                <span>{o}{i === reveal.bonus!.answer_index ? ' ✓' : p.bonusPick === i ? ' (your answer)' : ''}</span>
+              </button>
+            ))}
+          </div>
+          <p className="muted small">{reveal.bonus.explanation}</p>
+        </section>
+      )}
+
       <details className="fold">
         <summary>Solution</summary>
         <p><Rich text={ex.answer} /></p>
@@ -134,9 +153,6 @@ export default function Result(p: {
         <p><b>Traps</b></p>
         <ul>{traps.map((t, i) => <li key={i}><Rich text={t} /></li>)}</ul>
         {ex.fix && <p><b>The fix:</b> <Rich text={ex.fix} /></p>}
-        {solved && !view.bonusQuestion && reveal.bonus && (
-          <p><b>Bonus:</b> {reveal.bonus.options[reveal.bonus.answer_index]} {view.bonusCorrect ? '(you got it)' : ''}</p>
-        )}
         <p className="muted small">1,000 − {n} × {CARD_COST} − {w} × {WRONG_COST} − {timePenalty(secs)} for time{solved ? '' : ' (unsolved scores 0)'}.</p>
       </details>
 

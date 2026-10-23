@@ -40,7 +40,7 @@ export default function Nav() {
     <nav className="nav">
       <Link href="/" className="logo">
         <i>RC</i>
-        <span className="hide-sm">Root Cause</span>
+        <span className="logo-name">Root Cause</span>
       </Link>
       <div className="nav-links">
         {link('/play', 'Today')}
