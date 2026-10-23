@@ -53,6 +53,8 @@ export default function Game({ initial }: { initial: TodayPayload }) {
   const [lastWrong, setLastWrong] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [howTo, setHowTo] = useState(false);
+  const howToDone = useRef(false);
+  const afterHowTo = useRef<null | (() => void)>(null);
   const [storyOpen, setStoryOpen] = useState(false);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const pending = useRef<null | { kind: 'open'; index: number } | { kind: 'accuse' }>(null);
@@ -71,7 +73,8 @@ export default function Game({ initial }: { initial: TodayPayload }) {
     tag('played_today', !!initial.attempt?.finished);
     track('case_view', { case: pc.caseNumber, difficulty: pc.difficulty });
     try {
-      if (!localStorage.getItem(HOWTO_KEY) && !initial.attempt) setHowTo(true);
+      howToDone.current = !!localStorage.getItem(HOWTO_KEY);
+      if (!howToDone.current && !initial.attempt?.finished) setHowTo(true);
     } catch {}
     const c = new URLSearchParams(location.search).get('c');
     if (c && /^[A-Za-z0-9_]{3,20}$/.test(c))
@@ -111,9 +114,21 @@ export default function Game({ initial }: { initial: TodayPayload }) {
 
   function closeHowTo() {
     setHowTo(false);
+    howToDone.current = true;
     try {
       localStorage.setItem(HOWTO_KEY, '1');
     } catch {}
+    const next = afterHowTo.current;
+    afterHowTo.current = null;
+    if (next) setTimeout(next, 200);
+  }
+
+  /** Nobody plays before reading the rules: show them first, then carry on with what was tapped. */
+  function needHowTo(then: () => void) {
+    if (howToDone.current || practice) return false;
+    afterHowTo.current = then;
+    setHowTo(true);
+    return true;
   }
 
   function handleError(status: number, data: { error?: { code?: string; message?: string } }) {
@@ -157,6 +172,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
 
   // ---- files
   async function openFile(i: number, current: PlayerView | null = att) {
+    if (!view?.bodies[i] && !finished && needHowTo(() => openFile(i))) return;
     if (view?.bodies[i]) return setViewing(i);
     if (finished) return;
     if (practice) {
@@ -183,6 +199,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
 
   // ---- accuse
   function startAccuse() {
+    if (!finished && needHowTo(startAccuse)) return;
     if (finished) return setShowResult(true);
     if (needAccount({ kind: 'accuse' })) return;
     setLastWrong(null);

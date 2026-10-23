@@ -43,3 +43,13 @@ export function handleError(e: unknown) {
   console.error(e);
   return fail(500, 'server', 'Something went wrong.');
 }
+
+/** The caller's IP for rate limiting. Uses Vercel's own headers, which clients can't spoof. */
+export function clientIp(req: Request) {
+  return (
+    req.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ||
+    req.headers.get('x-real-ip')?.trim() ||
+    req.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ||
+    'unknown'
+  );
+}

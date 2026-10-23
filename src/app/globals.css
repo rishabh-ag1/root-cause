@@ -207,7 +207,7 @@ pre.share { margin: 0; background: var(--bg); border: 1px solid var(--line); bor
 .board tbody tr { animation: rise .35s var(--ease) both; }
 .seg { display: inline-flex; border: 1px solid var(--ink); border-radius: 3px; overflow: hidden; }
 .seg button { border: 0; background: none; padding: 7px 12px; font-family: var(--mono); font-size: 12px; }
-.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.seg button[aria-pressed="true"], .seg button[aria-selected="true"] { background: var(--ink); color: var(--paper); }
 .live { font-family: var(--mono); font-size: 11px; color: var(--ledger); display: inline-flex; align-items: center; gap: 6px; }
 .live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ledger); animation: pulse 1.6s infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ledger) 60%, transparent); } 100% { box-shadow: 0 0 0 8px transparent; } }

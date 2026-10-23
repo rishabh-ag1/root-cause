@@ -20,6 +20,28 @@ export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt
   const [err, setErr] = useState('');
   const [resendIn, setResendIn] = useState(0);
   const input = useRef<HTMLInputElement>(null);
+  const scrim = useRef<HTMLDivElement>(null);
+
+  // Phones: pin the dialog to the part of the screen the keyboard leaves visible.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const el = scrim.current;
+    if (!vv || !el) return;
+    const fit = () => {
+      el.style.top = vv.offsetTop + 'px';
+      el.style.height = vv.height + 'px';
+    };
+    fit();
+    vv.addEventListener('resize', fit);
+    vv.addEventListener('scroll', fit);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      vv.removeEventListener('resize', fit);
+      vv.removeEventListener('scroll', fit);
+      document.body.style.overflow = prev;
+    };
+  }, []);
 
   useEffect(() => {
     input.current?.focus();
@@ -107,7 +129,7 @@ export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt
   const stepNo = { email: 0, code: 1, username: 2 }[step];
 
   return (
-    <div className="scrim" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div ref={scrim} className="scrim top" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div className="sheet" data-clarity-mask="true" role="dialog" aria-modal="true" aria-labelledby="signin-title">
         <button className="close" onClick={onClose} aria-label="Close">×</button>
         <div className="steps" aria-hidden="true">

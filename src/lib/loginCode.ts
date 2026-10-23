@@ -94,11 +94,26 @@ export async function verifyCode(rawEmail: string, rawCode: string): Promise<str
     throw new CodeError('wrong', left > 0 ? `That code isn't right. ${left} ${left === 1 ? 'try' : 'tries'} left.` : 'Too many wrong tries. Ask for a new code.');
   }
   await sb.from('login_codes').delete().eq('email', email);
+  return (await ensureAccount(email)).hashedToken;
+}
 
-  // Create the account the first time (already confirmed: they just proved they own the inbox).
+/**
+ * Makes sure an account exists for this email and is marked confirmed, and returns a one-time
+ * sign-in token for it. Marking it confirmed matters for the fallback path: Supabase sends brand-new
+ * (unconfirmed) users its "Confirm signup" email instead of the code email, which strands them.
+ * Confirming here doesn't sign anyone in; they still need the code from their inbox.
+ */
+export async function ensureAccount(rawEmail: string) {
+  const email = normEmail(rawEmail);
+  const sb = adminClient();
   const created = await sb.auth.admin.createUser({ email, email_confirm: true });
   if (created.error && !/already|exists|registered/i.test(created.error.message)) throw created.error;
   const link = await sb.auth.admin.generateLink({ type: 'magiclink', email });
   if (link.error) throw link.error;
-  return link.data.properties.hashed_token;
+  const user = link.data.user;
+  if (user && !user.email_confirmed_at) {
+    const { error } = await sb.auth.admin.updateUserById(user.id, { email_confirm: true });
+    if (error) throw error;
+  }
+  return { hashedToken: link.data.properties.hashed_token, userId: user?.id ?? null };
 }

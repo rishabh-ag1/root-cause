@@ -1,7 +1,11 @@
 'use client';
 import { useEffect, useRef } from 'react';
 
-/** A bottom sheet on phones, a centred card on desktop. Escape or the backdrop closes it. */
+/**
+ * A bottom sheet on phones, a centred card on desktop.
+ * `dismissible={false}` hides the close button and ignores Escape and backdrop taps:
+ * the only way out is the action in the footer.
+ */
 export default function Sheet({
   open,
   onClose,
@@ -11,6 +15,7 @@ export default function Sheet({
   footer,
   size = 'md',
   className = '',
+  dismissible = true,
 }: {
   open: boolean;
   onClose: () => void;
@@ -20,11 +25,12 @@ export default function Sheet({
   footer?: React.ReactNode;
   size?: 'md' | 'lg' | 'full';
   className?: string;
+  dismissible?: boolean;
 }) {
   const panel = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    const onKey = (e: KeyboardEvent) => dismissible && e.key === 'Escape' && onClose();
     window.addEventListener('keydown', onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -33,13 +39,13 @@ export default function Sheet({
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = prev;
     };
-  }, [open, onClose]);
+  }, [open, onClose, dismissible]);
   if (!open) return null;
   return (
-    <div className="scrim" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div className={'scrim' + (dismissible ? '' : ' locked')} onMouseDown={(e) => dismissible && e.target === e.currentTarget && onClose()}>
       <div ref={panel} tabIndex={-1} className={`sheet2 ${size} ${className}`} role="dialog" aria-modal="true">
-        <div className="sheet2-grab" aria-hidden="true" />
-        <button className="sheet2-close" onClick={onClose} aria-label="Close">×</button>
+        {dismissible && <div className="sheet2-grab" aria-hidden="true" />}
+        {dismissible && <button className="sheet2-close" onClick={onClose} aria-label="Close">×</button>}
         {(kicker || title) && (
           <header className="sheet2-head">
             {kicker && <div className="kicker">{kicker}</div>}

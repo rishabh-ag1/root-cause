@@ -1,4 +1,4 @@
-import { json, fail, handleError } from '@/lib/api';
+import { json, fail, handleError, clientIp } from '@/lib/api';
 import { getChallenge, getTodayCase } from '@/lib/repo';
 import { rateLimited } from '@/lib/rateLimit';
 
@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: Request) {
   const u = new URL(req.url).searchParams.get('u')?.trim() ?? '';
   if (!/^[A-Za-z0-9_]{3,20}$/.test(u)) return fail(400, 'body', 'Invalid username.');
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const ip = clientIp(req);
   if (rateLimited('ch:' + ip, 60)) return fail(429, 'rate', 'Slow down a little.');
   try {
     const c = await getTodayCase();

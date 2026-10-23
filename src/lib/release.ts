@@ -39,7 +39,7 @@ export async function sendNewCaseEmails(opts: { caseId?: number; triggeredBy: st
     ]);
     if (optedOut.error) throw optedOut.error;
     const skip = new Set((optedOut.data ?? []).map((r: { id: string }) => r.id));
-    const recipients = users.filter((u) => u.email && u.email_confirmed_at && !skip.has(u.id));
+    const recipients = users.filter((u) => u.email && u.last_sign_in_at && !skip.has(u.id));
 
     let sent = 0;
     let failed = 0;

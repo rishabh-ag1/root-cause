@@ -21,7 +21,7 @@ export async function GET() {
     for (const r of [profiles, attempts, cases]) if (r.error) throw r.error;
     type C = { evidence: { title: string }[]; causes: { label: string }[] } & Record<string, unknown>;
     const stats = computeStats({
-      users: users.filter((u) => u.email_confirmed_at).map((u) => ({ id: u.id, created_at: u.created_at })),
+      users: users.filter((u) => u.last_sign_in_at).map((u) => ({ id: u.id, created_at: u.created_at })),
       profiles: (profiles.data ?? []) as { id: string }[],
       attempts: (attempts.data ?? []) as Parameters<typeof computeStats>[0]['attempts'],
       cases: ((cases.data ?? []) as C[]).map((c) => ({

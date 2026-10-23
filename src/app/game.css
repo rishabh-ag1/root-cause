@@ -158,3 +158,29 @@ details.fold ol, details.fold ul { padding-left: 20px; }
   .story { font-size: 15px; }
   .r-score { font-size: 64px; }
 }
+
+
+/* How to play: a light, highlighted card in every theme so it can't be mistaken for page content */
+.scrim.locked { background: rgba(15, 18, 16, .62); }
+.sheet2.howto-sheet { background: #fff6d6; color: #1f2421; border: 2px solid #1f2421; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .55); }
+.howto-sheet .sheet2-head { padding-top: 22px; padding-right: 20px; }
+.howto-sheet .sheet2-head::before { content: ''; display: block; width: 44px; height: 5px; border-radius: 3px; background: #b8322a; margin-bottom: 10px; }
+.howto-sheet .kicker { color: #8a6d1f; }
+.howto-sheet h3 { color: #1f2421; font-size: 26px; }
+.howto-sheet .sheet2-foot { border-top: 1px solid rgba(31, 36, 33, .15); }
+.howto-sheet .btn.ink { background: #1f2421; color: #fff6d6; min-height: 50px; font-size: 16px; }
+.howto-lead { margin: 0; font-size: 15.5px; line-height: 1.55; }
+.howto { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.howto li { display: flex; gap: 12px; align-items: flex-start; padding: 0; }
+.howto-n { flex: none; width: 28px; height: 28px; border-radius: 50%; background: #1f2421; color: #fff6d6; display: grid; place-items: center; font-family: var(--display); font-weight: 600; font-size: 14px; }
+.howto b { display: block; font-weight: 600; font-size: 15.5px; color: #1f2421; }
+.howto span { font-size: 14px; color: #4a4a40; }
+.howto-foot { margin: 0; font-size: 13px; color: #4a4a40; border-top: 1px dashed rgba(31, 36, 33, .2); padding-top: 12px; }
+
+/* Sign-in: sits in the upper part of the screen and follows the visible area when the keyboard opens */
+.scrim.top { bottom: auto; height: 100dvh; place-items: start center; padding: max(env(safe-area-inset-top, 0px), 7vh) 16px 16px; overflow-y: auto; }
+.scrim.top .sheet { border-radius: 14px; max-width: 420px; animation: sheetIn .25s var(--ease); max-height: none; }
+@media (max-width: 620px) {
+  .scrim.top { place-items: start center; padding: max(env(safe-area-inset-top, 0px), 5vh) 12px 12px; }
+  .scrim.top .sheet { border-radius: 14px; padding: 20px 18px 18px; animation-name: sheetIn; }
+}

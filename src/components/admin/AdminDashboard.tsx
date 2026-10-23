@@ -63,7 +63,7 @@ export default function AdminDashboard() {
         <div className="brand">Admin<small>ROOT CAUSE · CASE DAY {stats?.today ?? '…'} · RELEASES AT 9AM IST</small></div>
         <div className="seg" role="tablist">
           {(['overview', 'schedule', 'emails'] as Tab[]).map((t) => (
-            <button key={t} role="tab" aria-pressed={tab === t} onClick={() => setTab(t)}>{t[0].toUpperCase() + t.slice(1)}</button>
+            <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)}>{t[0].toUpperCase() + t.slice(1)}</button>
           ))}
         </div>
       </div>
