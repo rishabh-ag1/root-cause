@@ -43,7 +43,7 @@ export default function Nav() {
         <span className="hide-sm">Root Cause</span>
       </Link>
       <div className="nav-links">
-        {link('/', 'Today')}
+        {link('/play', 'Today')}
         {link('/leaderboard', 'Leaderboard')}
         {link('/settings', 'Account')}
         <button onClick={cycle} aria-label={`Theme: ${LABEL[theme]}`} title={`Theme: ${LABEL[theme]}`}>

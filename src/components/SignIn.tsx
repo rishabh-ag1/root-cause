@@ -139,8 +139,8 @@ export default function SignIn({ startAt = 'email', onDone, onClose }: { startAt
         {step === 'email' && (
           <form onSubmit={sendCode} style={{ display: 'contents' }}>
             <div className="tag">Join today&apos;s leaderboard</div>
-            <h3 id="signin-title">Sign in to start the clock</h3>
-            <p>No password. We&apos;ll email you a short code.</p>
+            <h3 id="signin-title">Sign in to play</h3>
+            <p>No password needed. We&apos;ll email you a 4-digit code. Your score goes on today&apos;s leaderboard.</p>
             <div className="field">
               <label htmlFor="email">Email</label>
               <input ref={input} id="email" type="email" inputMode="email" autoComplete="email" placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)} />

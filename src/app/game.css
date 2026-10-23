@@ -184,3 +184,40 @@ details.fold ol, details.fold ul { padding-left: 20px; }
   .scrim.top { place-items: start center; padding: max(env(safe-area-inset-top, 0px), 5vh) 12px 12px; }
   .scrim.top .sheet { border-radius: 14px; padding: 20px 18px 18px; animation-name: sheetIn; }
 }
+
+
+/* Landing: what the game is, how to play, how ranking works */
+.landing { max-width: 640px; gap: 26px; padding-bottom: 110px; }
+.hero { display: flex; flex-direction: column; gap: 12px; padding-top: 18px; }
+.hero h1 { font-family: var(--display); font-weight: 600; font-size: 34px; line-height: 1.1; margin: 0; text-wrap: balance; }
+.hero-sub { margin: 0; font-size: 16px; line-height: 1.6; }
+.today-card { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--paper); border: 1px solid var(--line); border-left: 4px solid var(--stamp); border-radius: 12px; padding: 14px 16px; }
+.today-card p { margin: 0; }
+.today-company { font-family: var(--display); font-weight: 600; font-size: 22px; margin: 2px 0 !important; }
+.today-done { font-size: 14px; text-align: right; }
+.landing h2 { font-size: 18px; letter-spacing: .08em; margin-bottom: 12px; }
+.howsteps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.howsteps li { display: flex; gap: 14px; align-items: flex-start; }
+.step-n { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-family: var(--display); font-weight: 600; font-size: 15px; }
+.howsteps b { display: block; font-size: 16px; }
+.howsteps p { margin: 2px 0 0; font-size: 14.5px; color: var(--muted); line-height: 1.55; }
+.howsteps p b, .rank-points b { display: inline; color: var(--ink); font-size: inherit; }
+.formula { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--paper); margin-bottom: 10px; }
+.formula > div { padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.formula > div:nth-child(even) { border-left: 1px solid var(--line); }
+.formula > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+.formula span { font-size: 12.5px; color: var(--muted); }
+.formula b { font-family: var(--mono); font-size: 17px; }
+.score-block p, .rank-block p { margin: 0; line-height: 1.55; }
+.rank-points, .tips-block ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 10px; font-size: 14.5px; line-height: 1.55; color: var(--muted); }
+.rank-points b { color: var(--ink); }
+.mini-top { margin-top: 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.mini-top ol { list-style: none; margin: 0; padding: 0; }
+.mini-top li { display: grid; grid-template-columns: 24px 1fr auto; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.mini-top li:last-child { border-bottom: 0; }
+.mini-top li span:first-child { font-family: var(--mono); color: var(--muted); font-size: 13px; }
+.mini-top b { font-family: var(--mono); }
+.start-btn { min-height: 54px !important; font-size: 17px !important; }
+@media (max-width: 620px) {
+  .hero h1 { font-size: 28px; }
+}

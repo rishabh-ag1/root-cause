@@ -11,7 +11,9 @@ import { identify, tag, track } from '@/lib/track';
 import { Blocks } from './Blocks';
 import SignIn from './SignIn';
 import Sheet from './ui/Sheet';
-import HowToPlay from './game/HowToPlay';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { INTRO_KEY } from './landing/StartButton';
 import Result, { type Challenge } from './game/Result';
 
 type Practice = { attempt: Attempt; c: StoredCase; bonusPick: number | null };
@@ -30,7 +32,6 @@ function fmtCountdown(ms: number) {
 }
 
 const LEVEL: Record<string, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard', expert: 'Expert' };
-const HOWTO_KEY = 'rc-howto-seen';
 
 export default function Game({ initial }: { initial: TodayPayload }) {
   const pc = initial.case;
@@ -52,9 +53,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
   const [picked, setPicked] = useState<number | null>(null);
   const [lastWrong, setLastWrong] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [howTo, setHowTo] = useState(false);
-  const howToDone = useRef(false);
-  const afterHowTo = useRef<null | (() => void)>(null);
+  const router = useRouter();
   const [storyOpen, setStoryOpen] = useState(false);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const pending = useRef<null | { kind: 'open'; index: number } | { kind: 'accuse' }>(null);
@@ -73,8 +72,8 @@ export default function Game({ initial }: { initial: TodayPayload }) {
     tag('played_today', !!initial.attempt?.finished);
     track('case_view', { case: pc.caseNumber, difficulty: pc.difficulty });
     try {
-      howToDone.current = !!localStorage.getItem(HOWTO_KEY);
-      if (!howToDone.current && !initial.attempt?.finished) setHowTo(true);
+      // Nobody starts a case without reading how the game works first.
+      if (!localStorage.getItem(INTRO_KEY) && !initial.attempt) return router.replace('/' + location.search);
     } catch {}
     const c = new URLSearchParams(location.search).get('c');
     if (c && /^[A-Za-z0-9_]{3,20}$/.test(c))
@@ -112,25 +111,6 @@ export default function Game({ initial }: { initial: TodayPayload }) {
     return p;
   }, [sync]);
 
-  function closeHowTo() {
-    setHowTo(false);
-    howToDone.current = true;
-    try {
-      localStorage.setItem(HOWTO_KEY, '1');
-    } catch {}
-    const next = afterHowTo.current;
-    afterHowTo.current = null;
-    if (next) setTimeout(next, 200);
-  }
-
-  /** Nobody plays before reading the rules: show them first, then carry on with what was tapped. */
-  function needHowTo(then: () => void) {
-    if (howToDone.current || practice) return false;
-    afterHowTo.current = then;
-    setHowTo(true);
-    return true;
-  }
-
   function handleError(status: number, data: { error?: { code?: string; message?: string } }) {
     if (status === 401) {
       setMe(null);
@@ -160,8 +140,8 @@ export default function Game({ initial }: { initial: TodayPayload }) {
     const action = pending.current;
     pending.current = null;
     if (!p || p.attempt?.finished || !action) return;
+    // Resume opening the file they tapped; never jump straight into the answer list after sign-in.
     if (action.kind === 'open') openFile(action.index, p.attempt);
-    else setAccusing(true);
   }
 
   function finishUp() {
@@ -172,7 +152,6 @@ export default function Game({ initial }: { initial: TodayPayload }) {
 
   // ---- files
   async function openFile(i: number, current: PlayerView | null = att) {
-    if (!view?.bodies[i] && !finished && needHowTo(() => openFile(i))) return;
     if (view?.bodies[i]) return setViewing(i);
     if (finished) return;
     if (practice) {
@@ -199,7 +178,6 @@ export default function Game({ initial }: { initial: TodayPayload }) {
 
   // ---- accuse
   function startAccuse() {
-    if (!finished && needHowTo(startAccuse)) return;
     if (finished) return setShowResult(true);
     if (needAccount({ kind: 'accuse' })) return;
     setLastWrong(null);
@@ -350,7 +328,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
             <div key={i} className={f.tone === 'down' ? 'down' : ''}><dt>{f.label}</dt><dd>{f.value}</dd></div>
           ))}
         </dl>
-        <button className="textbtn muted" onClick={() => setHowTo(true)}>How to play</button>
+        <Link className="textbtn muted" href="/">How to play</Link>
       </article>
 
       {/* ---- evidence */}
@@ -462,7 +440,6 @@ export default function Game({ initial }: { initial: TodayPayload }) {
         )}
       </Sheet>
 
-      <HowToPlay open={howTo} onClose={closeHowTo} />
       {signIn && <SignIn startAt={signIn} onDone={onSignedIn} onClose={() => { setSignIn(null); pending.current = null; }} />}
       {toast && <div className="toast" role="status">{toast}</div>}
     </main>
