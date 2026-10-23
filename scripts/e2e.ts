@@ -74,8 +74,8 @@ async function main() {
   const home = await fetch(BASE + '/');
   const homeHtml = await home.text();
   check('Home page loads', home.status === 200);
-  check('Home page explains how to play, scoring and ranking', /How to play/.test(homeHtml) && /How you score/.test(homeHtml) && /ranked/.test(homeHtml));
-  check('Home page has the start button', /Start today|See today/.test(homeHtml));
+  check('Home page states the three rules in plain words', /each costs 75 points/.test(homeHtml) && /Wrong guesses cost 250/.test(homeHtml) && /leaderboard/.test(homeHtml));
+  check('Home page has one Play button', />Play<|See your result/.test(homeHtml));
   check('Game page loads', (await fetch(BASE + '/play')).status === 200);
   check("Today's case loads without signing in", today.status === 200 && !!pc, today.text.slice(0, 120));
   check('No answer, hidden files or explanation in the public case', !/answer_index|"body"|"explanation"|"feedback"/.test(today.text));

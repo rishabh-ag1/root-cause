@@ -48,8 +48,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
   const [hitKey, setHitKey] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
   const [copied, setCopied] = useState('');
-  const [viewing, setViewing] = useState<number | null>(null);
-  const [accusing, setAccusing] = useState(false);
+  const [expanded, setExpanded] = useState<number[]>([]);
   const [picked, setPicked] = useState<number | null>(null);
   const [lastWrong, setLastWrong] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -57,6 +56,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
   const [storyOpen, setStoryOpen] = useState(false);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const pending = useRef<null | { kind: 'open'; index: number } | { kind: 'accuse' }>(null);
+  const answerRef = useRef<HTMLElement>(null);
 
   const view: PlayerView | null = practice ? playerView(practice.attempt, practice.c) : att;
   const ranked = !practice;
@@ -145,23 +145,24 @@ export default function Game({ initial }: { initial: TodayPayload }) {
   }
 
   function finishUp() {
-    setAccusing(false);
-    setViewing(null);
-    setTimeout(() => setShowResult(true), 250);
+    setTimeout(() => setShowResult(true), 400);
   }
+
+  const toggle = (i: number) => setExpanded((e) => (e.includes(i) ? e.filter((x) => x !== i) : [...e, i]));
+  const expand = (i: number) => setExpanded((e) => (e.includes(i) ? e : [...e, i]));
 
   // ---- files
   async function openFile(i: number, current: PlayerView | null = att) {
-    if (view?.bodies[i]) return setViewing(i);
+    if (view?.bodies[i]) return toggle(i);
     if (finished) return;
     if (practice) {
       const { attempt } = applyOpen(practice.attempt, practice.c, i, new Date().toISOString());
       setPractice({ ...practice, attempt });
       setHitKey((k) => k + 1);
-      return setViewing(i);
+      return expand(i);
     }
     if (needAccount({ kind: 'open', index: i })) return;
-    if (current?.bodies[i]) return setViewing(i);
+    if (current?.bodies[i]) return expand(i);
     setBusy('open' + i);
     const { ok, status, data } = await post('/api/attempt/open', { caseId: pc.id, index: i });
     setBusy(null);
@@ -173,26 +174,20 @@ export default function Game({ initial }: { initial: TodayPayload }) {
       return { ...base, startedAt: data.startedAt, opened: data.opened, bodies: { ...base.bodies, [i]: data.body } };
     });
     setHitKey((k) => k + 1);
-    setViewing(i);
+    expand(i);
   }
 
-  // ---- accuse
-  function startAccuse() {
-    if (finished) return setShowResult(true);
-    if (needAccount({ kind: 'accuse' })) return;
-    setLastWrong(null);
-    setPicked(null);
-    setAccusing(true);
-  }
-
+  // ---- answer (on the page: pick an option, then Submit)
   async function accuse() {
     if (picked === null || finished) return;
+    if (needAccount({ kind: 'accuse' })) return;
     if (practice) {
       const { attempt, out } = applyAccuse(practice.attempt, practice.c, picked, new Date().toISOString());
       setPractice({ ...practice, attempt });
       setPicked(null);
       if (out.result === 'wrong') {
         setLastWrong(out.feedback);
+        setTimeout(() => answerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
         setHitKey((k) => k + 1);
       } else finishUp();
       return;
@@ -210,6 +205,7 @@ export default function Game({ initial }: { initial: TodayPayload }) {
     });
     if (data.result === 'wrong') {
       setLastWrong(data.feedback);
+        setTimeout(() => answerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
       setHitKey((k) => k + 1);
       return;
     }
@@ -279,7 +275,6 @@ export default function Game({ initial }: { initial: TodayPayload }) {
   );
   const reveal = view?.reveal ?? null;
   const pickedBonus = practice ? practice.bonusPick : bonusPick;
-  const viewingBody = viewing !== null ? view?.bodies[viewing] : null;
 
   return (
     <main className="wrap game">
@@ -331,91 +326,78 @@ export default function Game({ initial }: { initial: TodayPayload }) {
         <Link className="textbtn muted" href="/">How to play</Link>
       </article>
 
-      {/* ---- evidence */}
+      {/* ---- evidence: files open in place */}
       <section className="files">
-        <div className="files-head">
+        <div className="section-head">
           <h2>Evidence</h2>
-          <span className="muted small">{CARD_COST} points per file · par {pc.par}</span>
+          <span className="muted small">Each file costs {CARD_COST} points</span>
         </div>
         <ul className="file-list">
           {pc.files.map((f, i) => {
-            const isOpen = !!view?.bodies[i];
+            const body = view?.bodies[i];
+            const isOpen = expanded.includes(i);
             const isBusy = busy === 'open' + i;
             return (
-              <li key={i}>
-                <button className={'file-row' + (isOpen ? ' opened' : '')} disabled={(!isOpen && finished) || isBusy} onClick={() => openFile(i)}>
+              <li key={i} className={body ? 'has-body' : ''}>
+                <button className={'file-row' + (body ? ' opened' : '')} aria-expanded={!!body && isOpen} disabled={(!body && finished) || isBusy} onClick={() => openFile(i)}>
                   <span className="file-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                   <span className="file-text"><b>{f.title}</b><span>{f.teaser}</span></span>
-                  <span className="file-cta">{isBusy ? '…' : isOpen ? 'Opened' : finished ? '' : `−${CARD_COST}`}</span>
+                  <span className="file-cta">{isBusy ? 'Opening…' : body ? (isOpen ? 'Hide' : 'Show') : finished ? '' : `Open · −${CARD_COST}`}</span>
                 </button>
+                {body && isOpen && (
+                  <div className="file-body">
+                    {pc.brief.units_note && <p className="muted small">{pc.brief.units_note}</p>}
+                    <Blocks blocks={body} />
+                  </div>
+                )}
               </li>
             );
           })}
         </ul>
       </section>
 
-      {/* ---- sticky action */}
-      <div className="cta-bar">
-        {finished ? (
-          <button className="btn primary block" onClick={() => setShowResult(true)}>See results</button>
-        ) : (
-          <button className="btn primary block" onClick={startAccuse} disabled={!!busy}>Name the root cause</button>
+      {/* ---- the answer, on the same page */}
+      <section className="answer" ref={answerRef}>
+        <div className="section-head">
+          <h2>{finished ? 'The answer' : "What's the root cause?"}</h2>
+          {!finished && <span className="muted small">{livesLeft} guess{livesLeft === 1 ? '' : 'es'} left</span>}
+        </div>
+        {!finished && <p className="muted small answer-help">Pick the one reason that best explains the problem. A wrong answer costs {WRONG_COST} points.</p>}
+        {!finished && lastWrong !== null && (
+          <div className="fb" key={wrong.length} role="alert"><b>Not quite.</b> {lastWrong}</div>
         )}
-      </div>
-
-      {/* ---- file viewer */}
-      <Sheet
-        open={viewing !== null && !!viewingBody}
-        onClose={() => setViewing(null)}
-        kicker={viewing !== null ? `File ${String(viewing + 1).padStart(2, '0')}` : ''}
-        title={viewing !== null ? pc.files[viewing].title : ''}
-        size="lg"
-        footer={!finished && (
-          <div className="sheet-actions">
-            <button className="btn ghost" onClick={() => setViewing(null)}>Back to files</button>
-            <button className="btn primary" onClick={() => { setViewing(null); startAccuse(); }}>Name the cause</button>
-          </div>
-        )}
-      >
-        {pc.brief.units_note && <p className="foot">{pc.brief.units_note}</p>}
-        {viewingBody && <Blocks blocks={viewingBody} />}
-      </Sheet>
-
-      {/* ---- accuse */}
-      <Sheet
-        open={accusing}
-        onClose={() => setAccusing(false)}
-        kicker={`${livesLeft} guess${livesLeft === 1 ? '' : 'es'} left · wrong costs ${WRONG_COST}`}
-        title="What's the root cause?"
-        size="lg"
-        footer={
-          <button className="btn primary block" disabled={picked === null || busy === 'accuse'} onClick={accuse}>
-            {busy === 'accuse' ? 'Checking…' : picked === null ? 'Pick one' : 'Accuse'}
-          </button>
-        }
-      >
-        {lastWrong !== null && (
-          <div className="fb" key={wrong.length}><b>Not it.</b> {lastWrong}</div>
-        )}
-        <div className="cause-list" role="radiogroup">
+        <div className="cause-list" role="radiogroup" aria-label="Possible root causes">
           {pc.causes.map((label, i) => {
             const ruled = wrong.some((w) => w.index === i);
+            const isAnswer = finished && reveal?.answerIndex === i;
             return (
               <button
                 key={i}
                 role="radio"
                 aria-checked={picked === i}
-                disabled={ruled}
-                className={'cause' + (picked === i ? ' on' : '') + (ruled ? ' ruled' : '')}
-                onClick={() => setPicked(i)}
+                disabled={ruled || finished}
+                className={'cause' + (picked === i ? ' on' : '') + (ruled ? ' ruled' : '') + (isAnswer ? ' right' : '')}
+                onClick={() => setPicked(picked === i ? null : i)}
               >
-                <span className="box" />{label}
+                <span className="box" aria-hidden="true" />
+                <span>{label}</span>
               </button>
             );
           })}
         </div>
-        {opened.length === 0 && <p className="foot center">Tip: opening one or two files first usually beats guessing.</p>}
-      </Sheet>
+        {finished && (
+          <button className="btn primary block" onClick={() => setShowResult(true)}>See your results</button>
+        )}
+      </section>
+
+      {/* ---- Submit appears only once something is picked */}
+      {!finished && picked !== null && (
+        <div className="cta-bar">
+          <button className="btn primary block" disabled={busy === 'accuse'} onClick={accuse}>
+            {busy === 'accuse' ? 'Checking…' : 'Submit answer'}
+          </button>
+        </div>
+      )}
 
       {/* ---- result */}
       <Sheet open={showResult && finished && !!view && !!reveal} onClose={() => setShowResult(false)} size="full" className="result-sheet">
