@@ -417,7 +417,7 @@ function Emails({ data, onSend }: { data: CasesResp; onSend: (id: number) => voi
   return (
     <>
       <section className="board">
-        <h2>Setup <span>New-case emails go out automatically at 9:00 IST</span></h2>
+        <h2>Setup <span>New-case emails go out within a minute of a case going live</span></h2>
         <div className="accuse-row">
           <button className="btn ghost small" onClick={sendTest} disabled={testing}>{testing ? 'Sending…' : 'Send me a test email'}</button>
           {test && <span className={test.ok ? 'copied' : 'err'} style={{ fontSize: 13 }}>{test.text}</span>}
