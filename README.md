@@ -37,7 +37,7 @@ src/components/Game.tsx    the Today screen
 | `CRON_SECRET` | Any long random string. Vercel Cron sends it to `/api/cron/release` at 09:00 IST. |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | Mail server for new-case emails. Gmail: `smtp.gmail.com`, `465`, your address, a 16-character [app password](https://myaccount.google.com/apppasswords). Resend: `smtp.resend.com`, `465`, `resend`, your API key. |
 | `EMAIL_FROM` | e.g. `Root Cause <you@gmail.com>` (Gmail always sends from the signed-in address). The same SMTP settings also send the 4-digit sign-in codes; without them, sign-in falls back to Supabase's 6-digit email code. |
-| `NEXT_PUBLIC_GA_ID` | Optional. Google Analytics 4 Measurement ID (`G-XXXXXXXXXX`). When set, GA4 loads on production pages and receives the same game events as PostHog. |
+| `NEXT_PUBLIC_GA_ID` | Optional. Overrides the built-in Google Analytics 4 Measurement ID (`G-255ZVL3F5V`). GA4 loads on production pages and receives the same game events as PostHog. |
 | `NEXT_PUBLIC_CLARITY_ID` | Optional. Overrides the built-in Microsoft Clarity project ID (`yw291uw8mq`). Clarity only loads on production builds. |
 
 Copy `.env.example` to `.env.local` and fill it in.
