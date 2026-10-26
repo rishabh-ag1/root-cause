@@ -71,7 +71,7 @@ Admins are flagged in the database: `update profiles set is_admin = true where i
 
 ## New-case emails
 
-Every minute, Supabase's scheduler (pg_cron + pg_net, migration 0006) calls `/api/cron/release` with the `CRON_SECRET` stored in Vault; Vercel Cron also calls it daily at 03:30 UTC as a backup. If a case went live today (at 09:00 IST, or when an admin schedules a case for today), every player who has signed in and hasn't unsubscribed gets one email within about a minute (brief teaser + play link). Each case is emailed at most once (`case_emails` row), so retries never double-send. Every email has a signed one-click unsubscribe link; players can also toggle it on the Account page.
+Every minute, Supabase's scheduler (pg_cron + pg_net, migration 0006) calls `/api/cron/release` with the `CRON_SECRET` stored in Vault; Vercel Cron also calls it daily at 03:30 UTC as a backup. If a case went live today (at 09:00 IST, or when an admin schedules a case for today), every player who has signed in and hasn't unsubscribed gets one email within about a minute (the case headline as the subject, a short teaser, a "Crack the case" button, yesterday's top score, and the player's streak). Admin → Emails → "Send me a preview" emails you the next one first. Each case is emailed at most once (`case_emails` row), so retries never double-send. Every email has a signed one-click unsubscribe link; players can also toggle it on the Account page.
 
 Gmail limits a personal account to about 500 emails a day. Move to Resend on your own domain before that matters.
 

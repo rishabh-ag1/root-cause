@@ -408,6 +408,12 @@ function Emails({ data, onSend }: { data: CasesResp; onSend: (id: number) => voi
   const today = data.cases.find((c) => c.state === 'live');
   const [test, setTest] = useState<{ ok: boolean; text: string } | null>(null);
   const [testing, setTesting] = useState(false);
+  async function sendPreview() {
+    setTesting(true);
+    const r = await api<{ caseNumber: number; company: string; subject: string }>('/api/admin/email/preview', { method: 'POST' });
+    setTesting(false);
+    setTest(r.ok ? { ok: true, text: `Preview of case #${r.data.caseNumber} (${r.data.company}) sent to your inbox. Subject: "${r.data.subject}"` } : { ok: false, text: r.data.error?.message ?? 'Failed.' });
+  }
   async function sendTest() {
     setTesting(true);
     const r = await api<{ to: string; from: string }>('/api/admin/email/test', { method: 'POST' });
@@ -419,7 +425,8 @@ function Emails({ data, onSend }: { data: CasesResp; onSend: (id: number) => voi
       <section className="board">
         <h2>Setup <span>New-case emails go out within a minute of a case going live</span></h2>
         <div className="accuse-row">
-          <button className="btn ghost small" onClick={sendTest} disabled={testing}>{testing ? 'Sending…' : 'Send me a test email'}</button>
+          <button className="btn primary small" onClick={sendPreview} disabled={testing}>{testing ? 'Sending…' : 'Send me a preview of the new-case email'}</button>
+          <button className="btn ghost small" onClick={sendTest} disabled={testing}>Send a plain test email</button>
           {test && <span className={test.ok ? 'copied' : 'err'} style={{ fontSize: 13 }}>{test.text}</span>}
         </div>
         <ul className="insights">
