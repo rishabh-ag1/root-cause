@@ -5,6 +5,7 @@ type Clarity = ((...args: unknown[]) => void) & { q?: unknown[] };
 declare global {
   interface Window {
     clarity?: Clarity;
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
@@ -13,8 +14,8 @@ type Props = Record<string, string | number | boolean | null>;
 const posthogReady = () => typeof window !== 'undefined' && posthog.__loaded;
 
 /**
- * Sends a product event to PostHog (numbers: DAU, retention, funnels) and Clarity (recordings).
- * No-ops when neither is loaded. Never pass emails, codes or anything that identifies a person.
+ * Sends a product event to PostHog (numbers: DAU, retention, funnels), Clarity (recordings) and GA4.
+ * No-ops when none is loaded. Never pass emails, codes or anything that identifies a person.
  */
 export function track(event: string, props?: Props) {
   try {
@@ -22,6 +23,9 @@ export function track(event: string, props?: Props) {
   } catch {}
   try {
     if (posthogReady()) posthog.capture(event, props);
+  } catch {}
+  try {
+    window.gtag?.('event', event, props);
   } catch {}
 }
 
@@ -40,6 +44,7 @@ export function identify(userId: string, username: string | null) {
   try {
     if (posthogReady() && posthog.get_distinct_id() !== userId) posthog.identify(userId, username ? { username } : undefined);
     window.clarity?.('identify', userId);
+    window.gtag?.('set', { user_id: userId });
   } catch {}
 }
 
